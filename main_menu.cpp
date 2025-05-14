@@ -59,31 +59,9 @@ int main() {
 	
 	while (true) {
 		cout << "Enter a command: ";
-		cin >> commandInput;
-		if (commandInput == "initialize") {
-			initializeHandler();
-		}
-		else if (commandInput == "screen") {
-			screenHandler();
-		}
-		else if (commandInput == "scheduler-test") {
-			scheduler_testHandler();
-		}
-		else if (commandInput == "scheduler-stop") {
-			scheduler_stopHandler();
-		}
-		else if (commandInput == "report-util") {
-			report_utilHandler();
-		}
-		else if (commandInput == "clear") { 
-			system("cls"); // Clear the screen
-			printHeader(); // Reprint the header after clearing the screen
-		}
-		else if (commandInput == "exit") {
-			break; // Exit the program
-		}
-		else {
-			cout << "Unknown command: " << commandInput << endl;
+		getline(cin, commandInput);
+		if (!commandHandler(commandInput)) {
+			break; // Exit the loop if commandHandler returns false
 		}
 	}
 
