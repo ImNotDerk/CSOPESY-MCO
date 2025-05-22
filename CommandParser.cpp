@@ -23,6 +23,7 @@ void CommandParser::handleScreenCommand(const std::string& option, const std::st
         //}
         else {
             Screen newScreen(name);
+            this->screenMaps.insert({name, newScreen});
             system("cls");
             newScreen.displayScreen();
         }
@@ -31,15 +32,13 @@ void CommandParser::handleScreenCommand(const std::string& option, const std::st
         if (name.empty()) {
             std::cerr << "Error: No name provided for screen." << std::endl;
         }
-        //else if () {
-        //    std::cerr << "Error: Screen name does not exist." << std::endl;
-        //}
-        else {
-            // Retrieve and display the screen with the given name
-            // Assuming you have a method to retrieve the screen by name
+        else if (this->screenMaps.find(name) != this->screenMaps.end()) {
             Screen existingScreen(name);
             system("cls");
             existingScreen.displayScreen();
+        }
+        else {
+            std::cerr << "Error: Inputted screen name doesn't exists." << std::endl;
         }
     }
     else {

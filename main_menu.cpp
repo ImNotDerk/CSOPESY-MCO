@@ -2,6 +2,7 @@
 #include <string>
 #include <windows.h>
 #include "CommandParser.h"
+#include "ConsoleManager.h"
 using namespace std;
 
 static void printHeader() {

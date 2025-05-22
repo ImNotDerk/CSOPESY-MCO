@@ -6,11 +6,14 @@
 #include <chrono>
 #include <ctime>
 #include <string>
+#include <map>
 
 class CommandParser {
 public:
     CommandParser() = default;
     ~CommandParser() = default;
+
+    std::map<String, Screen> screenMaps;
 
     void parse(const std::string& input);
 
