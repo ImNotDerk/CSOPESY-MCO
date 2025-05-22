@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <windows.h>
+#include "CommandParser.h"
 using namespace std;
 
 static void printHeader() {
@@ -16,9 +17,9 @@ static void printHeader() {
 static void initializeHandler() {
 	cout << "initialize command recognized. Doing something." << endl;
 }
-static void screenHandler() {
-	cout << "screen command recognized. Doing something." << endl;
-}
+//static void screenHandler() {
+//	cout << "screen command recognized. Doing something." << endl;
+//}
 static void scheduler_testHandler() {
 	cout << "scheduler-test command recognized. Doing something." << endl;
 }
@@ -29,42 +30,30 @@ static void report_utilHandler() {
 	cout << "report-util command recognized. Doing something." << endl;
 }
 
-static bool commandHandler(string command) {
-	if (command == "initialize") {
-		initializeHandler();
-	} else if (command == "screen") {
-		screenHandler();
-	} else if (command == "scheduler-test") {
-		scheduler_testHandler();
-	} else if (command == "scheduler-stop") {
-		scheduler_stopHandler();
-	} else if (command == "report-util") {
-		report_utilHandler();
-	} else if (command == "clear") {
-		system("cls"); // Clear the screen
-		printHeader(); // Reprint the header after clearing the screen
-	} else if (command == "exit") {
-		return false; // Exit the program
-	} else {
-		cout << "Unknown command: " << command << endl;
-	}
-
-	return true;
-}
-
 int main() {
 	std::string commandInput;
+
+	CommandParser parser; // create the parser instance
 
 	printHeader();
 	
 	while (true) {
-		cout << "Enter a command: ";
-		cin >> commandInput;
-		if (commandInput == "initialize") {
+		std::cout << "Enter a command: ";
+		std::getline(std::cin, commandInput); 
+
+		if (commandInput == "exit") {
+			break;
+		}
+		else if (commandInput == "clear") {
+			system("cls");
+			printHeader();
+		}
+		else if (commandInput == "initialize") {
 			initializeHandler();
 		}
-		else if (commandInput == "screen") {
-			screenHandler();
+		else if (commandInput.rfind("screen", 0) == 0) {
+			// If the command starts with "screen", delegate to parser
+			parser.parse(commandInput);
 		}
 		else if (commandInput == "scheduler-test") {
 			scheduler_testHandler();
@@ -75,15 +64,8 @@ int main() {
 		else if (commandInput == "report-util") {
 			report_utilHandler();
 		}
-		else if (commandInput == "clear") { 
-			system("cls"); // Clear the screen
-			printHeader(); // Reprint the header after clearing the screen
-		}
-		else if (commandInput == "exit") {
-			break; // Exit the program
-		}
 		else {
-			cout << "Unknown command: " << commandInput << endl;
+			std::cout << "Unknown command: " << commandInput << std::endl;
 		}
 	}
 
