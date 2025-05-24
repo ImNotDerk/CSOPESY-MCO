@@ -22,5 +22,4 @@ public:
 private:
     std::map<String, Screen> screenMaps;
     void handleScreenCommand(const std::string& option, const std::string& name);
-    void printTimestamp();
 };

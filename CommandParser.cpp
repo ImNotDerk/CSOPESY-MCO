@@ -42,6 +42,5 @@ void CommandParser::handleScreenCommand(const std::string& option, const std::st
     }
     else {
         std::cout << "Unknown option for screen: " << option << std::endl;
-    }
-    
+    }  
 }

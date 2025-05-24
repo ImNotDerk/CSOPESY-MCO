@@ -3,32 +3,32 @@
 #include <windows.h>
 #include "CommandParser.h"
 #include "ConsoleManager.h"
-using namespace std;
+typedef std::string String;
 
 static void printHeader() {
-	cout << "   ______     ______     ______     ______   ______     ______     __  __    " << endl;
-	cout << "  /\\  ___\\   /\\  ___\\   /\\  __ \\   /\\  == \\ /\\  ___\\   /\\  ___\\   /\\ \\_\\ \\   " << endl;
-	cout << "  \\ \\ \\____  \\ \\___  \\  \\ \\ \\/\\ \\  \\ \\  _-/ \\ \\  __\\   \\ \\___  \\  \\ \\____ \\  " << endl;
-	cout << "   \\ \\_____\\  \\/\\_____\\  \\ \\_____\\  \\ \\_\\    \\ \\_____\\  \\/\\_____\\  \\/\\_____\\ " << endl;
-	cout << "    \\/_____/   \\/_____/   \\/_____/   \\/_/     \\/_____/   \\/_____/   \\/_____/ " << endl;
-	cout << "Hello, Welcome to CSOPESY command line!" << endl;
-	cout << "Type 'exit' to quit, 'clear' to clear the screen" << endl;
+	std::cout << "   ______     ______     ______     ______   ______     ______     __  __    " << std::endl;
+	std::cout << "  /\\  ___\\   /\\  ___\\   /\\  __ \\   /\\  == \\ /\\  ___\\   /\\  ___\\   /\\ \\_\\ \\   " << std::endl;
+	std::cout << "  \\ \\ \\____  \\ \\___  \\  \\ \\ \\/\\ \\  \\ \\  _-/ \\ \\  __\\   \\ \\___  \\  \\ \\____ \\  " << std::endl;
+	std::cout << "   \\ \\_____\\  \\/\\_____\\  \\ \\_____\\  \\ \\_\\    \\ \\_____\\  \\/\\_____\\  \\/\\_____\\ " << std::endl;
+	std::cout << "    \\/_____/   \\/_____/   \\/_____/   \\/_/     \\/_____/   \\/_____/   \\/_____/ " << std::endl;
+	std::cout << "Hello, Welcome to CSOPESY command line!" << std::endl;
+	std::cout << "Type 'exit' to quit, 'clear' to clear the screen" << std::endl;
 }
 
 static void initializeHandler() {
-	cout << "initialize command recognized. Doing something." << endl;
+	std::cout << "initialize command recognized. Doing something." << std::endl;
 }
 //static void screenHandler() {
-//	cout << "screen command recognized. Doing something." << endl;
+//	std::cout << "screen command recognized. Doing something." << std::endl;
 //}
 static void scheduler_testHandler() {
-	cout << "scheduler-test command recognized. Doing something." << endl;
+	std::cout << "scheduler-test command recognized. Doing something." << std::endl;
 }
 static void scheduler_stopHandler() {
-	cout << "scheduler-stop command recognized. Doing something." << endl;
+	std::cout << "scheduler-stop command recognized. Doing something." << std::endl;
 }
 static void report_utilHandler() {
-	cout << "report-util command recognized. Doing something." << endl;
+	std::cout << "report-util command recognized. Doing something." << std::endl;
 }
 
 int main() {
@@ -58,7 +58,7 @@ int main() {
 			// entering the screen mode loop
 			std::string screenCommand;
 			while (true) {
-				std::cout << "[screen mode] Enter a command: ";
+				std::cout << "Enter a command: ";
 				std::getline(std::cin, screenCommand);
 
 				if (screenCommand == "exit") {
