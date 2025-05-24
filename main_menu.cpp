@@ -53,8 +53,27 @@ int main() {
 			initializeHandler();
 		}
 		else if (commandInput.rfind("screen", 0) == 0) {
-			// If the command starts with "screen", delegate to parser
-			parser.parse(commandInput);
+			parser.parse(commandInput); // initial screen command
+
+			// entering the screen mode loop
+			std::string screenCommand;
+			while (true) {
+				std::cout << "[screen mode] Enter a command: ";
+				std::getline(std::cin, screenCommand);
+
+				if (screenCommand == "exit") {
+					std::cout << "Exiting screen mode..." << std::endl;
+					system("cls");
+					printHeader();
+					break;
+				}
+				else if (screenCommand.rfind("screen", 0) == 0) {
+					parser.parse(screenCommand);
+				}
+				else {
+					std::cout << "Invalid command. While in screen mode, only 'screen' commands are allowed or type 'exit' to leave." << std::endl;
+				}
+			}
 		}
 		else if (commandInput == "scheduler-test") {
 			scheduler_testHandler();
