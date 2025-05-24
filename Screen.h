@@ -12,13 +12,14 @@ public:
 	String screenName;
 	int currentInstruction;
 	int totalInstruction;
-	time_t timeCreated;
+	const time_t timeCreated;
 
-	Screen(String screenName) {
+	Screen(String screenName) 
+		: timeCreated(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) // needs to be initialized as is since time_t is const
+		{
 		this->screenName = screenName;
 		this->currentInstruction = 0;
 		this->totalInstruction = 0;
-		this->timeCreated = time(&timeCreated);
 	}
 
 	void displayScreen();
@@ -26,5 +27,4 @@ public:
 
 private:
 	void printTimestamp();
-
 };

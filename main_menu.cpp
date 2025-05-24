@@ -67,7 +67,7 @@ int main() {
 					printHeader();
 					break;
 				}
-				else if (screenCommand.rfind("screen", 0) == 0) {
+				else if (screenCommand.rfind("screen", 0) == 0) { // possible fix next time maybe
 					parser.parse(screenCommand);
 				}
 				else {

@@ -130,7 +130,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommandParser.h" />
-    <ClInclude Include="Console.h" />
     <ClInclude Include="ConsoleManager.h" />
     <ClInclude Include="Screen.h" />
   </ItemGroup>
