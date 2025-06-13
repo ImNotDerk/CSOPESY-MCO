@@ -18,9 +18,6 @@ static void printHeader() {
 static void initializeHandler() {
 	std::cout << "initialize command recognized. Doing something." << std::endl;
 }
-//static void screenHandler() {
-//	std::cout << "screen command recognized. Doing something." << std::endl;
-//}
 static void scheduler_testHandler() {
 	std::cout << "scheduler-test command recognized. Doing something." << std::endl;
 }
