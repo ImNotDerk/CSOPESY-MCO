@@ -125,15 +125,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AConsole.cpp" />
+    <ClCompile Include="AScheduler.cpp" />
     <ClCompile Include="CommandParser.cpp" />
     <ClCompile Include="ConsoleManager.cpp" />
+    <ClCompile Include="IETThread.cpp" />
     <ClCompile Include="main_menu.cpp" />
+    <ClCompile Include="Process.cpp" />
     <ClCompile Include="Screen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AConsole.h" />
+    <ClInclude Include="AScheduler.h" />
     <ClInclude Include="CommandParser.h" />
     <ClInclude Include="ConsoleManager.h" />
+    <ClInclude Include="ICommand.h" />
+    <ClInclude Include="IETThread.h" />
+    <ClInclude Include="Process.h" />
     <ClInclude Include="Screen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
