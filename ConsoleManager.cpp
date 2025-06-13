@@ -1,8 +1,6 @@
 #include "ConsoleManager.h"
 #include <iostream>
 
-
-
 ConsoleManager* ConsoleManager::sharedInstance = nullptr;
 
 ConsoleManager* ConsoleManager::getInstance()
@@ -35,7 +33,7 @@ void ConsoleManager::drawConsole() const
 	}
 	else
 	{
-		std::cerr << "No console is currently set." << std::endl;
+		cerr << "No console is currently set." << endl;
 	}
 
 }
@@ -48,7 +46,7 @@ void ConsoleManager::process() const
 	}
 	else
 	{
-		std::cerr << "No console is currently set." << std::endl;
+		cerr << "No console is currently set." << endl;
 	}
 }
 
@@ -63,7 +61,7 @@ void ConsoleManager::switchConsole(String consoleName)
 	}
 	else
 	{
-		std::cerr << "Console name '" << consoleName << "' not initialized." << std::endl;
+		cerr << "Console name '" << consoleName << "' not initialized." << endl;
 	}
 }
 
@@ -77,7 +75,7 @@ void ConsoleManager::returnToPreviousConsole()
 	}
 	else
 	{
-		std::cerr << "No previous console to return to." << std::endl;
+		cerr << "No previous console to return to." << endl;
 	}
 }
 
@@ -87,7 +85,9 @@ ConsoleManager::ConsoleManager()
 
 	//initialize consoles
 	this->consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-
+	const shared_ptr<MainConsole> mainConsole = make_shared<MainConsole>();
+	this->consoleTable["MAIN_CONSOLE"] = mainConsole;
+	this->switchConsole(MAIN_CONSOLE);
 }
 
 

@@ -127,6 +127,8 @@
     <ClCompile Include="AConsole.cpp" />
     <ClCompile Include="CommandParser.cpp" />
     <ClCompile Include="ConsoleManager.cpp" />
+    <ClCompile Include="IETThread.cpp" />
+    <ClCompile Include="MainConsole.cpp" />
     <ClCompile Include="main_menu.cpp" />
     <ClCompile Include="Screen.cpp" />
   </ItemGroup>
@@ -134,6 +136,8 @@
     <ClInclude Include="AConsole.h" />
     <ClInclude Include="CommandParser.h" />
     <ClInclude Include="ConsoleManager.h" />
+    <ClInclude Include="IETThread.h" />
+    <ClInclude Include="MainConsole.h" />
     <ClInclude Include="Screen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
