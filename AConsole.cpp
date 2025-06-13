@@ -1,6 +1,7 @@
 #include "AConsole.h"
 
 #include <string>
+#include "MainConsole.h"
 
 AConsole::AConsole()
 {
