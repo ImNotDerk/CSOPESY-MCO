@@ -40,6 +40,9 @@ void CommandParser::handleScreenCommand(const std::string& option, const std::st
             std::cerr << "Error: Inputted screen name doesn't exists." << std::endl;
         }
     }
+    else if (option == "-ls") {
+		std::cout << "LIST SCREEN HERE" << std::endl;
+    }
     else {
         std::cout << "Unknown option for screen: " << option << std::endl;
     }  

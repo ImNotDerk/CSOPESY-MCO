@@ -2,15 +2,17 @@
 #include <memory>
 #include <vector>
 #include "AConsole.h"
+#include "MainConsole.h"
 #include <unordered_map>
 #include <Windows.h>
+
+typedef std::string String;
+using namespace std;
 
 const String MAIN_CONSOLE = "MAIN_CONSOLE";
 const String MARQUEE_CONSOLE = "MARQUEE_CONSOLE";
 const String SCHEDULING_CONSOLE = "SCHEDULING_CONSOLE";
 const String MEMORY_CONSOLE = "MEMORY_CONSOLE";
-
-typedef std::string String;
 
 class ConsoleManager {
 public:
@@ -24,17 +26,24 @@ public:
 	void process() const;
 	void switchConsole(String consoleName);
 	void returnToPreviousConsole();
+
+	void registerScreen(std::shared_ptr<BaseScreen> screenRef);
+	void switchToScreen(String screenName);
+	void unregisterScreen(String screenName);
+
 	void exitApplication();
 	bool isRunning() const;
+	//void exitApplication();
+	//bool isRunning() const;
 
-	HANDLE getConsoleHandle() const;
+	//HANDLE getConsoleHandle() const;
 
-	void setCursorPosition(int posX, int posY);
+	//void setCursorPosition(int posX, int posY);
 
 private:
 	ConsoleManager();
 	~ConsoleManager() = default;
-	ConsoleManager(ConsoleManager const&) {}; // copy constructor is private
+	//ConsoleManager(ConsoleManager const&) {}; // copy constructor is private
 	ConsoleManager& operator=(ConsoleManager const&) {}; // assignment operator is private
 	static ConsoleManager* sharedInstance;
 
