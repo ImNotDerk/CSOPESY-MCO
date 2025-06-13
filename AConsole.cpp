@@ -4,6 +4,7 @@
 
 AConsole::AConsole()
 {
+
 }
 
 AConsole::AConsole(String name)

@@ -29,13 +29,21 @@ static void report_utilHandler() {
 }
 
 int main() {
+	ConsoleManager::initialize(); // Initialize the console manager
+
+	bool running = true;
 	std::string commandInput;
 
 	CommandParser parser; // create the parser instance
 
 	printHeader();
 	
-	while (true) {
+	while (running) {
+		ConsoleManager::getInstance()->process();
+		ConsoleManager::getInstance()->drawConsole(); 
+
+		running = ConsoleManager::getInstance()->isRunning(); // Check if the console manager is still running
+
 		std::cout << "Enter a command: ";
 		std::getline(std::cin, commandInput); 
 
@@ -85,6 +93,8 @@ int main() {
 			std::cout << "Unknown command: " << commandInput << std::endl;
 		}
 	}
+
+	ConsoleManager::destroy(); // Cleanup the console manager before exiting
 
 	return 0;
 }
