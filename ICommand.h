@@ -3,7 +3,7 @@
 #include <string>
 
 typedef std::string String;
-// icommand
+
 class ICommand
 {
 public:
@@ -33,3 +33,4 @@ inline void ICommand::execute() {
 inline ICommand::ICommand(int processID, CommandType commandType) {
 	this->processID = processID;
 	this->commandType = commandType;
+}
