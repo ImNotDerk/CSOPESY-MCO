@@ -1,10 +1,11 @@
 #pragma once
 #include <string>
+using namespace std;
+typedef std::string String;
 
 class AConsole
 {
 public: 
-	typedef std::string String;
 	AConsole();
 	AConsole(String name);
 	~AConsole() = default;

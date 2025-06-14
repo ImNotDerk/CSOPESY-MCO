@@ -15,6 +15,5 @@ private:
 	void printProcessInfo() const;
 	std::shared_ptr<Process> attachedProcess;
 	bool refreshed = false;
-
 };
 
