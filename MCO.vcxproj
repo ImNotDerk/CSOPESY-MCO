@@ -127,6 +127,7 @@
     <ClCompile Include="AConsole.cpp" />
     <ClCompile Include="BaseScreen.cpp" />
     <ClCompile Include="CommandParser.cpp" />
+    <ClCompile Include="CommandPrinter.cpp" />
     <ClCompile Include="ConsoleManager.cpp" />
     <ClCompile Include="IETThread.cpp" />
     <ClCompile Include="MainConsole.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="AConsole.h" />
     <ClInclude Include="BaseScreen.h" />
     <ClInclude Include="CommandParser.h" />
+    <ClInclude Include="CommandPrinter.h" />
     <ClInclude Include="ConsoleManager.h" />
     <ClInclude Include="ICommand.h" />
     <ClInclude Include="IETThread.h" />
