@@ -125,6 +125,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AConsole.cpp" />
+    <ClCompile Include="AScheduler.cpp" />
     <ClCompile Include="BaseScreen.cpp" />
     <ClCompile Include="CommandParser.cpp" />
     <ClCompile Include="ConsoleManager.cpp" />
@@ -136,6 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AConsole.h" />
+    <ClInclude Include="AScheduler.h" />
     <ClInclude Include="BaseScreen.h" />
     <ClInclude Include="CommandParser.h" />
     <ClInclude Include="ConsoleManager.h" />
