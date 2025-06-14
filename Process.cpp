@@ -1,4 +1,5 @@
 #include "Process.h"
+#include "CommandPrinter.h"
 #include "ICommand.h"
 #include <string>
 
@@ -17,5 +18,16 @@ void Process::executeCurrentCommand() const {
 
 void Process::moveToNextLine() {
 	this->commandCounter++;
+}
+
+bool Process::isFinished() const {
+	return this->commandCounter >= this->commandList.size();
+}
+
+void Process::addCommand(ICommand::CommandType commandType) {
+	String printAdd = "Command added!";
+	const std::shared_ptr<ICommand> command = std::make_shared<CommandPrinter>(this->pid, printAdd);
+
+	
 }
 

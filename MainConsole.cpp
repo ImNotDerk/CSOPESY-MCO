@@ -1,4 +1,5 @@
 #include "MainConsole.h"
+#include "BaseScreen.h"
 
 MainConsole::MainConsole()
 {
