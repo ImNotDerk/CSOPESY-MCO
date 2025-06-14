@@ -19,18 +19,20 @@ public:
 
     Process(int pid, String name);
 
-    // void addCommand(ICommand::CommandType commandType);
+    void addCommand(ICommand::CommandType commandType);
     void executeCurrentCommand() const;
     void moveToNextLine();
 
-    // bool isFinished() const;
-    //int getRemainingTime() const;
-    // int getCommandCounter() const;
-    // int getLinesOfCode() const;
-    // int getPID() const;
-    // int getCPUCoreID() const;
-    // ProcessState getState() const;
-    // String getName() const;
+    bool isFinished() const;
+    int incrementCommandCounter();
+
+    int getRemainingTime() const;
+    int getCommandCounter() const;
+    int getLinesOfCode() const;
+    int getPID() const;
+    int getCPUCoreID() const;
+    ProcessState getState() const;
+    String getName() const;
 
 private:
     int pid;

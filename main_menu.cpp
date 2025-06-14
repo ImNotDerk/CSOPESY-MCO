@@ -13,7 +13,7 @@ int main() {
 		ConsoleManager::getInstance()->process();
 		ConsoleManager::getInstance()->drawConsole();
 
-		//running = ConsoleManager::getInstance()->isRunning();
+		running = ConsoleManager::getInstance()->isRunning();
 	}
 
 	ConsoleManager::destroy(); // Cleanup the console manager before exiting

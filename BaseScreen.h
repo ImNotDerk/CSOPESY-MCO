@@ -9,6 +9,7 @@ public:
 	void onEnabled() override;
 	void process() override;
 	void display() override;
+	String getName() const;
 
 private:
 	void printProcessInfo() const;
