@@ -28,7 +28,7 @@ public:
 
     int getRemainingTime() const;
     int getCommandCounter() const;
-    int getLinesOfCode() const;
+    std::size_t getLinesOfCode() const;
     int getPID() const;
     int getCPUCoreID() const;
     ProcessState getState() const;
@@ -43,5 +43,5 @@ private:
     int commandCounter;
     int cpuCoreID = -1;
     ProcessState currentState;
-    friend class ResourceEmulator;
+    /*friend class ResourceEmulator;*/
 };

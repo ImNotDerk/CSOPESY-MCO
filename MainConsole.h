@@ -5,7 +5,6 @@
 #include <sstream>
 #include "AConsole.h"
 
-using namespace std;
 typedef std::string String;
 
 class MainConsole : public AConsole
@@ -21,11 +20,11 @@ public:
 	void process() override;
 
 	void printHeader() const;
-	void initializeHandler() const;
+	/*void initializeHandler() const;
 	void scheduler_testHandler() const;
-	void scheduler_stopHandler() const;
+	void scheduler_stopHandler() const;*/
 	void report_utilHandler() const;
-	void processScreenHandler(const string& screencommand, const string& screenname) const;
+	void processScreenHandler(const std::string& screencommand, const std::string& screenname) const;
 
 	//String displayCPUUtil() const;
 	//String displayRunning();

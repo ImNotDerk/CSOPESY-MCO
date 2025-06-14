@@ -1,6 +1,6 @@
 #include "BaseScreen.h"
 
-BaseScreen::BaseScreen(shared_ptr<Process> process, String processName) {
+BaseScreen::BaseScreen(std::shared_ptr<Process> process, String processName) {
 	process = make_shared<Process>(processName);
 	this->attachedProcess = process;
 }
@@ -14,21 +14,21 @@ void BaseScreen::printProcessInfo() const
 {
 	if (!this->attachedProcess->isFinished())
 	{
-		cout << "" << endl;
-		cout << "Process: " << this->attachedProcess->getName() << endl;
-		cout << "ID: " << this->attachedProcess->getPID() << endl;
-		cout << "" << endl;
-		cout << "Current instruction line: " << this->attachedProcess->getCommandCounter() << endl;
-		cout << "Lines of code: " << this->attachedProcess->getLinesOfCode() << endl;
-		cout << "" << endl;
+		std::cout << "" << std::endl;
+		std::cout << "Process: " << this->attachedProcess->getName() << std::endl;
+		std::cout << "ID: " << this->attachedProcess->getPID() << std::endl;
+		std::cout << "" << std::endl;
+		std::cout << "Current instruction line: " << this->attachedProcess->getCommandCounter() << std::endl;
+		std::cout << "Lines of code: " << this->attachedProcess->getLinesOfCode() << std::endl;
+		std::cout << "" << std::endl;
 	}
 	else
 	{
-		cout << "" << endl;
-		cout << "Process: " << this->attachedProcess->getName() << endl;
-		cout << "ID: " << this->attachedProcess->getPID() << endl;
-		cout << "" << endl;
-		cout << "Finished!" << endl;
-		cout << "" << endl;
+		std::cout << "" << std::endl;
+		std::cout << "Process: " << this->attachedProcess->getName() << std::endl;
+		std::cout << "ID: " << this->attachedProcess->getPID() << std::endl;
+		std::cout << "" << std::endl;
+		std::cout << "Finished!" << std::endl;
+		std::cout << "" << std::endl;
 	}
 }

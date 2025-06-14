@@ -11,6 +11,6 @@ CommandPrinter::CommandPrinter(int pid, String& printCommand) : ICommand(pid, PR
 
 void CommandPrinter::execute() {
     ICommand::execute();
-    stringstream msg;
-    msg << "PID " << this->pid << ":" << this->printCommand << endl;
+    std::stringstream msg;
+    msg << "PID " << this->pid << ":" << this->printCommand << std::endl;
 }

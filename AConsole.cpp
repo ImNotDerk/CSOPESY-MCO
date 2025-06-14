@@ -1,5 +1,4 @@
 #include "AConsole.h"
-
 #include <string>
 #include "MainConsole.h"
 

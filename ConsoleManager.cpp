@@ -33,7 +33,7 @@ void ConsoleManager::drawConsole() const
 	}
 	else
 	{
-		cerr << "No console is currently set." << endl;
+		std::cerr << "No console is currently set." << std::endl;
 	}
 
 }
@@ -46,7 +46,7 @@ void ConsoleManager::process() const
 	}
 	else
 	{
-		cerr << "No console is currently set." << endl;
+		std::cerr << "No console is currently set." << std::endl;
 	}
 }
 
@@ -61,7 +61,7 @@ void ConsoleManager::switchConsole(String consoleName)
 	}
 	else
 	{
-		cerr << "Console name '" << consoleName << "' not initialized." << endl;
+		std::cerr << "Console name '" << consoleName << "' not initialized." << std::endl;
 	}
 }
 

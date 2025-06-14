@@ -7,7 +7,6 @@
 #include <Windows.h>
 
 typedef std::string String;
-using namespace std;
 
 const String MAIN_CONSOLE = "MAIN_CONSOLE";
 const String MARQUEE_CONSOLE = "MARQUEE_CONSOLE";

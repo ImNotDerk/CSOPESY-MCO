@@ -26,11 +26,11 @@ bool Process::isFinished() const {
 
 void Process::addCommand(ICommand::CommandType commandType) {
 	String printAdd = "Command added!";
-	const shared_ptr<ICommand> command = make_shared<CommandPrinter>(this->pid, printAdd);
+	const std::shared_ptr<ICommand> command = std::make_shared<CommandPrinter>(this->pid, printAdd);
 
 	if (command == nullptr)
 	{
-		cerr << "Failed to create command: No command declared [NULL detected]." << endl;
+		std::cerr << "Failed to create command: No command declared [NULL detected]." << std::endl;
 		return;
 	}
 	this->commandList.push_back(command);
@@ -60,7 +60,7 @@ Process::ProcessState Process::getState() const {
     return this->currentState;  
 }
 
-int Process::getLinesOfCode() const {
+std::size_t Process::getLinesOfCode() const {
 	return this->commandList.size();
 }
 

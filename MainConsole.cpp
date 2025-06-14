@@ -2,9 +2,9 @@
 #include "ConsoleManager.h"
 
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-string response = "";
-string commandMessage = "";
-string outputArg2 = "";
+std::string response = "";
+std::string commandMessage = "";
+std::string outputArg2 = "";
 bool isInitialized = false;
 
 MainConsole::MainConsole()
@@ -101,7 +101,7 @@ void MainConsole::display() // handles what displayes after the process function
 	}
 	else 
 	{
-		cout << "Console has not been initialized yet. Please type 'initialize' to start." << endl;
+		std::cout << "Console has not been initialized yet. Please type 'initialize' to start." << std::endl;
 	}
 
 
@@ -109,12 +109,12 @@ void MainConsole::display() // handles what displayes after the process function
 
 void MainConsole::process() // this function handles the input from the user 
 {
-	string commandInput;
-	cout << "root:\\\\>";
-	getline(cin, commandInput);
+	std::string commandInput;
+	std::cout << "root:\\\\>";
+	getline(std::cin, commandInput);
 
-	stringstream ss(commandInput);
-	string command, arg1, arg2;
+	std::stringstream ss(commandInput);
+	std::string command, arg1, arg2;
 	ss >> command >> arg1 >> arg2;
 
 	if (command == "exit") 
@@ -159,57 +159,57 @@ void MainConsole::process() // this function handles the input from the user
 	}
 	else {
 		commandMessage = "unknown-command";
-		cout << "Unknown command: " << commandInput << endl;
+		std::cout << "Unknown command: " << commandInput << std::endl;
 	}
 }
 
 void MainConsole::printHeader() const
 {
-	cout << "   ______     ______     ______     ______   ______     ______     __  __    " << endl;
-	cout << "  /\\  ___\\   /\\  ___\\   /\\  __ \\   /\\  == \\ /\\  ___\\   /\\  ___\\   /\\ \\_\\ \\   " << endl;
-	cout << "  \\ \\ \\____  \\ \\___  \\  \\ \\ \\/\\ \\  \\ \\  _-/ \\ \\  __\\   \\ \\___  \\  \\ \\____ \\  " << endl;
-	cout << "   \\ \\_____\\  \\/\\_____\\  \\ \\_____\\  \\ \\_\\    \\ \\_____\\  \\/\\_____\\  \\/\\_____\\ " << endl;
-	cout << "    \\/_____/   \\/_____/   \\/_____/   \\/_/     \\/_____/   \\/_____/   \\/_____/ " << endl;
-	cout << "Hello, Welcome to CSOPESY command line!" << endl;
+	std::cout << "   ______     ______     ______     ______   ______     ______     __  __    " << std::endl;
+	std::cout << "  /\\  ___\\   /\\  ___\\   /\\  __ \\   /\\  == \\ /\\  ___\\   /\\  ___\\   /\\ \\_\\ \\   " << std::endl;
+	std::cout << "  \\ \\ \\____  \\ \\___  \\  \\ \\ \\/\\ \\  \\ \\  _-/ \\ \\  __\\   \\ \\___  \\  \\ \\____ \\  " << std::endl;
+	std::cout << "   \\ \\_____\\  \\/\\_____\\  \\ \\_____\\  \\ \\_\\    \\ \\_____\\  \\/\\_____\\  \\/\\_____\\ " << std::endl;
+	std::cout << "    \\/_____/   \\/_____/   \\/_____/   \\/_/     \\/_____/   \\/_____/   \\/_____/ " << std::endl;
+	std::cout << "Hello, Welcome to CSOPESY command line!" << std::endl;
 	if (isInitialized == false) 
 	{
-		cout << "Type 'initialize' to initialize the console, 'exit' to quit" << endl;
+		std::cout << "Type 'initialize' to initialize the console, 'exit' to quit" << std::endl;
 	}
 	else 
 	{
-		cout << "Type 'clear' to clear the screen, 'exit' to quit" << endl;
+		std::cout << "Type 'clear' to clear the screen, 'exit' to quit" << std::endl;
 	}
 }
 
 void MainConsole::report_utilHandler() const {
-	cout << "report-util command recognized. Doing something." << endl;
+	std::cout << "report-util command recognized. Doing something." << std::endl;
 }
 
-void MainConsole::processScreenHandler(const string& screencommand, const string& screenname) const{
+void MainConsole::processScreenHandler(const std::string& screencommand, const std::string& screenname) const{
 	if (screencommand == "-s") {
 		if (screenname.empty()) {
-			cerr << "Error: No name provided for screen." << endl;
+			std::cerr << "Error: No name provided for screen." << std::endl;
 		}
 		//else if (this->getScreenMaps().find(name) != this->getScreenMaps().end()) {
 		//	std::cerr << "Error: Screen already exists. Please load instead." << std::endl;
 		//}
 		else {
-			cout << "MAKE A PROCESS HERE" << endl;
+			std::cout << "MAKE A PROCESS HERE" << std::endl;
 		}
 	}
 	else if (screencommand == "-r") {
 		if (screenname.empty()) {
-			cerr << "Error: No name provided for screen." << endl;
+			std::cerr << "Error: No name provided for screen." << std::endl;
 		}
 		//else if (this->getScreenMaps().find(name) != this->getScreenMaps().end()) {
 		//	system("cls");
 		//	getScreenMaps().at(name).displayScreen();
 		//}
 		else {
-			cerr << "Error: Inputted screen name doesn't exists." << endl;
+			std::cerr << "Error: Inputted screen name doesn't exists." << std::endl;
 		}
 	}
 	else {
-		cout << "Unknown option for screen: " << endl;
+		std::cout << "Unknown option for screen: " << std::endl;
 	}
 }

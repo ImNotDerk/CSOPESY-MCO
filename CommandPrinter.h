@@ -2,7 +2,6 @@
 #include "ICommand.h"
 #include <string>
 
-using namespace std;
 typedef std::string String;
 
 class CommandPrinter : public ICommand
