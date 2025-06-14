@@ -24,6 +24,8 @@ public:
     void moveToNextLine();
 
     bool isFinished() const;
+    int incrementCommandCounter();
+
     int getRemainingTime() const;
     int getCommandCounter() const;
     int getLinesOfCode() const;
