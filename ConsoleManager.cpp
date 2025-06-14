@@ -79,19 +79,19 @@ void ConsoleManager::returnToPreviousConsole()
 		return;
 	}
 
-	this->consoleTable[screenRef->getName()] = screenRef;
+	//this->consoleTable[screenRef->getName()] = screenRef;
 
 }
 
-void ConsoleManager::registerScreen(std::shared_ptr<BaseScreen> screenRef)
-{
-	if (this->consoleTable.contains(screenRef->getName()))
-	{
-		std::cerr << "Screen name " << screenRef->getName() << " already exists. Please use a different name." << std::endl;
-	}
-
-	this->consoleTable[screenRef->getName()] = screenRef;
-}
+//void ConsoleManager::registerScreen(std::shared_ptr<BaseScreen> screenRef)
+//{
+//	if (this->consoleTable.contains(screenRef->getName()))
+//	{
+//		std::cerr << "Screen name " << screenRef->getName() << " already exists. Please use a different name." << std::endl;
+//	}
+//
+//	this->consoleTable[screenRef->getName()] = screenRef;
+//}
 
 void ConsoleManager::switchToScreen(String screenName)
 {
@@ -106,6 +106,16 @@ void ConsoleManager::switchToScreen(String screenName)
 	{
 		std::cerr << "Screen name '" << screenName << "' not found." << std::endl;
 	}
+}
+
+void ConsoleManager::exitApplication()
+{
+	this->running = false;
+}
+
+bool ConsoleManager::isRunning() const
+{
+	return this->running;
 }
 
 ConsoleManager::ConsoleManager()

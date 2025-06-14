@@ -27,14 +27,12 @@ public:
 	void switchConsole(String consoleName);
 	void returnToPreviousConsole();
 
-	void registerScreen(std::shared_ptr<BaseScreen> screenRef);
+	//void registerScreen(std::shared_ptr<BaseScreen> screenRef);
 	void switchToScreen(String screenName);
-	void unregisterScreen(String screenName);
+	//void unregisterScreen(String screenName);
 
 	void exitApplication();
 	bool isRunning() const;
-	//void exitApplication();
-	//bool isRunning() const;
 
 	//HANDLE getConsoleHandle() const;
 
