@@ -19,6 +19,7 @@ public:
 
 	AScheduler();
 	AScheduler(SchedulingAlgorithm schedulingAglo, int pid, String processName);
+	std::shared_ptr<Process> findProcess();
 	~AScheduler() = default;
 
 	std::shared_ptr<Process> findProcess(String processName);
