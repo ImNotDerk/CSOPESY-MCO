@@ -1,13 +1,21 @@
 #include "BaseScreen.h"
 
 BaseScreen::BaseScreen(std::shared_ptr<Process> process, String processName) {
-	process = make_shared<Process>(processName);
+	process = std::make_shared<Process>(0, processName);
 	this->attachedProcess = process;
 }
 
 void BaseScreen::onEnabled() {
 	system("cls");
 	this->printProcessInfo();
+}
+
+void BaseScreen:: process() {
+
+}
+
+void BaseScreen::display() {
+
 }
 
 void BaseScreen::printProcessInfo() const

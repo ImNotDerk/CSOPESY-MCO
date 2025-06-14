@@ -64,3 +64,7 @@ std::size_t Process::getLinesOfCode() const {
 	return this->commandList.size();
 }
 
+String Process::getName() const {
+	return this->name;
+}
+
