@@ -18,6 +18,11 @@ std::shared_ptr<Process> AScheduler::findProcess()
 	}
 }
 
+std::shared_ptr<Process> AScheduler::findProcess(String processName)
+{
+	return std::shared_ptr<Process>();
+}
+
 void AScheduler::run()
 {
 	this->init();
