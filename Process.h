@@ -40,6 +40,8 @@ private:
 	int cpuCoreID = -1;
 	ProcessState currentState;
 
+	//debug
+
 	friend class ResourceEmulator;
 };
 
