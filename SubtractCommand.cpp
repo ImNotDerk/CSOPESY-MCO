@@ -13,6 +13,6 @@ void SubtractCommand::execute()
 uint16_t SubtractCommand::performSubtraction()
 {
 	// add val2 and 3 and store in val1
-	this->var1 = this->var2 + this->var3;
+	this->var1 = this->var2 - this->var3;
 	return this->var1;
 }
