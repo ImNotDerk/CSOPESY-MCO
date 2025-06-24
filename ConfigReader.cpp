@@ -1,5 +1,7 @@
 #include "ConfigReader.h"
 
+ConfigReader* ConfigReader::sharedInstance = nullptr;
+
 ConfigReader* ConfigReader::getInstance()
 {
     return sharedInstance;
@@ -119,4 +121,14 @@ int ConfigReader::getMaxIns() {
 
 int ConfigReader::getDelays() {
     return this->delays;
+}
+
+ConfigReader::ConfigReader() {
+    num_cpu = 0;
+    scheduler_to_use = "";
+    quantum_cycles = 0;
+    batch_process_freq = 0;
+    min_ins = 0;
+    max_ins = 0;
+    delays = 0;
 }

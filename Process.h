@@ -2,8 +2,14 @@
 #include <string>
 #include <memory>
 #include <vector>
-#include <string>
 #include "ICommand.h"
+#include "ConfigReader.h"
+#include "PrintCommand.h"
+#include "DeclareCommand.h"
+#include "AddCommand.h"
+#include "SubtractCommand.h"
+#include "SleepCommand.h"
+#include "ForCommand.h"
 
 typedef std::string String;
 
@@ -21,7 +27,7 @@ public:
 
     Process(int pid, String name);
 
-    void addCommand(ICommand::CommandType commandType);
+    void addCommand(std::shared_ptr<ICommand> command);
     void executeCurrentCommand() const;
     void moveToNextLine();
 
@@ -36,7 +42,7 @@ public:
     ProcessState getState() const;
     String getName() const;
 
-    //void test_generateRandomCommands(int limit);
+    void generateRandomCommands();
 
 private:
     int pid;

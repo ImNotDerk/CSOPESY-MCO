@@ -4,6 +4,8 @@
 #include <Windows.h>
 #include <sstream>
 #include "AConsole.h"
+#include "ConsoleManager.h"
+#include "ConfigReader.h"
 
 typedef std::string String;
 
