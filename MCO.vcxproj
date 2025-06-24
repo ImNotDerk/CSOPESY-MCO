@@ -134,6 +134,7 @@
     <ClCompile Include="DeclareCommand.cpp" />
     <ClCompile Include="FCFSScheduler.cpp" />
     <ClCompile Include="ForCommand.cpp" />
+    <ClCompile Include="ICommand.cpp" />
     <ClCompile Include="IETThread.cpp" />
     <ClCompile Include="MainConsole.cpp" />
     <ClCompile Include="main_menu.cpp" />
