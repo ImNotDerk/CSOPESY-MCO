@@ -65,8 +65,8 @@ void ConsoleManager::registerScreen(std::shared_ptr<BaseScreen> screenRef)
 
 void ConsoleManager::createBaseScreen(String screenName)
 {
-	
-	std::shared_ptr<Process> process = std::make_shared<Process>(0, screenName);
+	std::shared_ptr<Process> process = std::make_shared<Process>(this->numScreens, screenName);
+	this->numScreens++; // increment the screen count for unique process IDs when making processes manually
 	std::shared_ptr<BaseScreen> baseScreen = std::make_shared<BaseScreen>(process, screenName);
 	this->registerScreen(baseScreen);
 }
