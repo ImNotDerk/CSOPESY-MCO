@@ -15,6 +15,10 @@ public:
 	void assignParams(int index);
 	void testPrint(); // debug test to check
 
+	static ConfigReader* getInstance();
+	static void initialize();
+	static void destroy();
+
 	int getNumCPU();
 	String getSchedulerToUse();
 	int getQuantum();
@@ -24,6 +28,9 @@ public:
 	int getDelays();
 
 private:
+	ConfigReader();
+	~ConfigReader() = default;
+	static ConfigReader* sharedInstance;
 	std::vector<String> paramsList;
 	int num_cpu;
 	String scheduler_to_use;

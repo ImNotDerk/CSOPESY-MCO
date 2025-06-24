@@ -1,6 +1,8 @@
 #pragma once
 #include "ICommand.h"
-//#include "TypedefRepo.h"
+#include "IETThread.h"
+#include "ConsoleManager.h"
+
 class PrintCommand : public ICommand
 {
 public:

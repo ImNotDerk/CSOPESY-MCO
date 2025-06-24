@@ -1,7 +1,4 @@
 #include "Process.h"
-#include "CommandPrinter.h"
-#include "ICommand.h"
-#include <string>
 
 typedef std::string String;
 
@@ -9,6 +6,7 @@ Process::Process(int pid, String name) {
 	this->pid = pid;
 	this->name = name;
 	this->commandCounter = 0;
+	this->generateRandomCommands();
 	this->currentState = Process::ProcessState::READY;
 }
 
@@ -25,16 +23,70 @@ bool Process::isFinished() const {
 	return this->commandCounter >= this->commandList.size();
 }
 
-void Process::addCommand(ICommand::CommandType commandType) {
-	String printAdd = "Command added!";
-	const std::shared_ptr<ICommand> command = std::make_shared<CommandPrinter>(this->pid, printAdd);
+void Process::addCommand(std::shared_ptr<ICommand> command) {
 
-	if (command == nullptr)
+	/*if (command == nullptr)
 	{
 		std::cerr << "Failed to create command: No command declared [NULL detected]." << std::endl;
 		return;
-	}
+	}*/
 	this->commandList.push_back(command);
+}
+
+void Process::generateRandomCommands() {
+	// get min and max number of commands from config
+	int min = ConfigReader::getInstance()->getMinIns();
+	int max = ConfigReader::getInstance()->getMaxIns();
+
+	int noCommands =  min + rand() % (max - min + 1); // random number of commands between min and max
+	for (int i = 0; i < noCommands; i++) {
+		int type = rand() % 6; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
+		switch (type) {
+			case 0: { // PRINT COMMAND
+				bool msgOrNone = rand() % 1; // 0 for no message or 1 with message
+				String msg;
+				if (msgOrNone)
+				{
+					int var = 0; // get this from one of the declared variables in the symbol table
+					msg = "Print value from " + var;
+				}
+				else
+				{
+					msg = "Hello world from " + this->name;
+				}
+				const std::shared_ptr<ICommand> command = std::make_shared<PrintCommand>(this->pid, msg);
+
+				this->addCommand(command);
+				break;
+			}
+			case 1: { // DECLARE COMMAND
+				// create declare command instance here
+				// then use the addCommand function here
+				break;
+			}
+			case 2: { // ADD COMMAND
+				// create add command insntance here
+				// then use the addCommand function here
+				break;
+			}
+			case 3: { // SUBTRACT COMMAND
+				// create subtract command insntance here
+				// then use the addCommand function here
+				break;
+			}
+			case 4: { // SLEEP COMMAND
+				// create sleep command insntance here
+				// then use the addCommand function here
+				break;
+			}
+			case 5: { // FOR COMMAND - max of 3
+				// create for command insntance here
+				// then use the addCommand function here
+				break;
+			}
+		}
+	}
+
 }
 
 int Process::incrementCommandCounter() {

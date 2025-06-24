@@ -1,5 +1,27 @@
 #include "ConfigReader.h"
 
+ConfigReader* ConfigReader::getInstance()
+{
+    return sharedInstance;
+}
+
+void ConfigReader::initialize()
+{
+    if (sharedInstance == nullptr)
+    {
+        sharedInstance = new ConfigReader();
+    }
+}
+
+void ConfigReader::destroy()
+{
+    if (sharedInstance != nullptr)
+    {
+        delete sharedInstance;
+        sharedInstance = nullptr;
+    }
+}
+
 std::vector<String> ConfigReader::readFileToVector(const String& filename) {
     std::vector<String> lineVector;  
     std::ifstream file(filename);  

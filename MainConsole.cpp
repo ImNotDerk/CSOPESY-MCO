@@ -34,9 +34,9 @@ void MainConsole::display() // handles what displayes after the process function
 	if (isInitialized) {
 		if (commandMessage == "initialize") 
 		{
-			ConfigReader cfgRead;
-			cfgRead.setParams("config.txt");
-			cfgRead.testPrint(); // for debugging only
+			ConfigReader::initialize();
+			ConfigReader::getInstance()->setParams("config.txt");
+			ConfigReader::getInstance()->testPrint(); // for debugging only
 			commandMessage = "";
 		}
 
