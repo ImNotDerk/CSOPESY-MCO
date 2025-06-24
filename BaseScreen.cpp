@@ -2,7 +2,6 @@
 #include "ConsoleManager.h"
 
 BaseScreen::BaseScreen(std::shared_ptr<Process> process, String processName) {
-	process = std::make_shared<Process>(0, processName);
 	this->attachedProcess = process;
 	this->userInput = "";
 	this->commandInput = "";

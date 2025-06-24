@@ -53,4 +53,5 @@ private:
 
 	HANDLE consoleHandle;
 	bool running = true;
+	int numScreens = 0; // to add counter for screens
 };
