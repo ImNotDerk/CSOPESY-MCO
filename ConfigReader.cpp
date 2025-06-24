@@ -1,4 +1,39 @@
 #include "ConfigReader.h"
+ 
+ConfigReader* ConfigReader::sharedInstance = nullptr;
+
+ConfigReader::ConfigReader() {
+    // Optional: set default values
+    num_cpu = 0;
+    scheduler_to_use = "";
+    quantum_cycles = 0;
+    batch_process_freq = 0;
+    min_ins = 0;
+    max_ins = 0;
+    delays = 0;
+}
+
+ConfigReader* ConfigReader::getInstance()
+{
+    return sharedInstance;
+}
+
+void ConfigReader::initialize()
+{
+    if (sharedInstance == nullptr)
+    {
+        sharedInstance = new ConfigReader();
+    }
+}
+
+void ConfigReader::destroy()
+{
+    if (sharedInstance != nullptr)
+    {
+        delete sharedInstance;
+        sharedInstance = nullptr;
+    }
+}
 
 std::vector<String> ConfigReader::readFileToVector(const String& filename) {
     std::vector<String> lineVector;  

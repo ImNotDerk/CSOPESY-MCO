@@ -1,5 +1,4 @@
 #include "BaseScreen.h"
-#include "ConsoleManager.h"
 
 BaseScreen::BaseScreen(std::shared_ptr<Process> process, String processName) {
 	this->attachedProcess = process;

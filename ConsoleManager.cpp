@@ -1,5 +1,4 @@
 #include "ConsoleManager.h"
-#include <iostream>
 
 ConsoleManager* ConsoleManager::sharedInstance = nullptr;
 
