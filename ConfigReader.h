@@ -10,14 +10,10 @@ typedef std::string String;
 class ConfigReader
 {
 public:
-	static ConfigReader* getInstance();
-	static void initialize();
-	static void destroy();
-
 	std::vector<String> readFileToVector(const String& filename);
 	void setParams(const String& filename);
 	void assignParams(int index);
-	void testPrint(); // debug test to 
+	void testPrint(); // debug test to check
 
 	static ConfigReader* getInstance();
 	static void initialize();
@@ -32,11 +28,6 @@ public:
 	int getDelays();
 
 private:
-	ConfigReader();
-	~ConfigReader() = default;
-	ConfigReader& operator=(ConfigReader const&) {};
-
-	static ConfigReader* sharedInstance;
 	std::vector<String> paramsList;
 	int num_cpu;
 	String scheduler_to_use;

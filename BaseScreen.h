@@ -1,9 +1,6 @@
 #pragma once
 #include "AConsole.h"
-#include "ConsoleManager.h"
 #include "Process.h"
-
-class Process;
 
 class BaseScreen : public AConsole
 {

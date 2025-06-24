@@ -14,8 +14,6 @@ const String MARQUEE_CONSOLE = "MARQUEE_CONSOLE";
 const String SCHEDULING_CONSOLE = "SCHEDULING_CONSOLE";
 const String MEMORY_CONSOLE = "MEMORY_CONSOLE";
 
-class BaseScreen;
-
 class ConsoleManager {
 public:
 	typedef std::unordered_map<String, std::shared_ptr<AConsole>> ConsoleTable;
