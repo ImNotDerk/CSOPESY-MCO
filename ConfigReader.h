@@ -19,6 +19,10 @@ public:
 	void assignParams(int index);
 	void testPrint(); // debug test to 
 
+	static ConfigReader* getInstance();
+	static void initialize();
+	static void destroy();
+
 	int getNumCPU();
 	String getSchedulerToUse();
 	int getQuantum();
