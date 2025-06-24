@@ -130,6 +130,7 @@
     <ClCompile Include="BaseScreen.cpp" />
     <ClCompile Include="CommandParser.cpp" />
     <ClCompile Include="CommandPrinter.cpp" />
+    <ClCompile Include="ConfigReader.cpp" />
     <ClCompile Include="ConsoleManager.cpp" />
     <ClCompile Include="DeclareCommand.cpp" />
     <ClCompile Include="FCFSScheduler.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="BaseScreen.h" />
     <ClInclude Include="CommandParser.h" />
     <ClInclude Include="CommandPrinter.h" />
+    <ClInclude Include="ConfigReader.h" />
     <ClInclude Include="ConsoleManager.h" />
     <ClInclude Include="DeclareCommand.h" />
     <ClInclude Include="FCFSScheduler.h" />
@@ -164,6 +166,9 @@
     <ClInclude Include="Screen.h" />
     <ClInclude Include="SleepCommand.h" />
     <ClInclude Include="SubtractCommand.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="config.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
