@@ -3,6 +3,7 @@
 #include <vector>
 #include "AConsole.h"
 #include "MainConsole.h"
+#include "BaseScreen.h"
 #include <unordered_map>
 #include <Windows.h>
 
@@ -26,9 +27,11 @@ public:
 	void switchConsole(String consoleName);
 	void returnToPreviousConsole();
 
-	//void registerScreen(std::shared_ptr<BaseScreen> screenRef);
+	void registerScreen(std::shared_ptr<BaseScreen> screenRef);
+	void createBaseScreen(String screenName);
+
 	void switchToScreen(String screenName);
-	//void unregisterScreen(String screenName);
+	void unregisterScreen(String screenName);
 
 	void exitApplication();
 	bool isRunning() const;

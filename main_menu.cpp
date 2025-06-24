@@ -4,6 +4,8 @@
 #include "ConsoleManager.h"
 typedef std::string String;
 
+// This is the main entry point of the application
+
 int main() {
 	bool running = true;
 	ConsoleManager::initialize();

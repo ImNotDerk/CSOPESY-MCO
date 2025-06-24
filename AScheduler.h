@@ -5,16 +5,20 @@
 #include <sstream>
 #include <iostream>
 
+// Base file for Scheduling Algorithms
+
 typedef std::string String;
 
 static const String FCFS_SCHEDULER_NAME = "FCFSScheduler";
+static const String ROUND_ROBIN_SCHEDULER_NAME = "RoundRobinScheduler";
 
 class AScheduler : public IETThread
 {
 public:
 	enum SchedulingAlgorithm
 	{
-		FCFS
+		FCFS,
+		ROUND_ROBIN
 	};
 
 	AScheduler();

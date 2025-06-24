@@ -12,7 +12,7 @@ AConsole::AConsole(String name)
 	this->name = name;
 }
 
-std::string AConsole::getName() const
+String AConsole::getName() const
 {
 	return this->name;
 }

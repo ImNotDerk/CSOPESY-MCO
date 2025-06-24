@@ -10,7 +10,12 @@ public:
 	enum CommandType
 	{
 		IO,
-		PRINT
+		PRINT,
+		DECLARE,
+		ADD, 
+		SUBTRACT,
+		SLEEP,
+		FOR
 	};
 
 	ICommand(int processID, CommandType commandtype);
@@ -28,6 +33,8 @@ inline ICommand::CommandType ICommand::getCommandType() {
 
 inline void ICommand::execute() {
 	IETThread::sleep(10);
+
+	//IETThread::sleep(Delay::PER_INSTRUCTION_DELAY)
 }
 
 inline ICommand::ICommand(int processID, CommandType commandType) {

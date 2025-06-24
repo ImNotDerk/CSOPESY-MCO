@@ -125,29 +125,45 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AConsole.cpp" />
+    <ClCompile Include="AddCommand.cpp" />
     <ClCompile Include="AScheduler.cpp" />
     <ClCompile Include="BaseScreen.cpp" />
     <ClCompile Include="CommandParser.cpp" />
     <ClCompile Include="CommandPrinter.cpp" />
     <ClCompile Include="ConsoleManager.cpp" />
+    <ClCompile Include="DeclareCommand.cpp" />
+    <ClCompile Include="FCFSScheduler.cpp" />
+    <ClCompile Include="ForCommand.cpp" />
     <ClCompile Include="IETThread.cpp" />
     <ClCompile Include="MainConsole.cpp" />
     <ClCompile Include="main_menu.cpp" />
+    <ClCompile Include="PrintCommand.cpp" />
     <ClCompile Include="Process.cpp" />
+    <ClCompile Include="SchedulerWorker.cpp" />
     <ClCompile Include="Screen.cpp" />
+    <ClCompile Include="SleepCommand.cpp" />
+    <ClCompile Include="SubtractCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AConsole.h" />
+    <ClInclude Include="AddCommand.h" />
     <ClInclude Include="AScheduler.h" />
     <ClInclude Include="BaseScreen.h" />
     <ClInclude Include="CommandParser.h" />
     <ClInclude Include="CommandPrinter.h" />
     <ClInclude Include="ConsoleManager.h" />
+    <ClInclude Include="DeclareCommand.h" />
+    <ClInclude Include="FCFSScheduler.h" />
+    <ClInclude Include="ForCommand.h" />
     <ClInclude Include="ICommand.h" />
     <ClInclude Include="IETThread.h" />
     <ClInclude Include="MainConsole.h" />
+    <ClInclude Include="PrintCommand.h" />
     <ClInclude Include="Process.h" />
+    <ClInclude Include="SchedulerWorker.h" />
     <ClInclude Include="Screen.h" />
+    <ClInclude Include="SleepCommand.h" />
+    <ClInclude Include="SubtractCommand.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

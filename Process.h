@@ -6,6 +6,7 @@
 
 typedef std::string String;
 
+// Executes the list of commands in sequence
 class Process
 {
 public:
@@ -34,6 +35,8 @@ public:
     ProcessState getState() const;
     String getName() const;
 
+    //void test_generateRandomCommands(int limit);
+
 private:
     int pid;
     String name;
@@ -43,5 +46,6 @@ private:
     int commandCounter;
     int cpuCoreID = -1;
     ProcessState currentState;
+
     /*friend class ResourceEmulator;*/
 };

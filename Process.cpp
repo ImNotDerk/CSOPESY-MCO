@@ -12,6 +12,7 @@ Process::Process(int pid, String name) {
 	this->currentState = Process::ProcessState::READY;
 }
 
+// called by CPU core worker
 void Process::executeCurrentCommand() const {
 	this->commandList[this->commandCounter]->execute();
 }

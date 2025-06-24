@@ -1,8 +1,11 @@
 #include "BaseScreen.h"
+#include "ConsoleManager.h"
 
 BaseScreen::BaseScreen(std::shared_ptr<Process> process, String processName) {
 	process = std::make_shared<Process>(0, processName);
 	this->attachedProcess = process;
+	this->userInput = "";
+	this->commandInput = "";
 }
 
 void BaseScreen::onEnabled() {
@@ -10,13 +13,70 @@ void BaseScreen::onEnabled() {
 	this->printProcessInfo();
 }
 
-void BaseScreen:: process() {
-
-}
-
 void BaseScreen::display() {
-
+	if (this->commandInput.empty())
+	{
+		onEnabled();
+	}
+	else if (this->commandInput == "exit")
+	{
+		ConsoleManager::getInstance()->returnToPreviousConsole();
+		this->commandInput.clear();
+	}
+	else if (this->commandInput == "clear")
+	{
+		system("cls");
+		this->commandInput.clear();
+	}
+	else if (commandInput == "process-smi")
+	{
+		this->printProcessInfo();
+		this->commandInput.clear();
+	}
+	else
+	{
+		this->commandInput.clear();
+	}
 }
+
+void BaseScreen::process() {
+	if (this->refreshed == false)
+	{
+		this->refreshed = true;
+	}
+
+	std::cout << "root:\\\\> ";
+	getline(std::cin, this->userInput); // get user input
+
+	if (this->userInput == "exit")
+	{
+		this->commandInput = this->userInput;
+	}
+	else if (this->userInput == "clear")
+	{
+		this->commandInput = userInput;
+	}
+	else if (this->userInput == "process-smi")
+	{
+		this->commandInput = this->userInput;
+	}
+	else
+	{
+		std::cout << "Unknown command: " << this->userInput << std::endl;
+		this->commandInput = this->userInput;
+	}
+}
+
+String BaseScreen::getName() const
+{
+	return this->attachedProcess->getName();
+}
+
+std::shared_ptr<Process> BaseScreen::getProcess() const
+{
+	return this->attachedProcess;
+}
+
 
 void BaseScreen::printProcessInfo() const
 {

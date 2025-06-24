@@ -50,12 +50,33 @@ void ConsoleManager::process() const
 	}
 }
 
+void ConsoleManager::registerScreen(std::shared_ptr<BaseScreen> screenRef)
+{
+	if (this->consoleTable.contains(screenRef->getName()))
+	{
+		std::cerr << "Screen name " << screenRef->getName() << " already exists." << std::endl;
+		return;
+	}
+
+	//GlobalScheduler::getInstance()->addProcess(screenRef->getProcess);
+	this->consoleTable[screenRef->getName()] = screenRef;
+	this->switchConsole(screenRef->getName());
+}
+
+void ConsoleManager::createBaseScreen(String screenName)
+{
+	
+	std::shared_ptr<Process> process = std::make_shared<Process>(0, screenName);
+	std::shared_ptr<BaseScreen> baseScreen = std::make_shared<BaseScreen>(process, screenName);
+	this->registerScreen(baseScreen);
+}
+
 void ConsoleManager::switchConsole(String consoleName)
 {
 	if (this->consoleTable.contains(consoleName))
 	{
 		system("cls");
-		this->currentConsole = this->currentConsole;
+		this->previousConsole = this->currentConsole;
 		this->currentConsole = this->consoleTable[consoleName];
 		this->currentConsole->onEnabled();
 	}
@@ -65,11 +86,22 @@ void ConsoleManager::switchConsole(String consoleName)
 	}
 }
 
+void ConsoleManager::unregisterScreen(String screenName)
+{
+	if (this->consoleTable.contains(screenName))
+	{
+		this->consoleTable.erase(screenName);
+	}
+	else
+	{
+		std::cerr << "Unable to unregister screen '" << screenName << "'. Was not found." << std::endl;
+	}
+}
+
 void ConsoleManager::returnToPreviousConsole()
 {
 	if (this->previousConsole != nullptr)
 	{
-		system("cls");
 		this->currentConsole = this->previousConsole;
 		this->currentConsole->onEnabled();
 	}
@@ -79,19 +111,9 @@ void ConsoleManager::returnToPreviousConsole()
 		return;
 	}
 
-	//this->consoleTable[screenRef->getName()] = screenRef;
+	/*this->consoleTable[screenRef->getName()] = screenRef;*/
 
 }
-
-//void ConsoleManager::registerScreen(std::shared_ptr<BaseScreen> screenRef)
-//{
-//	if (this->consoleTable.contains(screenRef->getName()))
-//	{
-//		std::cerr << "Screen name " << screenRef->getName() << " already exists. Please use a different name." << std::endl;
-//	}
-//
-//	this->consoleTable[screenRef->getName()] = screenRef;
-//}
 
 void ConsoleManager::switchToScreen(String screenName)
 {

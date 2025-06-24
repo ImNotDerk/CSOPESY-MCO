@@ -20,6 +20,7 @@ std::shared_ptr<Process> AScheduler::findProcess(String processName)
 			return process;
 		}
 	}
+	return nullptr;
 }
 
 void AScheduler::run()

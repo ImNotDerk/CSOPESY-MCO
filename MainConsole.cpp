@@ -2,7 +2,7 @@
 #include "ConsoleManager.h"
 
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-std::string response = "";
+std::string userInput = "";
 std::string commandMessage = "";
 std::string outputArg2 = "";
 bool isInitialized = false;
@@ -59,7 +59,7 @@ void MainConsole::display() // handles what displayes after the process function
 		if (commandMessage == "screenS")
 		{
 			commandMessage = "";
-			// ConsoleManager::getInstance()->createBaseScreen(outputArg2);
+			ConsoleManager::getInstance()->createBaseScreen(outputArg2);
 			// int newCore = GlobalScheduler::getInstance()->getScheduler()->checkCoreQueue();
 			// GlobalScheduler::getInstance()->getScheduler()->assignCore(GlobalScheduler::getInstance()->getMostRecentProcess(), newCore);
 		}
