@@ -1,58 +1,47 @@
 #pragma once
+
 #include "IETThread.h"
 #include "Process.h"
 
-#include <sstream>
 #include <iostream>
+#include <vector>
+#include <memory>
+#include <string>
 
-// Base file for Scheduling Algorithms
-
-typedef std::string String;
-
-static const String FCFS_SCHEDULER_NAME = "FCFSScheduler";
-static const String ROUND_ROBIN_SCHEDULER_NAME = "RoundRobinScheduler";
-
-class AScheduler : public IETThread
-{
+class AScheduler : public IETThread {
 public:
-	enum SchedulingAlgorithm
-	{
+	enum SchedulingAlgorithm {
 		FCFS,
 		ROUND_ROBIN
 	};
 
 	AScheduler();
-	AScheduler(SchedulingAlgorithm schedulingAglo, int pid, String processName);
-	~AScheduler() = default;
+	AScheduler(SchedulingAlgorithm schedulingAlgo);
+	virtual ~AScheduler() = default;
 
-	std::shared_ptr<Process> findProcess(String processName);
-	void run() override;
-	void stop();
-
-	virtual int checkCores() = 0;
+	// Core functions
 	virtual void init() = 0;
+	virtual void run() override = 0;
+	virtual void stop() = 0;
 	virtual void execute() = 0;
+
+	// Process management
 	virtual void addProcess(std::shared_ptr<Process> process, int core) = 0;
 	virtual void assignCore(std::shared_ptr<Process> process, int core) = 0;
+	virtual void assignProcess(std::shared_ptr<Process> process) = 0;
+	virtual std::shared_ptr<Process> findProcess(const std::string& processName);
+
+	// Core management
+	virtual int checkCores() = 0;
 	virtual int checkCoreQueue() = 0;
-	virtual String getProcessfromQueue(int index) const = 0;
-	virtual void printCore() = 0;
-	virtual void printProcessQueue() = 0;
 
-	virtual void schedulerStart() = 0;
-	virtual void schedulerStop() = 0;
-
-	virtual String getName() const = 0;
-
-	friend class GlobalScheduler;
-	
-private:
-	SchedulingAlgorithm schedulingAlgo;
-	int pid;
-	String processName;
-	bool running = true;
+	// Utilities
+	virtual const std::string& getProcessFromQueue(int index) const = 0;
+	virtual void printCores() = 0;
+	virtual void printProcessQueues() = 0;
 
 protected:
+	SchedulingAlgorithm schedulingAlgo;
 	std::vector<std::shared_ptr<Process>> processes;
+	bool running = true;
 };
-
