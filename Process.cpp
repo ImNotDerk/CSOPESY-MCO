@@ -6,6 +6,7 @@ Process::Process(int pid, String name) {
 	this->pid = pid;
 	this->name = name;
 	this->commandCounter = 0;
+	this->generateRandomCommands(); 
 	this->currentState = Process::ProcessState::READY;
 }
 
@@ -33,10 +34,10 @@ void Process::addCommand(std::shared_ptr<ICommand> command) {
 
 void Process::generateRandomCommands() {
     // Get min and max number of commands from config
-    /*int min = ConfigReader::getInstance()->getMinIns();
-    int max = ConfigReader::getInstance()->getMaxIns();*/
+    int min = ConfigReader::getInstance()->getMinIns();
+    int max = ConfigReader::getInstance()->getMaxIns();
 
-    int noCommands = 100; // min + rand() % (max - min + 1);
+    int noCommands = min + rand() % (max - min + 1);
 
     for (int i = 0; i < noCommands; i++) {
         int type = rand() % 6; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
@@ -46,7 +47,7 @@ void Process::generateRandomCommands() {
             bool msgOrNone = rand() % 2; // 0 for no message, 1 for message
             String msg;
 
-            if (msgOrNone) {
+            if (0) {
                 int var = 0; // get this from one of the declared variables in the symbol table
                 msg = "Print value from " + std::to_string(var);
             }
@@ -92,7 +93,18 @@ void Process::generateRandomCommands() {
     }
 }
 
+// To print commands inside the process
+// TODO: Modify this to print commands that were only executed.
+//       Probably use a message log to track executed commands.
+//       Each process should probably have a message log to track executed commands.
+//       This is just a placeholder for now. Probably need to change execute() method of ICommand to return a string or something similar.
 
+void Process::printCommands() const {
+    for (const auto& command : this->commandList) {
+		command->execute(); // Assuming ICommand has a print or execute method to display the command
+        std::cout << std::endl;
+    }
+}
 
 int Process::incrementCommandCounter() {
 	return this->commandCounter++;

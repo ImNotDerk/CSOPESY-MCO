@@ -76,6 +76,20 @@ std::shared_ptr<Process> BaseScreen::getProcess() const
 	return this->attachedProcess;
 }
 
+// Process-smi:
+// TODO: Need to somehow store the logs of when specific commands were executed
+/* sample:
+* 
+	Process name: screen_01
+	ID: 1 
+	Logs:
+	(6/25/2025 11:05:30AM) Core 0: "Hello world from screen_01"
+	(6/25/2025 11:05:35AM) Core 0: "Hello world from screen_01"
+	(6/25/2025 11:07:20AM) Core 0: "Hello world from screen_01"
+
+	Current instruction line: 10
+	Lines of code: 1500
+*/
 
 void BaseScreen::printProcessInfo() const
 {
@@ -87,6 +101,8 @@ void BaseScreen::printProcessInfo() const
 		std::cout << "" << std::endl;
 		std::cout << "Current instruction line: " << this->attachedProcess->getCommandCounter() << std::endl;
 		std::cout << "Lines of code: " << this->attachedProcess->getLinesOfCode() << std::endl;
+		// this is to check if commands are being stored
+		// this->attachedProcess->printCommands();
 		std::cout << "" << std::endl;
 	}
 	else
@@ -94,6 +110,8 @@ void BaseScreen::printProcessInfo() const
 		std::cout << "" << std::endl;
 		std::cout << "Process: " << this->attachedProcess->getName() << std::endl;
 		std::cout << "ID: " << this->attachedProcess->getPID() << std::endl;
+		// this is to check if commands are being stored
+		// this->attachedProcess->printCommands();
 		std::cout << "" << std::endl;
 		std::cout << "Finished!" << std::endl;
 		std::cout << "" << std::endl;

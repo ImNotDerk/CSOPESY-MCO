@@ -12,6 +12,7 @@
 #include "ForCommand.h"
 
 typedef std::string String;
+typedef std::vector<std::shared_ptr<ICommand>> CommandList;
 
 // Executes the list of commands in sequence
 class Process
@@ -43,11 +44,11 @@ public:
     String getName() const;
 
     void generateRandomCommands();
+    void printCommands() const;
 
 private:
     int pid;
     String name;
-    typedef std::vector<std::shared_ptr<ICommand>> CommandList;
     CommandList commandList;
 
     int commandCounter;

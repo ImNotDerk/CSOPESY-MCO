@@ -87,6 +87,12 @@
     <ClCompile Include="FCFSScheduler.cpp">
       <Filter>Schedulers</Filter>
     </ClCompile>
+    <ClCompile Include="ConfigReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ICommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommandParser.h">
@@ -102,9 +108,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MainConsole.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ICommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CommandPrinter.h">
@@ -146,5 +149,14 @@
     <ClInclude Include="FCFSScheduler.h">
       <Filter>Schedulers</Filter>
     </ClInclude>
+    <ClInclude Include="ConfigReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ICommand.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="config.txt" />
   </ItemGroup>
 </Project>
