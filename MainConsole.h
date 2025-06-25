@@ -6,6 +6,7 @@
 #include "AConsole.h"
 #include "ConsoleManager.h"
 #include "ConfigReader.h"
+#include "GlobalScheduler.h"
 
 typedef std::string String;
 

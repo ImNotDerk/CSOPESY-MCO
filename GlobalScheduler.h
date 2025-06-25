@@ -2,8 +2,10 @@
 
 #include <vector>
 #include <memory>
+#include <chrono>
 #include "AScheduler.h"
 #include "Process.h"
+#include "ConsoleManager.h"
 
 // Singleton class to manage the selected scheduler and process list across the application.
 class GlobalScheduler {
@@ -47,6 +49,9 @@ private:
 
     // List of all submitted processes
     std::vector<std::shared_ptr<Process>> processList;
+
+    bool scheduler_start = false; // boolean for creating dummy processes
+    std::thread schedulerThread;
 
     // Core configuration
     int coreCount = 1;

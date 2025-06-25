@@ -34,7 +34,11 @@ void MainConsole::display() // handles what displayes after the process function
 		{
 			ConfigReader::initialize();
 			ConfigReader::getInstance()->setParams("config.txt");
-			ConfigReader::getInstance()->testPrint(); // for debugging only
+			//ConfigReader::getInstance()->testPrint(); // for debugging only
+			GlobalScheduler::initialize();
+			GlobalScheduler::getInstance()->selectScheduler(ConfigReader::getInstance()->getSchedulerToUse());
+			GlobalScheduler::getInstance()->getScheduler()->init();
+			GlobalScheduler::getInstance()->getScheduler()->run();
 			commandMessage = "";
 		}
 
@@ -43,7 +47,7 @@ void MainConsole::display() // handles what displayes after the process function
 			system("cls");
 			printHeader();
 			commandMessage = "";
-		}
+		} 
 
 		if (commandMessage == "exit")
 		{
@@ -60,7 +64,7 @@ void MainConsole::display() // handles what displayes after the process function
 		if (commandMessage == "screenS")
 		{
 			commandMessage = "";
-			ConsoleManager::getInstance()->createBaseScreen(outputArg2);
+			ConsoleManager::getInstance()->createBaseScreen(outputArg2, true);
 			// int newCore = GlobalScheduler::getInstance()->getScheduler()->checkCoreQueue();
 			// GlobalScheduler::getInstance()->getScheduler()->assignCore(GlobalScheduler::getInstance()->getMostRecentProcess(), newCore);
 		}
@@ -72,16 +76,16 @@ void MainConsole::display() // handles what displayes after the process function
 			std::cout << this->displayFinished();*/
 		}
 
-		if (commandMessage == "schedule-test")
+		if (commandMessage == "scheduler-start")
 		{
 			commandMessage = "";
-			// GlobalScheduler::getInstance()->getScheduler()->schedulerStart();
+			GlobalScheduler::getInstance()->schedulerStart();
 		}
 
 		if (commandMessage == "scheduler-stop")
 		{
 			commandMessage = "";
-			// GlobalScheduler::getInstance()->getScheduler()->schedulerStop();
+			GlobalScheduler::getInstance()->schedulerStop();
 		}
 
 		if (commandMessage == "report-util")
@@ -145,7 +149,11 @@ void MainConsole::process() // this function handles the input from the user
 	{
 		commandMessage = "screenLS";
 	}
-	else if (command == "scheduler-test") 
+	else if (command == "scheduler-start") 
+	{
+		commandMessage = command;
+	}
+	else if (command == "scheduler-stop")
 	{
 		commandMessage = command;
 	}

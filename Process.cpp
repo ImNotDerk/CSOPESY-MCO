@@ -11,12 +11,11 @@ Process::Process(int pid, String name) {
 }
 
 // called by CPU core worker
-void Process::executeCurrentCommand() const {
-	this->commandList[this->commandCounter]->execute();
-}
-
-void Process::moveToNextLine() {
-	this->commandCounter++;
+void Process::executeCurrentCommand() {
+    if (commandCounter < commandList.size()) {
+        commandList[commandCounter]->execute();  // run instruction
+        commandCounter++;                        // move to next
+    }
 }
 
 bool Process::isFinished() const {

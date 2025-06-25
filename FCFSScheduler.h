@@ -1,22 +1,60 @@
 #pragma once
+
 #include <vector>
 #include <queue>
+#include <memory>
 #include <mutex>
-#include <algorithm>
+#include <string>
+
+#include "Process.h"
 #include "AScheduler.h"
+#include "SchedulerWorker.h"
 
-typedef std::vector<std::shared_ptr<SchedulerWorker>> CPUWorkers;
-
-class FCFSScheduler: public AScheduler
-{
+// First-Come, First-Served Scheduler
+class FCFSScheduler : public AScheduler {
 public:
-	FCFSScheduler(int cores);
+    using CPUWorkers = std::vector<std::shared_ptr<SchedulerWorker>>;
 
-	void run() override;
-	void init() override;
-	void execute()override;
+    FCFSScheduler();
+    explicit FCFSScheduler(int cores);
+    ~FCFSScheduler() override = default;
 
-	void addProcess(std::shared_ptr<Process> process, int core) override; // add process to core worker
-	void assignCore(std::shared_ptr<Process>, int core) // assign core to process
+    // Lifecycle
+    void init() override;
+    void run() override;
+    void stop() override;
+    void execute() override;
+
+    // Process management
+    void assignProcess(std::shared_ptr<Process> process) override;
+    void addProcess(std::shared_ptr<Process> process, int core) override;
+    void assignCore(std::shared_ptr<Process> process, int core) override;
+
+    // Core checks
+    int checkCores() override;
+    int checkCoreQueue() override;
+
+    // Utility
+    std::shared_ptr<Process> getProcess(int core) const;
+    const std::string& getProcessFromQueue(int index) const override;
+
+    void printCores() override;
+    void printProcessQueues();
+
+    // Scheduler state
+    bool allProcessesFinished();
+
+private:
+    std::string name = "FCFS";
+    int numCores = 1;
+
+    std::mutex schedulerMutex;
+
+    std::thread schedulerThread;
+    std::atomic<bool> schedulerRun = false;
+
+
+    CPUWorkers cpuWorkers;
+    std::vector<std::queue<std::shared_ptr<Process>>> processQueues;
+    std::vector<int> currentIndex;
 };
-

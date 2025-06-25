@@ -29,8 +29,7 @@ public:
     Process(int pid, String name);
 
     void addCommand(std::shared_ptr<ICommand> command);
-    void executeCurrentCommand() const;
-    void moveToNextLine();
+    void executeCurrentCommand(); // called by SchedulerWorker
 
     bool isFinished() const;
     int incrementCommandCounter();

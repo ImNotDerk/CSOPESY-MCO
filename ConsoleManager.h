@@ -28,7 +28,7 @@ public:
 	void returnToPreviousConsole();
 
 	void registerScreen(std::shared_ptr<BaseScreen> screenRef);
-	void createBaseScreen(String screenName);
+	void createBaseScreen(String screenName, bool screenS);
 
 	void switchToScreen(String screenName);
 	void unregisterScreen(String screenName);

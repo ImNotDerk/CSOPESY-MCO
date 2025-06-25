@@ -3,7 +3,7 @@
 class SleepCommand : public ICommand
 {
 public:
-	SleepCommand(int processID, uint16_t sleepTicks) : ICommand(processID, CommandType::SLEEP) 
+	SleepCommand(int processID, uint8_t sleepTicks) : ICommand(processID, CommandType::SLEEP) 
 	{
 		this->processID = processID;
 		this->sleepTicks = sleepTicks;

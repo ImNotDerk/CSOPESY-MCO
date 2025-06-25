@@ -1,26 +1,35 @@
-#pragma once  
-#include "IETThread.h"  
-#include "Process.h"  
-#include <thread>  
-#include <mutex>  
-#include <queue>  
+#pragma once
 
-class SchedulerWorker : public IETThread  
-{  
-public:  
-    SchedulerWorker() = default;  
-    void update(bool isRunning);  
-    void run() override;  
-    void isOccupied();  
-    void addProcess(std::shared_ptr<Process> process);  
-    bool isAvailable() const;  
-    bool doesProcessExist() const;  
-    int getNumCores() const;  
+#include "IETThread.h"
+#include "Process.h"
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
+#include <iostream>
+#include <chrono>
 
-private:  
-    bool isRunning = true;  
-    bool available = true;  
-    int numCores;  
-    std::shared_ptr<Process> currentProcess; 
-    std::queue<std::shared_ptr<Process>> processQueue; 
+class SchedulerWorker : public IETThread {
+public:
+    explicit SchedulerWorker(int coreId = 0);
+    ~SchedulerWorker();
+
+    void start();                       // Launch thread
+    void stop();                        // Graceful stop
+    void run() override;               // Execution loop
+
+    void assignProcess(std::shared_ptr<Process> process); // Assign process
+    bool isBusy() const;               // Is worker executing?
+    std::shared_ptr<Process> getProcess() const; // Get current process
+
+private:
+    int coreId;
+    std::thread workerThread;
+    std::atomic<bool> running;
+    std::atomic<bool> busy;
+
+    std::shared_ptr<Process> currentProcess;
+
+    mutable std::mutex mtx;
+    std::condition_variable cv;
 };

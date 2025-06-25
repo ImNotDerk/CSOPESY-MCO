@@ -29,7 +29,7 @@ public:
 	virtual void addProcess(std::shared_ptr<Process> process, int core) = 0;
 	virtual void assignCore(std::shared_ptr<Process> process, int core) = 0;
 	virtual void assignProcess(std::shared_ptr<Process> process) = 0;
-	virtual std::shared_ptr<Process> findProcess(const std::string& processName);
+	std::shared_ptr<Process> findProcess(const std::string& processName);
 
 	// Core management
 	virtual int checkCores() = 0;
