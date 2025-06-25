@@ -1,5 +1,6 @@
 #pragma once
 #include "ICommand.h"
+#include <sstream>
 class DeclareCommand : public ICommand
 {
 public: 
@@ -15,7 +16,7 @@ public:
 	
 	//TODO: The actual declaration --> symbol table association + placement in memory.
 	//NOTE: Consider using std::move or move-based operation for transferring the data without copying
-	/*void performDeclaration();*/
+	void performDeclaration();
 
 private:
 	String varName; // Variable name
