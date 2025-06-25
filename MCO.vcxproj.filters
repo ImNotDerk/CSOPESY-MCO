@@ -88,7 +88,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ICommand.cpp">
-      <Filter>Commands</Filter>
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalScheduler.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SchedulerWorker.cpp">
       <Filter>Threading</Filter>
@@ -111,6 +114,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MainConsole.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ICommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CommandPrinter.h">
@@ -152,8 +158,8 @@
     <ClInclude Include="ConfigReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ICommand.h">
-      <Filter>Commands</Filter>
+    <ClInclude Include="GlobalScheduler.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GlobalScheduler.h">
       <Filter>Schedulers</Filter>
