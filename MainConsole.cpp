@@ -75,7 +75,8 @@ void MainConsole::display() // handles what displayes after the process function
 		
 		if (commandMessage == "screenLS")
 		{
-			GlobalScheduler::getInstance()->getScheduler()->screenLS();
+			this->screenLS = GlobalScheduler::getInstance()->getScheduler()->screenLS();
+			std::cout << this->screenLS;
 		}
 
 		if (commandMessage == "scheduler-start")
@@ -92,7 +93,12 @@ void MainConsole::display() // handles what displayes after the process function
 
 		if (commandMessage == "report-util")
 		{
-			report_utilHandler();
+			std::string filename = "csopesy-log.txt";
+			std::ofstream file(filename);
+			file << this->screenLS;
+			file.close();
+
+			std::cout << "Report generated at " << fs::absolute(filename) << std::endl;
 		}
 
 		if (commandMessage == "unknown-command")
@@ -101,6 +107,7 @@ void MainConsole::display() // handles what displayes after the process function
 			std::cout << "Unknown command. Please try again." << std::endl;
 		}
 	} 
+
 	else if (commandMessage == "exit")
 	{
 		commandMessage = "";
@@ -159,18 +166,12 @@ void MainConsole::process() // this function handles the input from the user
 	{
 		commandMessage = command;
 	}
-	else if (command == command)
-	{
-		commandMessage = command;
-	}
 	else if (command == "report-util") 
 	{
 		commandMessage = command;
-		report_utilHandler();
 	}
 	else {
 		commandMessage = "unknown-command";
-		std::cout << "Unknown command: " << commandInput << std::endl;
 	}
 }
 

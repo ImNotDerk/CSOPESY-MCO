@@ -3,12 +3,14 @@
 #include <iostream>
 #include <Windows.h>
 #include <sstream>
+#include <filesystem>
 #include "AConsole.h"
 #include "ConsoleManager.h"
 #include "ConfigReader.h"
 #include "GlobalScheduler.h"
 
 typedef std::string String;
+namespace fs = std::filesystem;
 
 class MainConsole : public AConsole
 {
@@ -23,17 +25,10 @@ public:
 	void process() override;
 
 	void printHeader() const;
-	/*void initializeHandler() const;
-	void scheduler_testHandler() const;
-	void scheduler_stopHandler() const;*/
 	void report_utilHandler() const;
 	void processScreenHandler(const std::string& screencommand, const std::string& screenname) const;
 
-	//String displayCPUUtil() const;
-	//String displayRunning();
-	//String displayFinished();
-	//String displayProcessSMI();
-	//String displayVMStat();
+	String screenLS;
 
 	friend class ConsoleManager;
 };

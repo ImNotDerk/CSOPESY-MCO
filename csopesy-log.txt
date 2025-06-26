@@ -1,0 +1,23 @@
+
+CPU Utilization: 0%
+Cores Used: 0
+Cores Available: 4
+------------------------------------
+Running Processes:
+Core 0: [Idle]
+Core 1: [Idle]
+Core 2: [Idle]
+Core 3: [Idle]
+
+Finished Processes:
+process_1     (2025-06-27 02:46:30)     Finished     23 / 23
+process_2     (2025-06-27 02:46:31)     Finished     21 / 21
+process_3     (2025-06-27 02:46:31)     Finished     14 / 14
+process_4     (2025-06-27 02:46:32)     Finished     22 / 22
+process_5     (2025-06-27 02:46:39)     Finished     29 / 29
+process_6     (2025-06-27 02:46:42)     Finished     28 / 28
+process_7     (2025-06-27 02:46:42)     Finished     36 / 36
+process_8     (2025-06-27 02:46:43)     Finished     27 / 27
+process_9     (2025-06-27 02:46:54)     Finished     38 / 38
+------------------------------------
+

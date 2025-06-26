@@ -39,7 +39,7 @@ public:
     void printProcessQueues() override;
     void printRunningProcesses() override;
     void printFinishedProcesses() override;
-    void screenLS() override;
+    String screenLS() override;
 
     // Scheduler state
     bool allProcessesFinished();

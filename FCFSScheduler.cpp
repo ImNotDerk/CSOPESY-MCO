@@ -187,8 +187,9 @@ void FCFSScheduler::printFinishedProcesses()
     std::cout << std::endl;
 }
 
-void FCFSScheduler::screenLS()
-{
+String FCFSScheduler::screenLS() {
+    std::ostringstream out;
+
     int usedCores = 0;
     for (int i = 0; i < numCores; ++i) {
         if (cpuWorkers[i]->isBusy()) {
@@ -197,48 +198,50 @@ void FCFSScheduler::screenLS()
     }
 
     double utilization = (static_cast<double>(usedCores) / numCores) * 100.0;
-    std::cout << std::endl;
-    std::cout << "CPU Utilization: " << utilization << "%" << std::endl;
-    std::cout << "Cores Used: " << usedCores << std::endl;
-    std::cout << "Cores Available: " << (numCores - usedCores) << std::endl;
 
-    std::cout << "------------------------------------" << std::endl;
-    std::cout << "Running Processes:" << std::endl;
+    out << "\n";
+    out << "CPU Utilization: " << utilization << "%\n";
+    out << "Cores Used: " << usedCores << "\n";
+    out << "Cores Available: " << (numCores - usedCores) << "\n";
+    out << "------------------------------------\n";
+    out << "Running Processes:\n";
 
     for (int i = 0; i < numCores; ++i) {
         auto process = cpuWorkers[i]->getProcess();
-        if (cpuWorkers[i]->isBusy() && process->getState() == Process::RUNNING)
-        {
+        if (cpuWorkers[i]->isBusy() && process->getState() == Process::RUNNING) {
             int currentLine = process->getCommandCounter();
             size_t totalLines = process->getCommandList().size();
 
-            std::cout << process->getName()
+            out << process->getName()
                 << "     (" << process->getRunningTimestamp()
                 << ")     Core: " << i << "     "
                 << currentLine << " / " << totalLines;
         }
         else {
-            std::cout << "Core " << i << ": [Idle]";
+            out << "Core " << i << ": [Idle]";
         }
-        std::cout << std::endl;
+        out << "\n";
     }
 
-    std::cout << std::endl << "Finished Processes:" << std::endl;
+    out << "\nFinished Processes:\n";
 
     {
         std::lock_guard<std::mutex> lock(schedulerMutex);
         for (const auto& process : processList) {
             if (process->getState() == Process::FINISHED) {
                 int totalLines = process->getCommandCounter();
-                std::cout << process->getName()
+                out << process->getName()
                     << "     (" << process->getFinishedTimestamp()
                     << ")     Finished     "
-                    << totalLines << " / " << totalLines << std::endl;
+                    << totalLines << " / " << totalLines << "\n";
             }
         }
     }
 
-    std::cout << "------------------------------------" << std::endl;
-    std::cout << std::endl;
+    out << "------------------------------------\n";
+    out << "\n";
+    return out.str();
 }
+
+
 
