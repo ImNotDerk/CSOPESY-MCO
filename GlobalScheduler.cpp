@@ -47,28 +47,32 @@ void GlobalScheduler::selectScheduler(const std::string& algoName) {
 
 // Assign dummy processes to the scheduler and start it
 void GlobalScheduler::schedulerStart() {
-
     scheduler_start = true;
+    int lastSpawnTick = 0;
+    int batchFreq = ConfigReader::getInstance()->getBatchProcessFreq();
 
-    // Generate dummy processes
-    schedulerThread = std::thread([this]() {
+    schedulerThread = std::thread([this, batchFreq, lastSpawnTick]() mutable {
         while (scheduler_start) {
-            int i = getProcessCount();
-            i++;
-            std::string name = "process_" + std::to_string(i);
-            auto process = std::make_shared<Process>(i, name);
+            int currentTick = CPUTick::getInstance()->getTicks();
 
-            ConsoleManager::getInstance()->createBaseScreen(process, false);
+            if ((currentTick - lastSpawnTick) >= batchFreq) {
+                int i = getProcessCount();
+                i++;
+                std::string name = "process_" + std::to_string(i);
+                auto process = std::make_shared<Process>(i, name);
 
-            processList.push_back(process);
+                ConsoleManager::getInstance()->createBaseScreen(process, false);
+                processList.push_back(process);
+                scheduler->addProcess(process, -1);
 
-            // Assign to scheduler (core will be handled internally)
-            scheduler->addProcess(process, -1);
-            std::this_thread::sleep_for(std::chrono::milliseconds(500)); 
+                lastSpawnTick = currentTick; // Update last spawn tick
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(30)); // Keep thread responsive
         }
-    });
-
+        });
 }
+
 
 void GlobalScheduler::schedulerStop() {
     scheduler_start = false;

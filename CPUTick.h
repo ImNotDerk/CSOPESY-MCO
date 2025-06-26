@@ -1,17 +1,32 @@
 #pragma once
-class CPUTick
-{
-public:
-	CPUTick();
-	~CPUTick() = default;
 
+#include <thread>
+#include <atomic>
+#include <chrono>
+
+class CPUTick {
+public:
     static CPUTick* getInstance();
-	void resetTicks();
-	void addTick(int ticks);
-	int getTicks() const;
+    static void destroy();  // Clean up memory
+
+    void resetTicks();
+    void addTick(int ticks);
+    int getTicks() const;
+
+    void startAutoTick(int intervalMs = 100);  // Start ticking in background
+    void stopAutoTick();                       // Stop background ticking
+
+    // Delete copy and assignment
+    CPUTick(const CPUTick&) = delete;
+    CPUTick& operator=(const CPUTick&) = delete;
 
 private:
-    CPUTick& operator=(CPUTick const&) {};
+    CPUTick();
+    ~CPUTick();
+
     static CPUTick* sharedInstance;
-	int nTicks;
+    int nTicks;
+
+    std::thread tickThread;
+    std::atomic<bool> ticking;
 };

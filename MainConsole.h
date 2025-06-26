@@ -8,6 +8,7 @@
 #include "ConsoleManager.h"
 #include "ConfigReader.h"
 #include "GlobalScheduler.h"
+#include "CPUTick.h"
 
 typedef std::string String;
 namespace fs = std::filesystem;

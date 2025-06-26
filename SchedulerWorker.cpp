@@ -40,6 +40,7 @@ std::shared_ptr<Process> SchedulerWorker::getProcess() const {
 }
 
 void SchedulerWorker::run() {
+    int delays_per_exec = ConfigReader::getInstance()->getDelays();
     while (running) {
         std::unique_lock<std::mutex> lock(mtx);
         cv.wait(lock, [&]() { return currentProcess != nullptr || !running; });
@@ -49,21 +50,19 @@ void SchedulerWorker::run() {
         auto process = currentProcess;  // Copy safely while holding lock
         lock.unlock();
 
-        //std::cout << "[Core " << coreId << "] Running process: "
-        //    << process->getName() << std::endl;
-
         while (process && !process->isFinished()) {
             process->executeCurrentCommand(coreId);
-            std::this_thread::sleep_for(std::chrono::milliseconds(500)); // still need to figure this out in terms of cpu ticks
+
+            if (delays_per_exec > 0) {
+                int startTick = CPUTick::getInstance()->getTicks();
+                while (CPUTick::getInstance()->getTicks() - startTick < delays_per_exec) {
+                    // busy-wait loop
+                    std::this_thread::yield();  // yield CPU to other threads
+                }
+            }
         }
 
         process->setState(Process::FINISHED);
-
-        // PRINT WHEN PROCESS IS DONE
-
-        // std::cout << "[Core " << coreId << "] Finished process." << std::endl;
-
-        // Reset state
 
         lock.lock();
         currentProcess = nullptr;

@@ -1,13 +1,15 @@
 #pragma once
 
-#include "IETThread.h"
-#include "Process.h"
 #include <thread>
 #include <mutex>
 #include <condition_variable>
 #include <atomic>
 #include <iostream>
 #include <chrono>
+#include "IETThread.h"
+#include "Process.h"
+#include "CPUTick.h"
+#include "ConfigReader.h"
 
 class SchedulerWorker : public IETThread {
 public:

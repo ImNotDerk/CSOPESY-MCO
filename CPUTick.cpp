@@ -4,6 +4,11 @@ CPUTick* CPUTick::sharedInstance = nullptr;
 
 CPUTick::CPUTick() {
     this->nTicks = 0;
+    ticking = false;
+}
+
+CPUTick::~CPUTick() {
+    stopAutoTick();
 }
 
 CPUTick* CPUTick::getInstance() {
@@ -11,6 +16,13 @@ CPUTick* CPUTick::getInstance() {
         sharedInstance = new CPUTick();
     }
     return sharedInstance;
+}
+
+void CPUTick::destroy() {
+    if (sharedInstance) {
+        delete sharedInstance;
+        sharedInstance = nullptr;
+    }
 }
 
 void CPUTick::resetTicks() {
@@ -23,4 +35,23 @@ void CPUTick::addTick(int ticks) {
 
 int CPUTick::getTicks() const {
     return this->nTicks;
+}
+
+void CPUTick::startAutoTick(int intervalMs) {
+    if (ticking) return; // already ticking
+
+    ticking = true;
+    tickThread = std::thread([this, intervalMs]() {
+        while (ticking) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(intervalMs));
+            this->addTick(1);
+        }
+        });
+}
+
+void CPUTick::stopAutoTick() {
+    ticking = false;
+    if (tickThread.joinable()) {
+        tickThread.join();
+    }
 }

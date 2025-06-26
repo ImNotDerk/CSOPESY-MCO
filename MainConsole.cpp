@@ -99,6 +99,12 @@ void MainConsole::display() // handles what displayes after the process function
 			file.close();
 
 			std::cout << "Report generated at " << fs::absolute(filename) << std::endl;
+
+		}
+
+		if (commandMessage == "show-ticks")
+		{
+			std::cout << CPUTick::getInstance()->getTicks() << std::endl;
 		}
 
 		if (commandMessage == "unknown-command")
@@ -167,6 +173,10 @@ void MainConsole::process() // this function handles the input from the user
 		commandMessage = command;
 	}
 	else if (command == "report-util") 
+	{
+		commandMessage = command;
+	}
+	else if (command == "show-ticks")
 	{
 		commandMessage = command;
 	}

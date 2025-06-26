@@ -2,6 +2,7 @@
 #include <string>
 #include <windows.h>
 #include "ConsoleManager.h"
+#include "CPUTick.h"
 typedef std::string String;
 
 // This is the main entry point of the application
@@ -9,9 +10,11 @@ typedef std::string String;
 int main() {
 	bool running = true;
 	ConsoleManager::initialize();
+	CPUTick::getInstance()->startAutoTick(100); // ticks every 100 ms
 	ConsoleManager::getInstance();
 	
 	while (running) {
+
 		ConsoleManager::getInstance()->process();
 		ConsoleManager::getInstance()->drawConsole();
 
@@ -19,6 +22,7 @@ int main() {
 	}
 
 	ConsoleManager::destroy(); // Cleanup the console manager before exiting
+	CPUTick::destroy();
 
 	return 0;
 }
