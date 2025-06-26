@@ -132,6 +132,7 @@
     <ClCompile Include="CommandPrinter.cpp" />
     <ClCompile Include="ConfigReader.cpp" />
     <ClCompile Include="ConsoleManager.cpp" />
+    <ClCompile Include="CPUTick.cpp" />
     <ClCompile Include="DeclareCommand.cpp" />
     <ClCompile Include="FCFSScheduler.cpp" />
     <ClCompile Include="ForCommand.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="CommandPrinter.h" />
     <ClInclude Include="ConfigReader.h" />
     <ClInclude Include="ConsoleManager.h" />
+    <ClInclude Include="CPUTick.h" />
     <ClInclude Include="DeclareCommand.h" />
     <ClInclude Include="FCFSScheduler.h" />
     <ClInclude Include="ForCommand.h" />
