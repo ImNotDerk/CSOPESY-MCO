@@ -11,14 +11,12 @@ Process::Process(int pid, String name) {
 }
 
 // called by CPU core worker
-void Process::executeCurrentCommand() {
-    if (commandCounter < commandList.size()) {
+void Process::executeCurrentCommand(int coreId) 
+{
+    if (this->commandCounter < commandList.size()) {
         commandList[commandCounter]->execute();  // run instruction
-        commandCounter++;                        // move to next
-    }
-    else 
-    {
-        this->currentState = Process::ProcessState::FINISHED;
+        this->logInstruction(coreId, commandList[commandCounter]->getOutput());
+        this->commandCounter++;                        // move to next
     }
 }
 
@@ -26,7 +24,8 @@ bool Process::isFinished() const {
 	return this->commandCounter >= this->commandList.size();
 }
 
-void Process::addCommand(std::shared_ptr<ICommand> command) {
+void Process::addCommand(std::shared_ptr<ICommand> command) 
+{
 	/*if (command == nullptr)
 	{
 		std::cerr << "Failed to create command: No command declared [NULL detected]." << std::endl;
@@ -35,7 +34,8 @@ void Process::addCommand(std::shared_ptr<ICommand> command) {
 	this->commandList.push_back(command);
 }
 
-void Process::generateRandomCommands() {
+void Process::generateRandomCommands() 
+{
     // Get min and max number of commands from config
     int min = ConfigReader::getInstance()->getMinIns();
     int max = ConfigReader::getInstance()->getMaxIns();
@@ -102,22 +102,47 @@ void Process::generateRandomCommands() {
 //       Each process should probably have a message log to track executed commands.
 //       This is just a placeholder for now. Probably need to change execute() method of ICommand to return a string or something similar.
 
-void Process::printCommands() const {
+void Process::printCommands() const 
+{
     for (const auto& command : this->commandList) {
 		command->execute(); // Assuming ICommand has a print or execute method to display the command
         std::cout << std::endl;
     }
 }
 
-int Process::incrementCommandCounter() {
+void Process::logInstruction(int core_id, String message) 
+{
+    auto now = std::chrono::system_clock::now();
+    auto time_t = std::chrono::system_clock::to_time_t(now);
+    std::tm tm;
+    localtime_s(&tm, &time_t);
+
+    char buffer[100];
+    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &tm);
+    std::string timestamp(buffer);
+
+    std::string log_entry = std::format("({}) Core {}: \"{}\"", timestamp, core_id, message);
+
+    this->print_logs.push_back(log_entry);
+}
+
+std::vector<String> Process::getLogs()
+{
+    return this->print_logs;
+}
+
+int Process::incrementCommandCounter() 
+{
 	return this->commandCounter++;
 }
 
-int Process::getRemainingTime() const {
+int Process::getRemainingTime() const 
+{
 	return this->commandCounter; //commandCounter for now...
 }
 
-int Process::getCommandCounter() const {
+int Process::getCommandCounter() const 
+{
 	return this->commandCounter;
 }
 
@@ -125,19 +150,28 @@ int Process::getPID() const{
 	return this->pid;
 }
 
-int Process::getCPUCoreID() const {  
-    return this->cpuCoreID;  
+int Process::getCPUCoreID() const 
+{
+    return this->cpuCoreID;
 }
 
-Process::ProcessState Process::getState() const {  
+void Process::setState(Process::ProcessState currentState) 
+{
+    this->currentState = currentState;
+}
+
+Process::ProcessState Process::getState() const 
+{  
     return this->currentState;  
 }
 
-std::size_t Process::getLinesOfCode() const {
+std::size_t Process::getLinesOfCode() const 
+{
 	return this->commandList.size();
 }
 
-String Process::getName() const {
+String Process::getName() const 
+{
 	return this->name;
 }
 

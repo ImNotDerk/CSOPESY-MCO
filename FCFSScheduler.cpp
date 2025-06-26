@@ -50,6 +50,9 @@ void FCFSScheduler::execute() {
             auto process = globalQueue.front();
             globalQueue.pop();
 
+            /*std::cout << "[FCFS] Assigning process " << process->getName()
+                << " to core " << core << std::endl;*/
+
             worker->assignProcess(process);
             worker->start();
         }

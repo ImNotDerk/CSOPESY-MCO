@@ -20,6 +20,7 @@ public:
 	ICommand(int processID, CommandType commandtype);
 	CommandType	getCommandType();
 	virtual void execute();
+	virtual String getOutput() const { return ""; }  // default empty
 
 protected:
 	int processID;

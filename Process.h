@@ -2,6 +2,10 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <chrono>
+#include <ctime>
+#include <format>
+#include <sstream>
 #include "ICommand.h"
 #include "ConfigReader.h"
 #include "PrintCommand.h"
@@ -29,7 +33,7 @@ public:
     Process(int pid, String name);
 
     void addCommand(std::shared_ptr<ICommand> command);
-    void executeCurrentCommand(); // called by SchedulerWorker
+    void executeCurrentCommand(int coreId); // called by SchedulerWorker
 
     bool isFinished() const;
     int incrementCommandCounter();
@@ -39,11 +43,14 @@ public:
     std::size_t getLinesOfCode() const;
     int getPID() const;
     int getCPUCoreID() const;
+    void setState(Process::ProcessState currentState);
     ProcessState getState() const;
     String getName() const;
 
     void generateRandomCommands();
     void printCommands() const;
+    void logInstruction(int core_id, String message);
+    std::vector<String> getLogs();
 
 private:
     int pid;
@@ -53,6 +60,8 @@ private:
     int commandCounter;
     int cpuCoreID = -1;
     ProcessState currentState = WAITING;
+
+    std::vector<String> print_logs;
 
     /*friend class ResourceEmulator;*/
 };

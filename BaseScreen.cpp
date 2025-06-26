@@ -100,6 +100,9 @@ void BaseScreen::printProcessInfo() const
 		this->attachedProcess->getCommandCounter();
 		std::cout << "Process: " << this->attachedProcess->getName() << std::endl;
 		std::cout << "ID: " << this->attachedProcess->getPID() << std::endl;
+		std::cout << "Logs:" << std::endl;
+		for (const auto& log : this->attachedProcess->getLogs())
+			std::cout << " " << log << std::endl;
 		std::cout << "" << std::endl;
 		std::cout << "Current instruction line: " << this->attachedProcess->getCommandCounter() << std::endl;
 		std::cout << "Lines of code: " << this->attachedProcess->getLinesOfCode() << std::endl;
@@ -112,8 +115,9 @@ void BaseScreen::printProcessInfo() const
 		std::cout << "" << std::endl;
 		std::cout << "Process: " << this->attachedProcess->getName() << std::endl;
 		std::cout << "ID: " << this->attachedProcess->getPID() << std::endl;
-		// this is to check if commands are being stored
-		// this->attachedProcess->printCommands();
+		std::cout << "Logs:" << std::endl;
+		for (const auto& log : this->attachedProcess->getLogs())
+			std::cout << " " << log << std::endl;
 		std::cout << "" << std::endl;
 		std::cout << "Finished!" << std::endl;
 		std::cout << "" << std::endl;
