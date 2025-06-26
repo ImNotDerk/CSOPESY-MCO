@@ -78,6 +78,9 @@
     <ClCompile Include="ForCommand.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
+    <ClCompile Include="SchedulerWorker.cpp">
+      <Filter>Threading</Filter>
+    </ClCompile>
     <ClCompile Include="IETThread.cpp">
       <Filter>Threading</Filter>
     </ClCompile>
@@ -93,11 +96,8 @@
     <ClCompile Include="GlobalScheduler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SchedulerWorker.cpp">
-      <Filter>Threading</Filter>
-    </ClCompile>
-    <ClCompile Include="GlobalScheduler.cpp">
-      <Filter>Schedulers</Filter>
+    <ClCompile Include="CPUTick.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +149,9 @@
     <ClInclude Include="ForCommand.h">
       <Filter>Commands</Filter>
     </ClInclude>
+    <ClInclude Include="SchedulerWorker.h">
+      <Filter>Threading</Filter>
+    </ClInclude>
     <ClInclude Include="IETThread.h">
       <Filter>Threading</Filter>
     </ClInclude>
@@ -161,11 +164,8 @@
     <ClInclude Include="GlobalScheduler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GlobalScheduler.h">
-      <Filter>Schedulers</Filter>
-    </ClInclude>
-    <ClInclude Include="SchedulerWorker.h">
-      <Filter>Threading</Filter>
+    <ClInclude Include="CPUTick.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
