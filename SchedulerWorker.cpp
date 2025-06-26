@@ -53,9 +53,8 @@ void SchedulerWorker::run() {
         //    << process->getName() << std::endl;
 
         while (process && !process->isFinished()) {
-            process->setState(Process::RUNNING);
             process->executeCurrentCommand(coreId);
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            std::this_thread::sleep_for(std::chrono::milliseconds(500)); // still need to figure this out in terms of cpu ticks
         }
 
         process->setState(Process::FINISHED);

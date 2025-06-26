@@ -64,7 +64,7 @@ void GlobalScheduler::schedulerStart() {
 
             // Assign to scheduler (core will be handled internally)
             scheduler->addProcess(process, -1);
-            std::this_thread::sleep_for(std::chrono::milliseconds(100)); 
+            std::this_thread::sleep_for(std::chrono::milliseconds(500)); 
         }
     });
 
@@ -78,7 +78,6 @@ void GlobalScheduler::schedulerStop() {
 }
 
 void GlobalScheduler::tick() {
-    // Optional: you can implement step-wise simulation or logging here
     std::cout << "[GlobalScheduler] Tick..." << std::endl;
 }
 

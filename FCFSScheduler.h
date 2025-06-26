@@ -36,7 +36,10 @@ public:
 	int getNumCores() override { return numCores; }
 
     void printCores() override;
-    void printProcessQueues();
+    void printProcessQueues() override;
+    void printRunningProcesses() override;
+    void printFinishedProcesses() override;
+    void screenLS() override;
 
     // Scheduler state
     bool allProcessesFinished();
@@ -53,5 +56,7 @@ private:
     CPUWorkers cpuWorkers;
     std::vector<int> currentIndex;
     std::queue<std::shared_ptr<Process>> globalQueue;
+    std::vector<std::shared_ptr<Process>> processList; // stores the processes being taken from GlobalScheduler
+
 
 };

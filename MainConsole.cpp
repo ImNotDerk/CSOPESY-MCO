@@ -70,15 +70,12 @@ void MainConsole::display() // handles what displayes after the process function
 				ConsoleManager::getInstance()->getNumScreens(), outputArg2
 			);
 			ConsoleManager::getInstance()->createBaseScreen(newProcess, true);
-			// int newCore = GlobalScheduler::getInstance()->getScheduler()->checkCoreQueue();
-			// GlobalScheduler::getInstance()->getScheduler()->assignCore(GlobalScheduler::getInstance()->getMostRecentProcess(), newCore);
+			GlobalScheduler::getInstance()->addProcess(newProcess);
 		}
 		
 		if (commandMessage == "screenLS")
 		{
-			/*std::cout << this->displayCPUUtil();
-			std::cout << this->displayRunning();
-			std::cout << this->displayFinished();*/
+			GlobalScheduler::getInstance()->getScheduler()->screenLS();
 		}
 
 		if (commandMessage == "scheduler-start")

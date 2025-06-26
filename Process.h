@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string>
 #include <memory>
 #include <vector>
@@ -6,6 +7,7 @@
 #include <ctime>
 #include <format>
 #include <sstream>
+
 #include "ICommand.h"
 #include "ConfigReader.h"
 #include "PrintCommand.h"
@@ -18,12 +20,9 @@
 typedef std::string String;
 typedef std::vector<std::shared_ptr<ICommand>> CommandList;
 
-// Executes the list of commands in sequence
-class Process
-{
+class Process {
 public:
-    enum ProcessState
-    {
+    enum ProcessState {
         READY,
         RUNNING,
         WAITING,
@@ -33,7 +32,7 @@ public:
     Process(int pid, String name);
 
     void addCommand(std::shared_ptr<ICommand> command);
-    void executeCurrentCommand(int coreId); // called by SchedulerWorker
+    void executeCurrentCommand(int coreId); // called by ScheduleWorker
 
     bool isFinished() const;
     int incrementCommandCounter();
@@ -43,13 +42,18 @@ public:
     std::size_t getLinesOfCode() const;
     int getPID() const;
     int getCPUCoreID() const;
-    void setState(Process::ProcessState currentState);
+
+    void setState(ProcessState currentState);
     ProcessState getState() const;
     String getName() const;
 
     void generateRandomCommands();
     void printCommands() const;
-    void logInstruction(int core_id, String message);
+    void logInstruction(int coreId, String message);
+
+    CommandList getCommandList();
+    String getRunningTimestamp();
+    String getFinishedTimestamp();
     std::vector<String> getLogs();
 
 private:
@@ -61,7 +65,10 @@ private:
     int cpuCoreID = -1;
     ProcessState currentState = WAITING;
 
+    String runningTimestamp;
+    String finishedTimestamp;
+
     std::vector<String> print_logs;
 
-    /*friend class ResourceEmulator;*/
+    String getCurrentTimestamp();
 };
