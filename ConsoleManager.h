@@ -28,13 +28,15 @@ public:
 	void returnToPreviousConsole();
 
 	void registerScreen(std::shared_ptr<BaseScreen> screenRef);
-	void createBaseScreen(String screenName, bool screenS);
+	void createBaseScreen(std::shared_ptr<Process> process, bool screenS);
 
 	void switchToScreen(String screenName);
 	void unregisterScreen(String screenName);
 
 	void exitApplication();
 	bool isRunning() const;
+
+	int getNumScreens();
 
 	//HANDLE getConsoleHandle() const;
 

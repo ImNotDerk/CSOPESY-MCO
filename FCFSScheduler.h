@@ -26,17 +26,14 @@ public:
     void execute() override;
 
     // Process management
-    void assignProcess(std::shared_ptr<Process> process) override;
     void addProcess(std::shared_ptr<Process> process, int core) override;
     void assignCore(std::shared_ptr<Process> process, int core) override;
 
-    // Core checks
-    int checkCores() override;
-    int checkCoreQueue() override;
 
     // Utility
     std::shared_ptr<Process> getProcess(int core) const;
     const std::string& getProcessFromQueue(int index) const override;
+	int getNumCores() override { return numCores; }
 
     void printCores() override;
     void printProcessQueues();
@@ -48,13 +45,13 @@ private:
     std::string name = "FCFS";
     int numCores = 1;
 
+    std::thread schedulerThread;
     std::mutex schedulerMutex;
 
-    std::thread schedulerThread;
     std::atomic<bool> schedulerRun = false;
 
-
     CPUWorkers cpuWorkers;
-    std::vector<std::queue<std::shared_ptr<Process>>> processQueues;
     std::vector<int> currentIndex;
+    std::queue<std::shared_ptr<Process>> globalQueue;
+
 };

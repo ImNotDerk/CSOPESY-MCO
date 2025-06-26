@@ -16,6 +16,10 @@ void Process::executeCurrentCommand() {
         commandList[commandCounter]->execute();  // run instruction
         commandCounter++;                        // move to next
     }
+    else 
+    {
+        this->currentState = Process::ProcessState::FINISHED;
+    }
 }
 
 bool Process::isFinished() const {

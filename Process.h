@@ -52,7 +52,7 @@ private:
 
     int commandCounter;
     int cpuCoreID = -1;
-    ProcessState currentState;
+    ProcessState currentState = WAITING;
 
     /*friend class ResourceEmulator;*/
 };

@@ -49,17 +49,20 @@ void SchedulerWorker::run() {
         auto process = currentProcess;  // Copy safely while holding lock
         lock.unlock();
 
-        std::cout << "[Core " << coreId << "] Running process: "
-            << process->getName() << std::endl;
+        //std::cout << "[Core " << coreId << "] Running process: "
+        //    << process->getName() << std::endl;
 
         while (process && !process->isFinished()) {
             process->executeCurrentCommand();
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
 
-        std::cout << "[Core " << coreId << "] Finished process." << std::endl;
+        // PRINT WHEN PROCESS IS DONE
+
+        // std::cout << "[Core " << coreId << "] Finished process." << std::endl;
 
         // Reset state
+
         lock.lock();
         currentProcess = nullptr;
         busy = false;

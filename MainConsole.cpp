@@ -36,9 +36,11 @@ void MainConsole::display() // handles what displayes after the process function
 			ConfigReader::getInstance()->setParams("config.txt");
 			//ConfigReader::getInstance()->testPrint(); // for debugging only
 			GlobalScheduler::initialize();
+			GlobalScheduler::getInstance()->setCoreCount(ConfigReader::getInstance()->getNumCPU());
 			GlobalScheduler::getInstance()->selectScheduler(ConfigReader::getInstance()->getSchedulerToUse());
 			GlobalScheduler::getInstance()->getScheduler()->init();
 			GlobalScheduler::getInstance()->getScheduler()->run();
+			
 			commandMessage = "";
 		}
 
@@ -64,7 +66,10 @@ void MainConsole::display() // handles what displayes after the process function
 		if (commandMessage == "screenS")
 		{
 			commandMessage = "";
-			ConsoleManager::getInstance()->createBaseScreen(outputArg2, true);
+			std::shared_ptr<Process> newProcess = std::make_shared<Process>(
+				ConsoleManager::getInstance()->getNumScreens(), outputArg2
+			);
+			ConsoleManager::getInstance()->createBaseScreen(newProcess, true);
 			// int newCore = GlobalScheduler::getInstance()->getScheduler()->checkCoreQueue();
 			// GlobalScheduler::getInstance()->getScheduler()->assignCore(GlobalScheduler::getInstance()->getMostRecentProcess(), newCore);
 		}

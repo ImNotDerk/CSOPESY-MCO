@@ -52,7 +52,14 @@ void ConfigReader::assignParams(int index) {
             this->num_cpu = std::stoi(paramsList[0]); // stoi converts String type read from Config converted to int data type
         }
         else if(index == 1) {
-            this->scheduler_to_use = paramsList[1];
+            std::string raw = paramsList[1];
+
+            // remove surrounding quotation marks if they exist
+            if (!raw.empty() && raw.front() == '"' && raw.back() == '"') {
+                raw = raw.substr(1, raw.length() - 2);
+            }
+
+            this->scheduler_to_use = raw;
         }
         else if (index == 2) {
             this->quantum_cycles = std::stoi(paramsList[2]);

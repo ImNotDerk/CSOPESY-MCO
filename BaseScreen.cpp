@@ -5,6 +5,7 @@ BaseScreen::BaseScreen(std::shared_ptr<Process> process, String processName) {
 	this->attachedProcess = process;
 	this->userInput = "";
 	this->commandInput = "";
+	this->name = processName;
 }
 
 void BaseScreen::onEnabled() {
@@ -96,6 +97,7 @@ void BaseScreen::printProcessInfo() const
 	if (!this->attachedProcess->isFinished())
 	{
 		std::cout << "" << std::endl;
+		this->attachedProcess->getCommandCounter();
 		std::cout << "Process: " << this->attachedProcess->getName() << std::endl;
 		std::cout << "ID: " << this->attachedProcess->getPID() << std::endl;
 		std::cout << "" << std::endl;

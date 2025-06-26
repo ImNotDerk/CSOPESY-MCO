@@ -9,7 +9,7 @@ GlobalScheduler* GlobalScheduler::instance = nullptr;
 
 GlobalScheduler::GlobalScheduler() {
     // Default: use FCFS scheduler
-    this->scheduler = std::make_shared<FCFSScheduler>(coreCount);
+    this->scheduler = std::make_shared<FCFSScheduler>();
 }
 
 GlobalScheduler::~GlobalScheduler() {
@@ -35,10 +35,10 @@ GlobalScheduler* GlobalScheduler::getInstance() {
 
 // Select scheduling algorithm by name
 void GlobalScheduler::selectScheduler(const std::string& algoName) {
-    if (algoName == "FCFS") {
-        scheduler = std::make_shared<FCFSScheduler>(coreCount);
+    if (algoName == "fcfs") {
+        this->scheduler = std::make_shared<FCFSScheduler>(coreCount);
     }
-    // else if (algoName == "RR") {
+    // else if (algoName == "rr") {
     //     scheduler = std::make_shared<RoundRobinScheduler>(coreCount);
     // }
 
@@ -58,7 +58,7 @@ void GlobalScheduler::schedulerStart() {
             std::string name = "process_" + std::to_string(i);
             auto process = std::make_shared<Process>(i, name);
 
-            ConsoleManager::getInstance()->createBaseScreen(name, false);
+            ConsoleManager::getInstance()->createBaseScreen(process, false);
 
             processList.push_back(process);
 
@@ -75,7 +75,6 @@ void GlobalScheduler::schedulerStop() {
     if (schedulerThread.joinable()) {
         schedulerThread.join();
     }
-    
 }
 
 void GlobalScheduler::tick() {
