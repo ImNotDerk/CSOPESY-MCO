@@ -170,5 +170,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="config.txt" />
+    <Text Include="a.txt" />
   </ItemGroup>
 </Project>

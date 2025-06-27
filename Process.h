@@ -7,6 +7,7 @@
 #include <ctime>
 #include <format>
 #include <sstream>
+#include <unordered_map>
 
 #include "ICommand.h"
 #include "ConfigReader.h"
@@ -19,6 +20,7 @@
 
 typedef std::string String;
 typedef std::vector<std::shared_ptr<ICommand>> CommandList;
+typedef std::unordered_map<std::string, uint16_t> Symbol_Table; // stores results from process commands
 
 class Process {
 public:
@@ -35,6 +37,7 @@ public:
     void executeCurrentCommand(int coreId); // called by ScheduleWorker
 
     bool isFinished() const;
+
     int incrementCommandCounter();
 
     int getRemainingTime() const;
@@ -51,9 +54,12 @@ public:
     void printCommands() const;
     void logInstruction(int coreId, String message);
 
+    ICommand* generateNestedForCommand(int currentDepth, int maxDepth);
+
     CommandList getCommandList();
     String getRunningTimestamp();
     String getFinishedTimestamp();
+    String getUniqueVariableName(); // used to store a unique var name in an unordered map
     std::vector<String> getLogs();
 
     String stateToString(ProcessState state);
@@ -64,8 +70,10 @@ private:
     int pid;
     String name;
     CommandList commandList;
+    Symbol_Table symbolTable;
 
     int commandCounter;
+    int commandCounterIndex;
     int cpuCoreID = -1;
     ProcessState currentState = WAITING;
 

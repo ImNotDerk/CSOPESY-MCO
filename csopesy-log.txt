@@ -4,80 +4,99 @@ Cores Used: 0
 Cores Available: 32
 ------------------------------------
 Running Processes:
-Core 0: [Idle]
-Core 1: [Idle]
-Core 2: [Idle]
-Core 3: [Idle]
-Core 4: [Idle]
-Core 5: [Idle]
-Core 6: [Idle]
-Core 7: [Idle]
-Core 8: [Idle]
-Core 9: [Idle]
-Core 10: [Idle]
-Core 11: [Idle]
-Core 12: [Idle]
-Core 13: [Idle]
-Core 14: [Idle]
-Core 15: [Idle]
-Core 16: [Idle]
-Core 17: [Idle]
-Core 18: [Idle]
-Core 19: [Idle]
-Core 20: [Idle]
-Core 21: [Idle]
-Core 22: [Idle]
-Core 23: [Idle]
-Core 24: [Idle]
-Core 25: [Idle]
-Core 26: [Idle]
-Core 27: [Idle]
-Core 28: [Idle]
-Core 29: [Idle]
-Core 30: [Idle]
-Core 31: [Idle]
+process_92     (2025-06-27 03:37:03)     Core: 0     5 / 28
+process_91     (2025-06-27 03:37:01)     Core: 1     20 / 30
 
 Finished Processes:
-process_1     (2025-06-28 04:36:36)     Finished     23 / 23
-process_2     (2025-06-28 04:36:36)     Finished     21 / 21
-process_3     (2025-06-28 04:36:36)     Finished     14 / 14
-process_4     (2025-06-28 04:36:37)     Finished     22 / 22
-process_5     (2025-06-28 04:36:37)     Finished     29 / 29
-process_6     (2025-06-28 04:36:37)     Finished     28 / 28
-process_7     (2025-06-28 04:36:38)     Finished     36 / 36
-process_8     (2025-06-28 04:36:38)     Finished     27 / 27
-process_9     (2025-06-28 04:36:38)     Finished     38 / 38
-process_10     (2025-06-28 04:36:38)     Finished     26 / 26
-process_11     (2025-06-28 04:36:38)     Finished     21 / 21
-process_12     (2025-06-28 04:36:39)     Finished     31 / 31
-process_13     (2025-06-28 04:36:39)     Finished     27 / 27
-process_14     (2025-06-28 04:36:39)     Finished     30 / 30
-process_15     (2025-06-28 04:36:39)     Finished     14 / 14
-process_16     (2025-06-28 04:36:39)     Finished     16 / 16
-process_17     (2025-06-28 04:36:40)     Finished     29 / 29
-process_18     (2025-06-28 04:36:40)     Finished     33 / 33
-process_19     (2025-06-28 04:36:40)     Finished     22 / 22
-process_20     (2025-06-28 04:36:40)     Finished     22 / 22
-process_21     (2025-06-28 04:36:41)     Finished     26 / 26
-process_22     (2025-06-28 04:36:41)     Finished     17 / 17
-process_23     (2025-06-28 04:36:41)     Finished     22 / 22
-process_24     (2025-06-28 04:36:41)     Finished     31 / 31
-process_25     (2025-06-28 04:36:42)     Finished     34 / 34
-process_26     (2025-06-28 04:36:41)     Finished     18 / 18
-process_27     (2025-06-28 04:36:42)     Finished     34 / 34
-process_28     (2025-06-28 04:36:42)     Finished     25 / 25
-process_29     (2025-06-28 04:36:42)     Finished     18 / 18
-process_30     (2025-06-28 04:36:43)     Finished     30 / 30
-process_31     (2025-06-28 04:36:43)     Finished     20 / 20
-process_32     (2025-06-28 04:36:43)     Finished     17 / 17
-process_33     (2025-06-28 04:36:43)     Finished     13 / 13
-process_34     (2025-06-28 04:36:43)     Finished     29 / 29
-process_35     (2025-06-28 04:36:44)     Finished     25 / 25
-process_36     (2025-06-28 04:36:44)     Finished     36 / 36
-process_37     (2025-06-28 04:36:44)     Finished     27 / 27
-process_38     (2025-06-28 04:36:44)     Finished     21 / 21
-process_39     (2025-06-28 04:36:44)     Finished     19 / 19
-process_40     (2025-06-28 04:36:45)     Finished     32 / 32
-process_41     (2025-06-28 04:36:45)     Finished     14 / 14
+process_1     (2025-06-27 03:34:55)     Finished     23 / 23
+process_2     (2025-06-27 03:34:55)     Finished     21 / 21
+process_3     (2025-06-27 03:34:58)     Finished     14 / 14
+process_4     (2025-06-27 03:34:58)     Finished     22 / 22
+process_5     (2025-06-27 03:34:59)     Finished     29 / 29
+process_6     (2025-06-27 03:35:00)     Finished     28 / 28
+process_7     (2025-06-27 03:35:03)     Finished     36 / 36
+process_8     (2025-06-27 03:35:03)     Finished     27 / 27
+process_9     (2025-06-27 03:35:07)     Finished     38 / 38
+process_10     (2025-06-27 03:35:07)     Finished     26 / 26
+process_11     (2025-06-27 03:35:10)     Finished     21 / 21
+process_12     (2025-06-27 03:35:11)     Finished     31 / 31
+process_13     (2025-06-27 03:35:12)     Finished     27 / 27
+process_14     (2025-06-27 03:35:14)     Finished     30 / 30
+process_15     (2025-06-27 03:35:15)     Finished     14 / 14
+process_16     (2025-06-27 03:35:17)     Finished     16 / 16
+process_17     (2025-06-27 03:35:18)     Finished     29 / 29
+process_18     (2025-06-27 03:35:19)     Finished     33 / 33
+process_19     (2025-06-27 03:35:21)     Finished     22 / 22
+process_20     (2025-06-27 03:35:22)     Finished     22 / 22
+process_21     (2025-06-27 03:35:23)     Finished     26 / 26
+process_22     (2025-06-27 03:35:25)     Finished     17 / 17
+process_23     (2025-06-27 03:35:26)     Finished     22 / 22
+process_24     (2025-06-27 03:35:27)     Finished     31 / 31
+process_25     (2025-06-27 03:35:29)     Finished     34 / 34
+process_26     (2025-06-27 03:35:30)     Finished     18 / 18
+process_27     (2025-06-27 03:35:32)     Finished     34 / 34
+process_28     (2025-06-27 03:35:33)     Finished     25 / 25
+process_29     (2025-06-27 03:35:35)     Finished     18 / 18
+process_30     (2025-06-27 03:35:36)     Finished     30 / 30
+process_31     (2025-06-27 03:35:38)     Finished     20 / 20
+process_32     (2025-06-27 03:35:39)     Finished     17 / 17
+process_33     (2025-06-27 03:35:40)     Finished     13 / 13
+process_34     (2025-06-27 03:35:41)     Finished     29 / 29
+process_35     (2025-06-27 03:35:41)     Finished     25 / 25
+process_36     (2025-06-27 03:35:44)     Finished     36 / 36
+process_37     (2025-06-27 03:35:44)     Finished     27 / 27
+process_38     (2025-06-27 03:35:47)     Finished     21 / 21
+process_39     (2025-06-27 03:35:48)     Finished     19 / 19
+process_40     (2025-06-27 03:35:50)     Finished     32 / 32
+process_41     (2025-06-27 03:35:50)     Finished     14 / 14
+process_42     (2025-06-27 03:35:52)     Finished     17 / 17
+process_43     (2025-06-27 03:35:53)     Finished     18 / 18
+process_44     (2025-06-27 03:35:54)     Finished     24 / 24
+process_45     (2025-06-27 03:35:55)     Finished     29 / 29
+process_46     (2025-06-27 03:35:57)     Finished     28 / 28
+process_47     (2025-06-27 03:35:59)     Finished     20 / 20
+process_48     (2025-06-27 03:36:00)     Finished     16 / 16
+process_49     (2025-06-27 03:36:01)     Finished     15 / 15
+process_50     (2025-06-27 03:36:02)     Finished     31 / 31
+process_51     (2025-06-27 03:36:02)     Finished     15 / 15
+process_52     (2025-06-27 03:36:04)     Finished     22 / 22
+process_53     (2025-06-27 03:36:05)     Finished     16 / 16
+process_54     (2025-06-27 03:36:07)     Finished     27 / 27
+process_55     (2025-06-27 03:36:07)     Finished     27 / 27
+process_56     (2025-06-27 03:36:10)     Finished     21 / 21
+process_57     (2025-06-27 03:36:10)     Finished     34 / 34
+process_58     (2025-06-27 03:36:12)     Finished     33 / 33
+process_59     (2025-06-27 03:36:14)     Finished     30 / 30
+process_60     (2025-06-27 03:36:16)     Finished     24 / 24
+process_61     (2025-06-27 03:36:17)     Finished     18 / 18
+process_62     (2025-06-27 03:36:19)     Finished     25 / 25
+process_63     (2025-06-27 03:36:19)     Finished     40 / 40
+process_64     (2025-06-27 03:36:22)     Finished     26 / 26
+process_65     (2025-06-27 03:36:24)     Finished     24 / 24
+process_66     (2025-06-27 03:36:24)     Finished     21 / 21
+process_67     (2025-06-27 03:36:26)     Finished     26 / 26
+process_68     (2025-06-27 03:36:27)     Finished     28 / 28
+process_69     (2025-06-27 03:36:29)     Finished     23 / 23
+process_70     (2025-06-27 03:36:30)     Finished     21 / 21
+process_71     (2025-06-27 03:36:32)     Finished     39 / 39
+process_72     (2025-06-27 03:36:32)     Finished     35 / 35
+process_73     (2025-06-27 03:36:36)     Finished     21 / 21
+process_74     (2025-06-27 03:36:36)     Finished     19 / 19
+process_75     (2025-06-27 03:36:39)     Finished     25 / 25
+process_76     (2025-06-27 03:36:39)     Finished     27 / 27
+process_77     (2025-06-27 03:36:41)     Finished     32 / 32
+process_78     (2025-06-27 03:36:42)     Finished     31 / 31
+process_79     (2025-06-27 03:36:45)     Finished     35 / 35
+process_80     (2025-06-27 03:36:45)     Finished     28 / 28
+process_81     (2025-06-27 03:36:48)     Finished     22 / 22
+process_82     (2025-06-27 03:36:49)     Finished     24 / 24
+process_83     (2025-06-27 03:36:51)     Finished     32 / 32
+process_84     (2025-06-27 03:36:51)     Finished     19 / 19
+process_85     (2025-06-27 03:36:54)     Finished     24 / 24
+process_86     (2025-06-27 03:36:54)     Finished     23 / 23
+process_87     (2025-06-27 03:36:56)     Finished     24 / 24
+process_88     (2025-06-27 03:36:57)     Finished     9 / 9
+process_89     (2025-06-27 03:36:58)     Finished     28 / 28
+process_90     (2025-06-27 03:36:59)     Finished     34 / 34
 ------------------------------------
 
