@@ -35,6 +35,8 @@ public:
     void executeCurrentCommand(int coreId); // called by ScheduleWorker
 
     bool isFinished() const;
+
+    void incrementCommandCounterBy(int count);
     int incrementCommandCounter();
 
     int getRemainingTime() const;
@@ -51,6 +53,8 @@ public:
     void printCommands() const;
     void logInstruction(int coreId, String message);
 
+    ICommand* generateNestedForCommand(int currentDepth, int maxDepth);
+
     CommandList getCommandList();
     String getRunningTimestamp();
     String getFinishedTimestamp();
@@ -62,6 +66,7 @@ private:
     CommandList commandList;
 
     int commandCounter;
+    int commandCounterIndex;
     int cpuCoreID = -1;
     ProcessState currentState = WAITING;
 

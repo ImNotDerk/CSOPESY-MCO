@@ -14,9 +14,19 @@ Process::Process(int pid, String name) {
 void Process::executeCurrentCommand(int coreId)
 {
 	if (this->commandCounter < commandList.size()) {
-		commandList[commandCounter]->execute();  // run instruction
-		this->logInstruction(coreId, commandList[commandCounter]->getOutput());
-		this->commandCounter++;                        // move to next
+		ICommand* cmd = commandList[commandCounter].get();
+
+		if (auto* forCmd = dynamic_cast<ForCommand*>(cmd)) {
+			forCmd->performWithLogging(this, coreId, 1); // FOR will increment inside
+		}
+		else {
+			cmd->execute();
+			this->logInstruction(coreId, cmd->getOutput());
+			this->commandCounter++; // count this single command
+		}
+
+		// Still move to next top-level command
+		this->commandCounterIndex++; // use a separate index if needed
 	}
 }
 
@@ -139,18 +149,61 @@ void Process::generateRandomCommands()
 			break;
 		}
 		case 5: { 
-			int repeats = 1 + rand() % 4; 
+			/*int repeats = 1 + rand() % 4;
 			std::vector<ICommand*> forInstructions;
 
-			String msg = "Inside loop";  
-			forInstructions.push_back(new PrintCommand(this->pid, msg));  
+			String msg = "Inside loop";
+
+			forInstructions.push_back(new PrintCommand(this->pid, msg));
 
 			const std::shared_ptr<ICommand> command = std::make_shared<ForCommand>(this->pid, forInstructions, repeats);
 			this->addCommand(command);
+			break;*/
+
+			const int MAX_DEPTH = 3;
+			ICommand* forCmd = generateNestedForCommand(1, MAX_DEPTH);
+			this->addCommand(std::shared_ptr<ICommand>(forCmd));
 			break;
 		}
 		}
 	}
+}
+
+ICommand* Process::generateNestedForCommand(int currentDepth, int maxDepth) 
+{
+	int noCommands = 1 + rand() % 2;
+
+	String msg = "[FOR] Create FOR depth: " + std::to_string(currentDepth);
+
+	if (currentDepth >= maxDepth) {
+		String msg = "[FOR] Max FOR depth reached";
+		return new PrintCommand(this->pid, msg);
+	}
+
+	int repeats = 1 + rand() % 2; // Randomly choose number of repeats
+	std::vector<ICommand*> innerCommands;
+
+	innerCommands.push_back(new PrintCommand(this->pid, msg));
+
+	// Generate Random Commands
+	for (int i = 0; i < noCommands; ++i) {
+		int type = rand() % 2;
+		if (type == 0) {
+			String msg = "[PRINT] Print from FOR depth " + std::to_string(currentDepth);
+			innerCommands.push_back(new PrintCommand(this->pid, msg));
+		}
+		else if (type == 1) {
+			// Nested FOR — increase depth
+			ICommand* nestedFor = generateNestedForCommand(currentDepth + 1, maxDepth);
+			innerCommands.push_back(nestedFor);
+		}
+	}
+
+	String msge = "Debug:: Exit FOR depth " + std::to_string(currentDepth);
+
+	innerCommands.push_back(new PrintCommand(this->pid, msge));
+
+	return new ForCommand(this->pid, innerCommands, repeats);
 }
 
 // To print commands inside the process
