@@ -14,5 +14,6 @@ void PrintCommand::execute()
 
 String PrintCommand::getOutput() const
 {
+
 	return toPrint;
 }
