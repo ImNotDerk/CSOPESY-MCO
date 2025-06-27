@@ -8,6 +8,8 @@
 #include <format>
 #include <sstream>
 #include <unordered_map>
+#include <cstdlib>  
+#include <iterator> 
 
 #include "ICommand.h"
 #include "ConfigReader.h"

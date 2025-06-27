@@ -27,6 +27,6 @@ uint16_t DeclareCommand::getValue() {
 }
 
 String DeclareCommand::getOutput() const {  
-	String msg = "Value from " + this->var + ": " + std::to_string(this->value) + "!";
+	String msg = this->var + " declared with the value: " + std::to_string(this->value) + "!";
     return msg;  
 }

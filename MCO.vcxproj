@@ -179,7 +179,6 @@
     <ClInclude Include="SubtractCommand.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="a.txt" />
     <Text Include="config.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

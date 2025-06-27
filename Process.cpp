@@ -14,19 +14,23 @@ Process::Process(int pid, String name) {
 void Process::executeCurrentCommand(int coreId)
 {
 	if (this->commandCounter < commandList.size()) {
-		ICommand* cmd = commandList[commandCounter].get();
 
-		if (auto* forCmd = dynamic_cast<ForCommand*>(cmd)) {
-			forCmd->performWithLogging(this, coreId, 1); // FOR will increment inside
-		}
-		else {
-			cmd->execute();
-			this->logInstruction(coreId, cmd->getOutput());
-			this->commandCounter++; // count this single command
-		}
+		//ICommand* cmd = commandList[commandCounter].get();
+
+		//if (auto* forCmd = dynamic_cast<ForCommand*>(cmd)) {
+		//	forCmd->performWithLogging(this, coreId, 1); // FOR will increment inside
+		//}
+		//else {
+		//	cmd->execute();
+		//	this->logInstruction(coreId, cmd->getOutput());
+		//}
+		commandList[commandCounter]->execute();  // run instruction
+		this->logInstruction(coreId, commandList[commandCounter]->getOutput());
+		this->commandCounter++; // count this single command
 
 		// Still move to next top-level command
-		this->commandCounterIndex++; // use a separate index if needed
+
+		//this->commandCounterIndex++; // use a separate index if needed
 	}
 }
 
@@ -109,14 +113,25 @@ void Process::generateRandomCommands()
 
 		switch (type) {
 		case 0: { // PRINT COMMAND
-			bool msgOrNone = rand() % 2; // 0 for no message, 1 for message
 			String msg;
+			if (!symbolTable.empty())
+			{
+				bool msgOrNone = rand() % 2; // 0 for no message, 1 for message
 
-			if (0) {
-				int var = 0; // get this from one of the declared variables in the symbol table
-				msg = "Print value from " + std::to_string(var);
+				if (msgOrNone) {
+					int randomIndex = rand() % symbolTable.size();
+					auto it = symbolTable.begin();
+					std::advance(it, randomIndex);
+
+					uint16_t varValue = it->second;
+					msg = "Print value from: " + std::to_string(varValue);
+				}
+				else {
+					msg = "Hello world from " + this->name;
+				}
 			}
-			else {
+			else 
+			{
 				msg = "Hello world from " + this->name;
 			}
 
@@ -126,6 +141,7 @@ void Process::generateRandomCommands()
 		}
 
 		case 1: { // DECLARE COMMAND
+			
 			String varName = getUniqueVariableName();
 			std::shared_ptr<DeclareCommand> declareCmd = std::make_shared<DeclareCommand>(varName, 0); // 0 placeholder since uint16_t declaration must be in DeclareCommand's execute()
 			declareCmd->execute();
@@ -175,9 +191,9 @@ void Process::generateRandomCommands()
 			this->addCommand(command);
 			break;*/
 
-			const int MAX_DEPTH = 3;
+			/*const int MAX_DEPTH = 3;
 			ICommand* forCmd = generateNestedForCommand(1, MAX_DEPTH);
-			this->addCommand(std::shared_ptr<ICommand>(forCmd));
+			this->addCommand(std::shared_ptr<ICommand>(forCmd));*/
 			break;
 		}
 		}
@@ -214,18 +230,13 @@ ICommand* Process::generateNestedForCommand(int currentDepth, int maxDepth)
 		}
 	}
 
-	String msge = "Debug:: Exit FOR depth " + std::to_string(currentDepth);
+	//String msge = "Debug:: Exit FOR depth " + std::to_string(currentDepth);
 
-	innerCommands.push_back(new PrintCommand(this->pid, msge));
+	//innerCommands.push_back(new PrintCommand(this->pid, msge));
 
 	return new ForCommand(this->pid, innerCommands, repeats);
 }
 
-// To print commands inside the process
-// TODO: Modify this to print commands that were only executed.
-//       Probably use a message log to track executed commands.
-//       Each process should probably have a message log to track executed commands.
-//       This is just a placeholder for now. Probably need to change execute() method of ICommand to return a string or something similar.
 void Process::printCommands() const
 {
 	for (const auto& command : this->commandList) {
