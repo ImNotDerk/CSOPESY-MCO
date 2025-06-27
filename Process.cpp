@@ -138,10 +138,15 @@ void Process::generateRandomCommands()
 			// then use the addCommand function here
 			break;
 		}
+		case 5: { 
+			int repeats = 1 + rand() % 4; 
+			std::vector<ICommand*> forInstructions;
 
-		case 5: { // FOR COMMAND - max of 3
-			// create for command instance here
-			// then use the addCommand function here
+			String msg = "Inside loop";  
+			forInstructions.push_back(new PrintCommand(this->pid, msg));  
+
+			const std::shared_ptr<ICommand> command = std::make_shared<ForCommand>(this->pid, forInstructions, repeats);
+			this->addCommand(command);
 			break;
 		}
 		}
