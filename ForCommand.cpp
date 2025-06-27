@@ -46,7 +46,7 @@ void ForCommand::performWithLogging(Process* process, int coreId, int currentDep
 				process->logInstruction(coreId, output);
 
 				if (output.find("Debug:: Exit FOR") == String::npos) {
-					process->incrementCommandCounterBy(1);
+					process->incrementCommandCounter();
 				}
 			}
 		}

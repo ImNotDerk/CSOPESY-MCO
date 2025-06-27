@@ -38,7 +38,6 @@ public:
 
     bool isFinished() const;
 
-    void incrementCommandCounterBy(int count);
     int incrementCommandCounter();
 
     int getRemainingTime() const;
