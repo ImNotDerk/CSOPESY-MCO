@@ -38,11 +38,9 @@ void GlobalScheduler::selectScheduler(const std::string& algoName) {
     if (algoName == "fcfs") {
         this->scheduler = std::make_shared<FCFSScheduler>(coreCount);
     }
-    // else if (algoName == "rr") {
-    //     scheduler = std::make_shared<RoundRobinScheduler>(coreCount);
-    // }
-
-
+     else if (algoName == "rr") {
+        this->scheduler = std::make_shared<RRScheduler>(coreCount, ConfigReader::getInstance()->getQuantum());
+     }
 }
 
 // Assign dummy processes to the scheduler and start it
@@ -63,7 +61,7 @@ void GlobalScheduler::schedulerStart() {
 
                 ConsoleManager::getInstance()->createBaseScreen(process, false);
                 processList.push_back(process);
-                scheduler->addProcess(process, -1);
+                this->scheduler->addProcess(process, -1);
 
                 lastSpawnTick = currentTick; // Update last spawn tick
             }
@@ -81,16 +79,10 @@ void GlobalScheduler::schedulerStop() {
     }
 }
 
-void GlobalScheduler::tick() {
-    std::cout << "[GlobalScheduler] Tick..." << std::endl;
-}
-
 // Add a new process
 void GlobalScheduler::addProcess(std::shared_ptr<Process> process) {
     processList.push_back(process);
-    if (scheduler) {
-        scheduler->addProcess(process, -1);
-    }
+    this->scheduler->addProcess(process, -1);
 }
 
 // Get total process count

@@ -202,36 +202,3 @@ void MainConsole::printHeader() const
 		std::cout << "Type 'clear' to clear the screen, 'exit' to quit" << std::endl;
 	}
 }
-
-void MainConsole::report_utilHandler() const {
-	std::cout << "report-util command recognized. Doing something." << std::endl;
-}
-
-void MainConsole::processScreenHandler(const std::string& screencommand, const std::string& screenname) const{
-	if (screencommand == "-s") {
-		if (screenname.empty()) {
-			std::cerr << "Error: No name provided for screen." << std::endl;
-		}
-		//else if (this->getScreenMaps().find(name) != this->getScreenMaps().end()) {
-		//	std::cerr << "Error: Screen already exists. Please load instead." << std::endl;
-		//}
-		else {
-			std::cout << "MAKE A PROCESS HERE" << std::endl;
-		}
-	}
-	else if (screencommand == "-r") {
-		if (screenname.empty()) {
-			std::cerr << "Error: No name provided for screen." << std::endl;
-		}
-		//else if (this->getScreenMaps().find(name) != this->getScreenMaps().end()) {
-		//	system("cls");
-		//	getScreenMaps().at(name).displayScreen();
-		//}
-		else {
-			std::cerr << "Error: Inputted screen name doesn't exists." << std::endl;
-		}
-	}
-	else {
-		std::cout << "Unknown option for screen: " << std::endl;
-	}
-}

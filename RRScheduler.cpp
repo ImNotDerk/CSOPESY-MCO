@@ -1,87 +1,83 @@
-#include "FCFSScheduler.h"
+#include "RRScheduler.h"
 
-FCFSScheduler::FCFSScheduler() {}
+RRScheduler::RRScheduler() {}
 
-FCFSScheduler::FCFSScheduler(int cores) : numCores(cores), schedulerRun(true) 
-{
+RRScheduler::RRScheduler(int cores, int quantumCycles) : numCores(cores), quantumCycles(quantumCycles), schedulerRun(true) {
     init();
 }
 
-void FCFSScheduler::init() 
-{
+void RRScheduler::init() {
     std::lock_guard<std::mutex> lock(schedulerMutex);
 
     cpuWorkers.clear();
-    while (!globalQueue.empty()) globalQueue.pop();  // clear global queue
+    while (!GlobalProcessQueue::getInstance().empty()) {
+        GlobalProcessQueue::getInstance().pop();
+    }
 
-    for (int i = 0; i < numCores; ++i) 
-    {
-        cpuWorkers.push_back(std::make_shared<SchedulerWorker>(i));
+    for (int i = 0; i < numCores; i++) {
+        cpuWorkers.push_back(std::make_shared<RRSchedulerWorker>(i));
     }
 }
 
-void FCFSScheduler::run() 
-{
+void RRScheduler::run() {
     schedulerRun = true;
-    schedulerThread = std::thread([this]() 
-        {
-        while (schedulerRun) 
-        {
+    schedulerThread = std::thread([this]() {
+        while (schedulerRun) {
             execute();
-            //std::this_thread::sleep_for(std::chrono::milliseconds(100));  // simulate CPU tick
         }
-    });
+        });
 }
 
-void FCFSScheduler::stop() 
-{
+void RRScheduler::stop() {
     schedulerRun = false;
     if (schedulerThread.joinable()) {
         schedulerThread.join();
     }
 }
 
-void FCFSScheduler::execute() 
-{
+void RRScheduler::execute() {
     std::lock_guard<std::mutex> lock(schedulerMutex);
 
-    for (int core = 0; core < numCores; ++core) 
-    {
+    for (int core = 0; core < numCores; ++core) {
         auto& worker = cpuWorkers[core];
 
-        if (!worker->isBusy() && !globalQueue.empty()) 
-        {
-            auto process = globalQueue.front();
-            globalQueue.pop();
+        if (!worker->isBusy()) {
+            auto process = worker->getProcess();
 
-            worker->assignProcess(process);
-            process->setState(Process::RUNNING);
-            worker->start();
+            if (process && process->getState() == Process::WAITING) {
+                process->setState(Process::READY);
+            }
+            else if (process && process->getState() == Process::FINISHED) {
+            }
+
+            auto nextProcess = GlobalProcessQueue::getInstance().pop();
+            if (nextProcess) {
+                nextProcess->setState(Process::RUNNING);
+                worker->assignProcess(nextProcess);
+                worker->start();
+            }
         }
     }
 }
 
-void FCFSScheduler::addProcess(std::shared_ptr<Process> process, int core) 
-{
+void RRScheduler::addProcess(std::shared_ptr<Process> process, int core) {
     std::lock_guard<std::mutex> lock(schedulerMutex);
-    globalQueue.push(process);  // ignore core and just queue
+    GlobalProcessQueue::getInstance().push(process);
     this->processList.push_back(process);
 }
 
-void FCFSScheduler::assignCore(std::shared_ptr<Process> process, int core) 
-{
-    addProcess(process, core);  // still uses global queue
+void RRScheduler::assignCore(std::shared_ptr<Process> process, int core) {
+    addProcess(process, core);
 }
 
-std::shared_ptr<Process> FCFSScheduler::getProcess(int core) const 
-{
+std::shared_ptr<Process> RRScheduler::getProcess(int core) const {
     if (core >= 0 && core < numCores && cpuWorkers[core]->isBusy()) {
         return cpuWorkers[core]->getProcess();
     }
     return nullptr;
 }
 
-const std::string& FCFSScheduler::getProcessFromQueue(int index) const 
+const std::string& RRScheduler::getProcessFromQueue(int index) const
 {
     static std::string empty = "";
     if (!globalQueue.empty()) {
@@ -90,23 +86,29 @@ const std::string& FCFSScheduler::getProcessFromQueue(int index) const
     return empty;
 }
 
-void FCFSScheduler::printCores() {
-    for (int i = 0; i < numCores; ++i) 
+void RRScheduler::printCores() {
+    for (int i = 0; i < numCores; ++i)
     {
         std::cout << "Core " << i << ": ";
-        if (cpuWorkers[i]->isBusy()) 
+        if (cpuWorkers[i]->isBusy())
         {
             std::cout << cpuWorkers[i]->getProcess()->getName();
-        } else {
+        }
+        else {
             std::cout << "[Idle]";
         }
         std::cout << std::endl;
     }
 }
 
+void RRScheduler::setQuantumCycles(int quantumCycles)
+{
+    this->quantumCycles = quantumCycles;
+}
+
 // for debugging
 
-void FCFSScheduler::printProcessQueues()
+void RRScheduler::printProcessQueues()
 {
     std::lock_guard<std::mutex> lock(schedulerMutex);
     std::cout << "Global Queue: ";
@@ -120,13 +122,13 @@ void FCFSScheduler::printProcessQueues()
 
 // for debugging
 
-bool FCFSScheduler::allProcessesFinished() 
+bool RRScheduler::allProcessesFinished()
 {
     std::lock_guard<std::mutex> lock(schedulerMutex);
     if (!globalQueue.empty()) return false;
-    for (int i = 0; i < numCores; ++i) 
+    for (int i = 0; i < numCores; ++i)
     {
-        if (cpuWorkers[i]->isBusy()) 
+        if (cpuWorkers[i]->isBusy())
         {
             return false;
         }
@@ -136,11 +138,11 @@ bool FCFSScheduler::allProcessesFinished()
 
 // for debugging
 
-void FCFSScheduler::printRunningProcesses() 
+void RRScheduler::printRunningProcesses()
 {
     for (int i = 0; i < numCores; ++i) {
         auto process = cpuWorkers[i]->getProcess();
-        if (cpuWorkers[i]->isBusy() && process->getState() == Process::RUNNING) 
+        if (cpuWorkers[i]->isBusy() && process->getState() == Process::RUNNING)
         {
             int currentLine = process->getCommandCounter();        // current instruction index
             size_t totalLines = process->getCommandList().size();        // total 
@@ -160,7 +162,7 @@ void FCFSScheduler::printRunningProcesses()
 // for debugging
 
 
-void FCFSScheduler::printFinishedProcesses() 
+void RRScheduler::printFinishedProcesses()
 {
     std::lock_guard<std::mutex> lock(schedulerMutex);
     std::cout << "Finished Processes: ";
@@ -178,7 +180,7 @@ void FCFSScheduler::printFinishedProcesses()
     std::cout << std::endl;
 }
 
-String FCFSScheduler::screenLS() {
+String RRScheduler::screenLS() {
     std::ostringstream out;
 
     int usedCores = 0;

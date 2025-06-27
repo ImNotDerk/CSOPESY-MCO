@@ -108,6 +108,7 @@ void BaseScreen::printProcessInfo() const
 		std::cout << "Lines of code: " << this->attachedProcess->getLinesOfCode() << std::endl;
 		// this is to check if commands are being stored
 		// this->attachedProcess->printCommands();
+		std::cout << this->attachedProcess->stateToString(this->attachedProcess->getState()) << std::endl;
 		std::cout << "" << std::endl;
 	}
 	else

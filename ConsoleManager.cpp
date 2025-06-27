@@ -57,14 +57,17 @@ void ConsoleManager::registerScreen(std::shared_ptr<BaseScreen> screenRef)
 		std::cerr << "Screen name " << screenRef->getName() << " already exists." << std::endl;
 		return;
 	}
-
-	//GlobalScheduler::getInstance()->addProcess(screenRef->getProcess);
 	this->consoleTable[screenRef->getName()] = screenRef;
 	this->switchConsole(screenRef->getName());
 }
 
 void ConsoleManager::createBaseScreen(std::shared_ptr<Process> process, bool screenS)
 {
+	if (this->consoleTable.contains(process->getName()))
+	{
+		std::cerr << "Screen name " << process->getName() << " already exists." << std::endl;
+		return;
+	}
 	this->numScreens++; // increment the screen count for unique process IDs when making processes manually
 	std::shared_ptr<BaseScreen> baseScreen = std::make_shared<BaseScreen>(process, process->getName());
 	this->consoleTable[baseScreen->getName()] = baseScreen;

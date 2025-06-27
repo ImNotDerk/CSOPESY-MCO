@@ -187,6 +187,17 @@ std::vector<String> Process::getLogs()
 	return this->print_logs;
 }
 
+String Process::stateToString(Process::ProcessState state) {
+	switch (state) {
+	case Process::READY: return "READY";
+	case Process::RUNNING: return "RUNNING";
+	case Process::WAITING: return "WAITING";
+	case Process::FINISHED: return "FINISHED";
+	default: return "UNKNOWN";
+	}
+}
+
+
 String Process::getCurrentTimestamp()
 {
 	auto now = std::chrono::system_clock::now();

@@ -56,6 +56,10 @@ public:
     String getFinishedTimestamp();
     std::vector<String> getLogs();
 
+    String stateToString(ProcessState state);
+
+    
+
 private:
     int pid;
     String name;

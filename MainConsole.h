@@ -26,8 +26,6 @@ public:
 	void process() override;
 
 	void printHeader() const;
-	void report_utilHandler() const;
-	void processScreenHandler(const std::string& screencommand, const std::string& screenname) const;
 
 	String screenLS;
 

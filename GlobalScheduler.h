@@ -4,6 +4,7 @@
 #include <memory>
 #include <chrono>
 #include "AScheduler.h"
+#include "RRScheduler.h"
 #include "Process.h"
 #include "ConsoleManager.h"
 
@@ -18,7 +19,6 @@ public:
     // Scheduler control
     void selectScheduler(const std::string& algoName);
     std::shared_ptr<AScheduler> getScheduler();
-    void tick();  // Optional: step-based simulation or update
 
     // Process management
     void addProcess(std::shared_ptr<Process> process);

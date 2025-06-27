@@ -5,6 +5,9 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <iostream>
+#include <thread>
+#include <chrono>
 
 #include "Process.h"
 #include "AScheduler.h"
@@ -54,7 +57,6 @@ private:
     std::atomic<bool> schedulerRun = false;
 
     CPUWorkers cpuWorkers;
-    std::vector<int> currentIndex;
     std::queue<std::shared_ptr<Process>> globalQueue;
     std::vector<std::shared_ptr<Process>> processList; // stores the processes being taken from GlobalScheduler
 
