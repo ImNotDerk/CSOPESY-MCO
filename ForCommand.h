@@ -5,12 +5,14 @@
 class ForCommand : public ICommand
 {
 public:
-	ForCommand(int processID, std::vector<ICommand*> instructions, int repeats) : ICommand(processID, CommandType::FOR)
+	ForCommand(int processID, std::vector<ICommand*> instructions, int repeats)
+		: ICommand(processID, CommandType::FOR)
 	{
 		this->processID = processID;
 		this->instructions = instructions;
 		this->repeats = repeats;
 	}
+
 	void performForCommand();
 	void execute() override;
 
@@ -19,4 +21,3 @@ private:
 	std::vector<ICommand*> instructions;
 	int repeats;
 };
-
