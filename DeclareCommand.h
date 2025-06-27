@@ -1,25 +1,15 @@
 #pragma once
 #include "ICommand.h"
-#include <sstream>
-class DeclareCommand : public ICommand
-{
-public: 
-//	DeclareCommand(int processID, String& varName, uint16_t value) : ICommand(processID, CommandType::DECLARE)
-//	{
-//		this->varName = varName;
-//		this->value = value;
-//		//IMPORTANT: Variables are only stored temporarily. To make them "appear" or be associated in the process, 
-//		//the actual declaration must occur in the execute command.
-//	}
-//
-//	void execute() override;
-//	
-//	//TODO: The actual declaration --> symbol table association + placement in memory.
-//	//NOTE: Consider using std::move or move-based operation for transferring the data without copying
-//	void performDeclaration();
-//
-//private:
-//	String varName; // Variable name
-//	uint16_t value; // Initial value
-};
+class DeclareCommand : public ICommand {
+public:
+    DeclareCommand(const String& varName, uint16_t value);
+    void execute() override;
 
+    void declareVariable(const String& varName);
+    String getVariableName();
+    uint16_t getValue();
+    String getOutput() const override;
+private:
+    String var;
+    uint16_t value;
+};

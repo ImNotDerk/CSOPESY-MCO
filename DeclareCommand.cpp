@@ -1,18 +1,32 @@
 #include "DeclareCommand.h"
 
-//void DeclareCommand::execute() 
-//{
-//	ICommand::execute(); // Call base class execute for common behavior
-//
-//	performDeclaration(); // Perform the actual declaration and storing in symbol table + memory
-//
-//	std::stringstream msg;
-//	msg << "Executing DECLARE command for PID " << this->processID
-//		<< ": variable '" << this->varName << "' with value " << this->value << std::endl;
-//	std::cout << msg.str();
-//}
-//
-//void performDeclaration() 
-//{
-//
-//}
+// Constructor for DECLARE: takes variable name and initial value
+DeclareCommand::DeclareCommand(const String& varName, uint16_t value)
+    : ICommand(processID, CommandType::DECLARE), var(varName), value(value) {
+    // IMPORTANT: Variables are only stored temporarily. To make them "appear" or be associated in the process,  
+    // the actual declaration must occur in the execute command.  
+}
+
+void DeclareCommand::execute()
+{
+	ICommand::execute();
+	declareVariable(getVariableName());
+}
+
+void DeclareCommand::declareVariable(const String& varName) {
+	this->var = varName;
+	this->value = static_cast<uint16_t>(rand() % 65536); // clamp range of uint16_t from 0 to 65535
+}
+
+String DeclareCommand::getVariableName() {
+	return this->var;
+}
+
+uint16_t DeclareCommand::getValue() {
+	return this->value;
+}
+
+String DeclareCommand::getOutput() const {  
+	String msg = "Value from " + this->var + ": " + std::to_string(this->value) + "!";
+    return msg;  
+}

@@ -126,8 +126,23 @@ void Process::generateRandomCommands()
 		}
 
 		case 1: { // DECLARE COMMAND
-			// create declare command instance here
-			// then use the addCommand function here
+			String varName = getUniqueVariableName();
+			std::shared_ptr<DeclareCommand> declareCmd = std::make_shared<DeclareCommand>(varName, 0); // 0 placeholder since uint16_t declaration must be in DeclareCommand's execute()
+			declareCmd->execute();
+			symbolTable[declareCmd->getVariableName()] = declareCmd->getValue();
+
+			// CHECKER LANG TO KUNG GUMAGANA
+			/*auto it = symbolTable.find(declareCmd->getVariableName());
+			if (it != symbolTable.end()) {
+				std::cout << "Variable (key): " << it->first << std::endl;
+				std::cout << "Value (value): " << it->second << std::endl;
+			}
+			else {
+				std::cout << "Variable not found in symbol table!" << std::endl;
+			}*/
+
+			this->addCommand(declareCmd);
+
 			break;
 		}
 
@@ -217,6 +232,19 @@ void Process::printCommands() const
 		command->execute(); // Assuming ICommand has a print or execute method to display the command
 		std::cout << std::endl;
 	}
+}
+
+String Process::getUniqueVariableName() {
+	int varCounter = 0;
+	String varName = "var";
+	String newKey;
+
+	do {
+		newKey = varName + std::to_string(varCounter);
+		varCounter++;
+	} while (symbolTable.find(newKey) != symbolTable.end());
+
+	return newKey;
 }
 
 void Process::logInstruction(int core_id, String message)
