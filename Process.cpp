@@ -194,8 +194,6 @@ String Process::getUniqueVariableName() {
 	return newKey;
 }
 
-
-
 void Process::logInstruction(int core_id, String message)
 {
 	std::string log_entry = std::format("({}) Core {}: \"{}\"", getCurrentTimestamp(), core_id, message);
