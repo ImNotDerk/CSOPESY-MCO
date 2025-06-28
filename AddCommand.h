@@ -3,15 +3,11 @@
 class AddCommand : public ICommand
 {
 public:
-	AddCommand(int processID, uint16_t var1, uint16_t var2, uint16_t var3) : ICommand(processID, CommandType::ADD)
-	{
-		this->var1 = var1;
-		this->var2 = var2;
-		this->var3 = var3;
-	}
-
-	uint16_t performAddition();
+	AddCommand(uint16_t var2, uint16_t var3);
+	void performAddition();
 	void execute() override;
+	uint16_t getResult() const;
+	String getOutput() const override;
 
 private:
 	uint16_t var1; // result
