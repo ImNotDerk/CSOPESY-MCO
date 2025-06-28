@@ -111,8 +111,14 @@ void Process::generateRandomCommands()
 
 	int noCommands = min + rand() % (max - min + 1);
 
+	String varName = getUniqueVariableName();
+	std::shared_ptr<DeclareCommand> declareCmd = std::make_shared<DeclareCommand>(varName, 0); // 0 placeholder since uint16_t declaration must be in DeclareCommand's execute()
+	declareCmd->execute();
+	symbolTable[declareCmd->getVariableName()] = declareCmd->getValue();
+	this->addCommand(declareCmd);
+
 	for (int i = 0; i < noCommands; i++) {
-		int type = 3; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
+		int type = rand()% 5; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
 
 		switch (type) {
 		case 0: { // PRINT COMMAND
