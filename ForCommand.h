@@ -17,6 +17,7 @@ public:
 	void performWithLogging(Process* process, int coreId, int currentDepth=1);
 	void execute() override;
 	String getOutput() const override;
+	//std::shared_ptr<ICommand> clone() const override;
 
 private:
 	int processID;

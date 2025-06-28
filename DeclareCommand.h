@@ -3,6 +3,7 @@
 class DeclareCommand : public ICommand {
 public:
     DeclareCommand(const String& varName, uint16_t value);
+    std::shared_ptr<ICommand> clone() const;
     void execute() override;
 
     void declareVariable(const String& varName);

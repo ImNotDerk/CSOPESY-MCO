@@ -186,7 +186,7 @@ void Process::generateRandomCommands()
 		}
 		case 5: { 
 			//const int MAX_DEPTH = 1 + rand() % 3; // Randomly choose max depth between 1 and 3
-			const int MAX_DEPTH = 1;
+			const int MAX_DEPTH = 2;
 			const int repeats = 1 + rand() % 4; 
 			generateNestedForCommand(1, MAX_DEPTH, repeats);
 			break;
@@ -199,57 +199,72 @@ void Process::generateNestedForCommand(int currentDepth, int maxDepth, int repea
 {
 	int repeatsNested = 1 + rand() % 2; // Randomly choose number of repeats
 
-	// Always add a print indicating the depth
-	String msg = "[FOR] Create FOR depth: " + std::to_string(currentDepth);
-	this->addCommand(std::make_shared<PrintCommand>(this->pid, msg));
-
 	int noCommands = 1 + rand() % 3; // up to 3 instrucitons
 	std::vector<std::shared_ptr<ICommand>> instructions;
 
 	// Generate Random Commands
-	for (int i = 0; i < 3; ++i) {
-		int instructionType;
+	for (int i = 0; i < noCommands; i++) {
 
-		if (currentDepth >= maxDepth) {
-			instructionType = rand() % 5;  // 0-4 (PRINT to SLEEP, no FOR)
-		}
-		else {
-			instructionType = rand() % 6;  // 0-5 (PRINT to FOR)
-		}
+		int instructionType = rand() % 5; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP)
 
 		switch (instructionType) {
-		case 0: { // PRINT
-			String msg = "[PRINT] Depth " + std::to_string(currentDepth);
-			const std::shared_ptr<ICommand> command = std::make_shared<PrintCommand>(this->pid, msg);
-			this->addCommand(command);
-			instructions.push_back(command);
-			break;
+			case 0: { // PRINT
+				String msg;
+				if (!symbolTable.empty())
+				{
+					bool msgOrNone = rand() % 2; // 0 for no message, 1 for message
+
+					if (msgOrNone) {
+						int randomIndex = rand() % symbolTable.size();
+						auto it = symbolTable.begin();
+						std::advance(it, randomIndex);
+
+						uint16_t varValue = it->second;
+						msg = "Print value from: " + std::to_string(varValue);
+					}
+					else {
+						msg = "Hello world from " + this->name;
+					}
+				}
+				else
+				{
+					msg = "Hello world from " + this->name;
+				}
+				const std::shared_ptr<ICommand> command = std::make_shared<PrintCommand>(this->pid, msg);
+				this->addCommand(command);
+				instructions.push_back(command->clone());
+				break;
+			}
+			case 1: { // DECLARE
+				String varName = getUniqueVariableName();
+				std::shared_ptr<DeclareCommand> declareCmd = std::make_shared<DeclareCommand>(varName, 0);
+				declareCmd->execute();
+				symbolTable[declareCmd->getVariableName()] = declareCmd->getValue();
+				this->addCommand(declareCmd);
+				instructions.push_back(declareCmd->clone());
+				break;
+			}
+			case 2: { // ADD
+				// Add logic here if implemented
+				break;
+			}
+			case 3: { // SUBTRACT
+				// Add logic here if implemented
+				break;
+			}
+			case 4: { // SLEEP
+				// Add logic here if implemented
+				break;
+			}
+			case 5: { // FOR (only if not at max depth)
+				/*generateNestedForCommand(currentDepth + 1, maxDepth, repeatsNested);*/
+				break;
+			}
 		}
-		case 1: { // DECLARE
-			String varName = getUniqueVariableName();
-			std::shared_ptr<DeclareCommand> declareCmd = std::make_shared<DeclareCommand>(varName, 0);
-			declareCmd->execute();
-			symbolTable[declareCmd->getVariableName()] = declareCmd->getValue();
-			this->addCommand(declareCmd);
-			instructions.push_back(declareCmd);
-			break;
-		}
-		case 2: { // ADD
-			// Add logic here if implemented
-			break;
-		}
-		case 3: { // SUBTRACT
-			// Add logic here if implemented
-			break;
-		}
-		case 4: { // SLEEP
-			// Add logic here if implemented
-			break;
-		}
-		case 5: { // FOR (only if not at max depth)
-			generateNestedForCommand(currentDepth + 1, maxDepth, repeatsNested);
-			break;
-		}
+	}
+	for (int r = 0; r < repeats; ++r) {
+		for (const auto& cmd : instructions) {
+			this->addCommand(cmd);
 		}
 	}
 }

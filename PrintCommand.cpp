@@ -7,6 +7,11 @@ PrintCommand::PrintCommand(int processID, String& toPrint) : ICommand(processID,
 	this->toPrint = toPrint;
 }
 
+std::shared_ptr<ICommand> PrintCommand::clone() const {
+	return std::make_shared<PrintCommand>(*this);
+}
+
+
 void PrintCommand::execute()
 {
 	ICommand::execute();

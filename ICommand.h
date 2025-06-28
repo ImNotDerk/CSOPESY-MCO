@@ -18,6 +18,8 @@ public:
 	};
 	
 	ICommand(int processID, CommandType commandtype);
+	virtual ~ICommand() = default;
+	virtual std::shared_ptr<ICommand> clone() const = 0;
 	CommandType	getCommandType();
 	virtual void execute();
 	virtual String getOutput() const { return ""; }  // default empty

@@ -7,6 +7,10 @@ DeclareCommand::DeclareCommand(const String& varName, uint16_t value)
     // the actual declaration must occur in the execute command.  
 }
 
+std::shared_ptr<ICommand> DeclareCommand::clone() const {
+	return std::make_shared<DeclareCommand>(*this);
+}
+
 void DeclareCommand::execute()
 {
 	ICommand::execute();
