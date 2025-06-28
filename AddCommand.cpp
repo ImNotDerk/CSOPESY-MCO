@@ -1,18 +1,29 @@
 #include "AddCommand.h"
 
+AddCommand::AddCommand(uint16_t operand1, uint16_t operand2) : ICommand(processID, CommandType::ADD)
+{
+	this->var1 = 0;
+	this->var2 = operand1;
+	this->var3 = operand2;
+}
+
 void AddCommand::execute()
 {
 	ICommand::execute(); // Call base class execute for common behavior
-
-	uint16_t result = performAddition();
-
-	// NOTE: print for the mean time
-	std::cout << "Addition Result: " << result << std::endl;
+	performAddition();
 }
 
-uint16_t AddCommand::performAddition()
+void AddCommand::performAddition()
 {
-	// add val2 and 3 and store in val1
 	this->var1 = this->var2 + this->var3;
+}
+
+uint16_t AddCommand::getResult() const
+{
 	return this->var1;
+}
+
+String AddCommand::getOutput() const
+{
+	return "Result of addition: " + std::to_string(this->var1);
 }

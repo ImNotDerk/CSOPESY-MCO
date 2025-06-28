@@ -10,6 +10,9 @@
 #include <unordered_map>
 #include <cstdlib>  
 #include <iterator> 
+#include <filesystem>
+#include <algorithm>
+#include <random>   
 
 #include "ICommand.h"
 #include "ConfigReader.h"

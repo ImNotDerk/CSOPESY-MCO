@@ -1,7 +1,5 @@
 #include "Process.h"
 
-typedef std::string String;
-
 Process::Process(int pid, String name) {
 	this->pid = pid;
 	this->name = name;
@@ -109,7 +107,7 @@ void Process::generateRandomCommands()
 	int noCommands = min + rand() % (max - min + 1);
 
 	for (int i = 0; i < noCommands; i++) {
-		int type = rand() % 6; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
+		int type = rand() % 3; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
 
 		switch (type) {
 		case 0: { // PRINT COMMAND
@@ -141,30 +139,48 @@ void Process::generateRandomCommands()
 		}
 
 		case 1: { // DECLARE COMMAND
-			
 			String varName = getUniqueVariableName();
 			std::shared_ptr<DeclareCommand> declareCmd = std::make_shared<DeclareCommand>(varName, 0); // 0 placeholder since uint16_t declaration must be in DeclareCommand's execute()
 			declareCmd->execute();
 			symbolTable[declareCmd->getVariableName()] = declareCmd->getValue();
-
-			// CHECKER LANG TO KUNG GUMAGANA
-			/*auto it = symbolTable.find(declareCmd->getVariableName());
-			if (it != symbolTable.end()) {
-				std::cout << "Variable (key): " << it->first << std::endl;
-				std::cout << "Value (value): " << it->second << std::endl;
-			}
-			else {
-				std::cout << "Variable not found in symbol table!" << std::endl;
-			}*/
-
 			this->addCommand(declareCmd);
-
 			break;
 		}
 
 		case 2: { // ADD COMMAND
-			// create add command instance here
-			// then use the addCommand function here
+			uint16_t operand1 = 0, operand2 = 0;
+
+			if (symbolTable.size() >= 2) {
+				int operand1Index;
+				int operand2Index;
+
+				operand1Index = rand() % symbolTable.size();
+				auto iterate = symbolTable.begin();
+				std::advance(iterate, operand1Index);
+				operand1 = iterate->second;
+
+				operand2Index = rand() % symbolTable.size();
+				auto iterate2 = symbolTable.begin();
+				std::advance(iterate2, operand2Index);
+				operand2 = iterate2->second;
+			}
+			else if (symbolTable.size() == 1) {
+				int operand1Index;
+				operand1Index = rand() % symbolTable.size();
+				auto iterate = symbolTable.begin();
+				std::advance(iterate, operand1Index);
+				operand1 = iterate->second;
+				operand2 = 0;
+			}
+			else {
+				operand1 = 0;
+				operand2 = 0;
+			}
+			std::shared_ptr<AddCommand> addCmd = std::make_shared<AddCommand>(operand1, operand2);
+			addCmd->execute();
+			String varName = getUniqueVariableName();
+			symbolTable[varName] = addCmd->getResult();
+			this->addCommand(addCmd);
 			break;
 		}
 
