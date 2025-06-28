@@ -1,7 +1,8 @@
 #pragma once
 #include "ICommand.h"
-#include "Process.h"
 #include <vector>
+
+class Process;
 
 class ForCommand : public ICommand
 {
@@ -13,8 +14,9 @@ public:
 		this->repeats = repeats;
 	}
 	void performForCommand();
-	void performWithLogging(class Process* process, int coreId, int currentDepth = 1);
+	void performWithLogging(Process* process, int coreId, int currentDepth=1);
 	void execute() override;
+	String getOutput() const override;
 
 private:
 	int processID;

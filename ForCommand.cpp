@@ -1,4 +1,5 @@
 #include "ForCommand.h"
+#include "Process.h"
 
 void ForCommand::execute()
 {
@@ -24,31 +25,31 @@ void ForCommand::performForCommand()
 
 void ForCommand::performWithLogging(Process* process, int coreId, int currentDepth)
 {
-	const int MAX_DEPTH = 3;
-	if (currentDepth > MAX_DEPTH) return;
+	process->logInstruction(coreId, "[FOR] Enter depth " + std::to_string(currentDepth) + " with " + std::to_string(repeats) + " repeats");
 
-	std::string indentation(currentDepth * 2, ' ');
-
-	for (int i = 0; i < this->repeats; ++i)
+	for (int i = 0; i < this->repeats; i++)
 	{
-		for (ICommand* instruction : this->instructions)
+		for (ICommand* instruction : instructions)
 		{
-			if (!instruction) continue;
+			if (instruction == nullptr) continue;
 
-			if (auto* nested = dynamic_cast<ForCommand*>(instruction)) {
-				nested->performWithLogging(process, coreId, currentDepth + 1);
+			// If instruction is another FOR, recurse
+			if (auto* nestedFor = dynamic_cast<ForCommand*>(instruction)) {
+				nestedFor->performWithLogging(process, coreId, currentDepth + 1);
 			}
 			else {
 				instruction->execute();
-				String output = instruction->getOutput();
-				output = indentation + output;
-
-				process->logInstruction(coreId, output);
-
-				if (output.find("Debug:: Exit FOR") == String::npos) {
-					process->incrementCommandCounter();
-				}
+				std::string output = instruction->getOutput();
+				if (!output.empty())
+					process->logInstruction(coreId, output);
 			}
 		}
 	}
+
+	process->logInstruction(coreId, "[FOR] Exit depth " + std::to_string(currentDepth));
+}
+
+String ForCommand::getOutput() const {
+	String msg = "[FOR] Executed loop with " + std::to_string(repeats) + " repeats";
+	return msg;
 }
