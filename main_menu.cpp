@@ -10,7 +10,7 @@ typedef std::string String;
 int main() {
 	bool running = true;
 	ConsoleManager::initialize();
-	CPUTick::getInstance()->startAutoTick(100); // ticks every 100 ms
+	CPUTick::getInstance()->startAutoTick(25); // ticks every 100 ms
 	ConsoleManager::getInstance();
 	
 	while (running) {

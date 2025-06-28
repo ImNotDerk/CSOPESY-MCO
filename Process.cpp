@@ -112,7 +112,7 @@ void Process::generateRandomCommands()
 	int noCommands = min + rand() % (max - min + 1);
 
 	for (int i = 0; i < noCommands; i++) {
-		int type = rand() % 3; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
+		int type = 3; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
 
 		switch (type) {
 		case 0: { // PRINT COMMAND
@@ -153,7 +153,7 @@ void Process::generateRandomCommands()
 		}
 
 		case 2: { // ADD COMMAND
-			uint16_t operand1 = 0, operand2 = 0;
+			uint16_t operand1 = 0, operand2 = 0; 
 
 			if (symbolTable.size() >= 2) {
 				int operand1Index;
@@ -202,9 +202,9 @@ void Process::generateRandomCommands()
 		}
 		case 5: { 
 			//const int MAX_DEPTH = 1 + rand() % 3; // Randomly choose max depth between 1 and 3
-			const int MAX_DEPTH = 2;
+			/*const int MAX_DEPTH = 2;
 			const int repeats = 1 + rand() % 4; 
-			generateNestedForCommand(1, MAX_DEPTH, repeats);
+			generateNestedForCommand(1, MAX_DEPTH, repeats);*/
 			break;
 		}
 		}

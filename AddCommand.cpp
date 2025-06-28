@@ -13,6 +13,10 @@ void AddCommand::execute()
 	performAddition();
 }
 
+std::shared_ptr<ICommand> AddCommand::clone() const {
+	return std::make_shared<AddCommand>(*this);
+}
+
 void AddCommand::performAddition()
 {
 	this->var1 = this->var2 + this->var3;

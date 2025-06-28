@@ -5,6 +5,7 @@ class AddCommand : public ICommand
 public:
 	AddCommand(uint16_t var2, uint16_t var3);
 	void performAddition();
+	std::shared_ptr<ICommand> clone() const override;
 	void execute() override;
 	uint16_t getResult() const;
 	String getOutput() const override;
