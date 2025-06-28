@@ -59,7 +59,7 @@ public:
     void printCommands() const;
     void logInstruction(int coreId, String message);
 
-    ICommand* generateNestedForCommand(int currentDepth, int maxDepth);
+    void generateNestedForCommand(int currentDepth, int maxDepth, int repeats);
 
     CommandList getCommandList();
     String getRunningTimestamp();
