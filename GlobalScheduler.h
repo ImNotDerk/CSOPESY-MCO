@@ -7,6 +7,7 @@
 #include "RRScheduler.h"
 #include "Process.h"
 #include "ConsoleManager.h"
+#include "MemoryManager.h" 
 
 // Singleton class to manage the selected scheduler and process list across the application.
 class GlobalScheduler {
@@ -55,4 +56,6 @@ private:
 
     // Core configuration
     int coreCount = 1;
+
+    std::unique_ptr<MemoryManager> memoryManager;
 };
