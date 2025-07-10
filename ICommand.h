@@ -1,6 +1,7 @@
 #pragma once
 #include "IETThread.h"
 #include <string>
+#include <unordered_map>
 
 typedef std::string String;
 

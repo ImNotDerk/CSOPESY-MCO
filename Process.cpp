@@ -15,25 +15,7 @@ void Process::executeCurrentCommand(int coreId)
 
 		commandList[commandCounter]->execute();  // run instruction
 		this->logInstruction(coreId, commandList[commandCounter]->getOutput());
-		this->commandCounter++; // count this single command
-		
-		
-		//ICommand* cmd = commandList[commandCounter].get();
-
-		//if (auto* forCmd = dynamic_cast<ForCommand*>(cmd)) {
-		//	forCmd->performWithLogging(this, coreId, 1); // FOR will increment inside
-		//}
-		//else {
-		//	cmd->execute();
-		//	this->logInstruction(coreId, cmd->getOutput());
-		//}
-		//commandList[commandCounter]->execute();  // run instruction
-		//this->logInstruction(coreId, commandList[commandCounter]->getOutput());
-		//this->commandCounter++; // count this single command
-
-		// Still move to next top-level command
-
-		//this->commandCounterIndex++; // use a separate index if needed
+		this->commandCounter++; // count this single command;
 	}
 }
 
@@ -116,29 +98,8 @@ void Process::generateRandomCommands()
 
 		switch (type) {
 		case 0: { // PRINT COMMAND
-			String msg;
-			if (!symbolTable.empty())
-			{
-				bool msgOrNone = rand() % 2; // 0 for no message, 1 for message
-
-				if (msgOrNone) {
-					int randomIndex = rand() % symbolTable.size();
-					auto it = symbolTable.begin();
-					std::advance(it, randomIndex);
-
-					uint16_t varValue = it->second;
-					msg = "Print value from: " + std::to_string(varValue);
-				}
-				else {
-					msg = "Hello world from " + this->name;
-				}
-			}
-			else 
-			{
-				msg = "Hello world from " + this->name;
-			}
-
-			const std::shared_ptr<ICommand> command = std::make_shared<PrintCommand>(this->pid, msg);
+			
+			const std::shared_ptr<ICommand> command = std::make_shared<PrintCommand>(this->pid, symbolTable);
 			this->addCommand(command);
 			break;
 		}
