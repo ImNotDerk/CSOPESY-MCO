@@ -1,5 +1,10 @@
 # MCO
 
+## S15 G6 Members
+- Derrick M. Valdellon
+- Hans Jared C. Sescon
+- Ghee Kaye S. Lopez
+- Ryu Kisen P. Unisan
 ## Requirements
 - Visual Studio C++ 20
 
