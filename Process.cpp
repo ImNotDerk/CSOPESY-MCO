@@ -95,117 +95,95 @@ void Process::generateRandomCommands()
 	int noCommands = min + rand() % (max - min + 1);
 
 	for (int i = 0; i < noCommands; i++) {
-		int type = rand()% 5; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
+		int type = rand()% 6; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
 
 		switch (type) {
-		case 0: { // PRINT COMMAND
-			auto newCommand = std::make_shared<PrintCommand>(this->pid, this->name, symbolTable);
-			this->addCommand(newCommand);
-			break;
-		}
+			case 0: { // PRINT COMMAND
+				auto newCommand = std::make_shared<PrintCommand>(this->pid, this->name, symbolTable);
+				this->addCommand(newCommand);
+				break;
+			}
 
-		case 1: { // DECLARE COMMAND
-			String varName = "";
-			auto newCommand = std::make_shared<DeclareCommand>(varName, 0, symbolTable);
-			this->addCommand(newCommand);
-			break;
-		}
+			case 1: { // DECLARE COMMAND
+				String varName = "";
+				auto newCommand = std::make_shared<DeclareCommand>(varName, 0, symbolTable);
+				this->addCommand(newCommand);
+				break;
+			}
 
-		case 2: { // ADD COMMAND
-			auto newCommand = std::make_shared<AddCommand>(symbolTable);
-			this->addCommand(newCommand);
-			break;
-		}
+			case 2: { // ADD COMMAND
+				auto newCommand = std::make_shared<AddCommand>(symbolTable);
+				this->addCommand(newCommand);
+				break;
+			}
 
-		case 3: { // SUBTRACT COMMAND
-			auto newCommand = std::make_shared<SubtractCommand>(symbolTable);
-			this->addCommand(newCommand);
-			break;
-		}
+			case 3: { // SUBTRACT COMMAND
+				auto newCommand = std::make_shared<SubtractCommand>(symbolTable);
+				this->addCommand(newCommand);
+				break;
+			}
 
-		case 4: { // SLEEP COMMAND
-			// create sleep command instance here
-			// then use the addCommand function here
-			break;
-		}
-		case 5: { 
-			//const int MAX_DEPTH = 1 + rand() % 3; // Randomly choose max depth between 1 and 3
-			/*const int MAX_DEPTH = 2;
-			const int repeats = 1 + rand() % 4; 
-			generateNestedForCommand(1, MAX_DEPTH, repeats);*/
-			break;
-		}
+			case 4: { // SLEEP COMMAND
+				uint8_t sleepTicks = static_cast<uint8_t>(rand() % 255); // clamp range of uint16_t from 0 to 255
+				auto newCommand = std::make_shared<SleepCommand>(this->pid, sleepTicks);
+				this->addCommand(newCommand);
+				break;
+			}
+			case 5: { 
+				const int MAX_DEPTH = 1 + rand() % 3; // Randomly choose max depth between 1 and 3
+				const int repeats = 1 + rand() % 4; 
+				generateNestedForCommand(1, MAX_DEPTH, repeats); // creates instructions then directly adds to commandList
+				break;
+			}
 		}
 	}
 }
 
 void Process::generateNestedForCommand(int currentDepth, int maxDepth, int repeats) 
 {
-	int repeatsNested = 1 + rand() % 2; // Randomly choose number of repeats
-
-	int noCommands = 1 + rand() % 3; // up to 3 instrucitons
+	int repeatsNested = 1 + rand() % 2;
+	int noCommands = 1 + rand() % 3;
 	std::vector<std::shared_ptr<ICommand>> instructions;
 
-	// Generate Random Commands
 	for (int i = 0; i < noCommands; i++) {
-
-		int instructionType = rand() % 5; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP)
+		int instructionType = rand() % 5; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
 
 		switch (instructionType) {
-			case 0: { // PRINT
-				String msg;
-				if (!symbolTable->empty())
-				{
-					bool msgOrNone = rand() % 2; // 0 for no message, 1 for message
-
-					if (msgOrNone) {
-						int randomIndex = rand() % symbolTable->size();
-						auto it = symbolTable->begin();
-						std::advance(it, randomIndex);
-
-						uint16_t varValue = it->second;
-						msg = "Print value from: " + std::to_string(varValue);
-					}
-					else {
-						msg = "Hello world from " + this->name;
-					}
+			case 0: {
+				auto cmd = std::make_shared<PrintCommand>(this->pid, this->name, symbolTable);
+				instructions.push_back(cmd->clone());
+				break;
+			}
+			case 1: {
+				auto cmd = std::make_shared<DeclareCommand>("", 0, symbolTable);
+				instructions.push_back(cmd->clone());
+				break;
+			}
+			case 2: {
+				auto cmd = std::make_shared<AddCommand>(symbolTable);
+				instructions.push_back(cmd->clone());
+				break;
+			}
+			case 3: {
+				auto cmd = std::make_shared<SubtractCommand>(symbolTable);
+				instructions.push_back(cmd->clone());
+				break;
+			}
+			case 4: {
+				uint8_t ticks = static_cast<uint8_t>(rand() % 255);
+				auto cmd = std::make_shared<SleepCommand>(this->pid, ticks);
+				instructions.push_back(cmd->clone());
+				break;
+			}
+			case 5: {
+				if (currentDepth < maxDepth) {
+					generateNestedForCommand(currentDepth + 1, maxDepth, repeatsNested);
 				}
-				else
-				{
-					msg = "Hello world from " + this->name;
-				}
-				const std::shared_ptr<ICommand> command = std::make_shared<PrintCommand>(this->pid, this->name, symbolTable);
-				this->addCommand(command);
-				instructions.push_back(command->clone());
-				break;
-			}
-			case 1: { // DECLARE
-				//String varName = getUniqueVariableName();
-				//std::shared_ptr<DeclareCommand> declareCmd = std::make_shared<DeclareCommand>(varName, 0);
-				//declareCmd->execute();
-				//symbolTable[declareCmd->getVariableName()] = declareCmd->getValue();
-				//this->addCommand(declareCmd);
-				//instructions.push_back(declareCmd->clone());
-				break;
-			}
-			case 2: { // ADD
-				// Add logic here if implemented
-				break;
-			}
-			case 3: { // SUBTRACT
-				// Add logic here if implemented
-				break;
-			}
-			case 4: { // SLEEP
-				// Add logic here if implemented
-				break;
-			}
-			case 5: { // FOR (only if not at max depth)
-				/*generateNestedForCommand(currentDepth + 1, maxDepth, repeatsNested);*/
 				break;
 			}
 		}
 	}
+
 	for (int r = 0; r < repeats; ++r) {
 		for (const auto& cmd : instructions) {
 			this->addCommand(cmd);
@@ -213,13 +191,24 @@ void Process::generateNestedForCommand(int currentDepth, int maxDepth, int repea
 	}
 }
 
+
 void Process::printCommands() const
 {
 	for (const auto& command : this->commandList) {
-		command->execute(); // Assuming ICommand has a print or execute method to display the command
+		std::cout << "Command Type: ";
+		switch (command->getCommandType()) {
+		case ICommand::PRINT:    std::cout << "PRINT"; break;
+		case ICommand::DECLARE:  std::cout << "DECLARE"; break;
+		case ICommand::ADD:      std::cout << "ADD"; break;
+		case ICommand::SUBTRACT: std::cout << "SUBTRACT"; break;
+		case ICommand::SLEEP:    std::cout << "SLEEP"; break;
+		case ICommand::FOR:      std::cout << "FOR"; break;
+		default:                 std::cout << "UNKNOWN"; break;
+		}
 		std::cout << std::endl;
 	}
 }
+
 
 void Process::logInstruction(int core_id, String message)
 {

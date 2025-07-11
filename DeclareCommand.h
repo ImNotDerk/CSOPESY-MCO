@@ -8,7 +8,7 @@ public:
 
     void declareVariable(const String varName);
     String getVariableName();
-    uint16_t getValue();
+    uint16_t getValue() const;
     String getOutput() const override;
 private:
     String newVar;

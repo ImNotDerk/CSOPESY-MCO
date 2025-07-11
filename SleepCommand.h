@@ -8,8 +8,9 @@ public:
 		this->processID = processID;
 		this->sleepTicks = sleepTicks;
 	}
-
+	std::shared_ptr<ICommand> clone() const override;
 	void execute() override;
+	String getOutput() const;
 
 private:
 	int processID; 

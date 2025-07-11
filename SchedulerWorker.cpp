@@ -52,14 +52,6 @@ void SchedulerWorker::run() {
 
         while (process && !process->isFinished()) {
             process->executeCurrentCommand(coreId);
-
-            if (delays_per_exec > 0) {
-                int startTick = CPUTick::getInstance()->getTicks();
-                while (CPUTick::getInstance()->getTicks() - startTick < delays_per_exec) {
-                    // busy-wait loop
-                    std::this_thread::yield();  // yield CPU to other threads
-                }
-            }
         }
 
         process->setState(Process::FINISHED);

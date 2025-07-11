@@ -99,14 +99,14 @@
     <ClCompile Include="GlobalProcessQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RRScheduler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RRSchedulerWorker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ICommand.cpp">
       <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="RRScheduler.cpp">
+      <Filter>Schedulers</Filter>
+    </ClCompile>
+    <ClCompile Include="RRSchedulerWorker.cpp">
+      <Filter>Threading</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -176,14 +176,14 @@
     <ClInclude Include="GlobalProcessQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RRScheduler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RRSchedulerWorker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ICommand.h">
       <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="RRScheduler.h">
+      <Filter>Schedulers</Filter>
+    </ClInclude>
+    <ClInclude Include="RRSchedulerWorker.h">
+      <Filter>Threading</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

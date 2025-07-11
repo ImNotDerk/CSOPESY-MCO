@@ -42,7 +42,7 @@ String DeclareCommand::getVariableName() {
 	return this->newVar;
 }
 
-uint16_t DeclareCommand::getValue() {
+uint16_t DeclareCommand::getValue() const {
 	return this->value;
 }
 

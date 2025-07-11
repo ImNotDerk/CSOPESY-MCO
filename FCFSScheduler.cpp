@@ -28,7 +28,6 @@ void FCFSScheduler::run()
         while (schedulerRun) 
         {
             execute();
-            //std::this_thread::sleep_for(std::chrono::milliseconds(100));  // simulate CPU tick
         }
     });
 }
