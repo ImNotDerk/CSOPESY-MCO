@@ -64,7 +64,6 @@ public:
     CommandList getCommandList();
     String getRunningTimestamp();
     String getFinishedTimestamp();
-    String getUniqueVariableName(); // used to store a unique var name in an unordered map
     std::vector<String> getLogs();
 
     String stateToString(ProcessState state);

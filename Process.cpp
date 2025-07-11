@@ -99,17 +99,15 @@ void Process::generateRandomCommands()
 
 		switch (type) {
 		case 0: { // PRINT COMMAND
-			auto command = std::make_shared<PrintCommand>(this->pid, this->name, symbolTable);
-			this->addCommand(command);
+			auto newCommand = std::make_shared<PrintCommand>(this->pid, this->name, symbolTable);
+			this->addCommand(newCommand);
 			break;
 		}
 
 		case 1: { // DECLARE COMMAND
-			String varName = getUniqueVariableName();
-			std::shared_ptr<DeclareCommand> declareCmd = std::make_shared<DeclareCommand>(varName, 0); // 0 placeholder since uint16_t declaration must be in DeclareCommand's execute()
-			declareCmd->execute();
-			(*symbolTable)[declareCmd->getVariableName()] = declareCmd->getValue();
-			this->addCommand(declareCmd);
+			String varName = "";
+			auto newCommand = std::make_shared<DeclareCommand>(varName, 0, symbolTable);
+			this->addCommand(newCommand);
 			break;
 		}
 
@@ -252,19 +250,6 @@ void Process::printCommands() const
 		command->execute(); // Assuming ICommand has a print or execute method to display the command
 		std::cout << std::endl;
 	}
-}
-
-String Process::getUniqueVariableName() {
-	int varCounter = 0;
-	String varName = "var";
-	String newKey;
-
-	do {
-		newKey = varName + std::to_string(varCounter);
-		varCounter++;
-	} while (symbolTable->find(newKey) != symbolTable->end());
-
-	return newKey;
 }
 
 void Process::logInstruction(int core_id, String message)

@@ -2,7 +2,7 @@
 #include "ICommand.h"
 class DeclareCommand : public ICommand {
 public:
-    DeclareCommand(const String& varName, uint16_t value);
+    DeclareCommand(const String& varName, uint16_t value, std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable);
     std::shared_ptr<ICommand> clone() const;
     void execute() override;
 
@@ -11,6 +11,8 @@ public:
     uint16_t getValue();
     String getOutput() const override;
 private:
-    String var;
+    String newVar;
     uint16_t value;
+    void getUniqueVariableName();
+    std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable;
 };
