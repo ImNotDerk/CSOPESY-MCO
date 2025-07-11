@@ -4,6 +4,7 @@ Process::Process(int pid, String name) {
 	this->pid = pid;
 	this->name = name;
 	this->commandCounter = 0;
+	this->symbolTable = std::make_shared<Symbol_Table>();
 	this->generateRandomCommands();
 	this->currentState = Process::ProcessState::READY;
 }
@@ -98,8 +99,7 @@ void Process::generateRandomCommands()
 
 		switch (type) {
 		case 0: { // PRINT COMMAND
-			
-			const std::shared_ptr<ICommand> command = std::make_shared<PrintCommand>(this->pid, symbolTable);
+			auto command = std::make_shared<PrintCommand>(this->pid, this->name, symbolTable);
 			this->addCommand(command);
 			break;
 		}
@@ -108,45 +108,45 @@ void Process::generateRandomCommands()
 			String varName = getUniqueVariableName();
 			std::shared_ptr<DeclareCommand> declareCmd = std::make_shared<DeclareCommand>(varName, 0); // 0 placeholder since uint16_t declaration must be in DeclareCommand's execute()
 			declareCmd->execute();
-			symbolTable[declareCmd->getVariableName()] = declareCmd->getValue();
+			(*symbolTable)[declareCmd->getVariableName()] = declareCmd->getValue();
 			this->addCommand(declareCmd);
 			break;
 		}
 
 		case 2: { // ADD COMMAND
-			uint16_t operand1 = 0, operand2 = 0; 
+			//uint16_t operand1 = 0, operand2 = 0; 
 
-			if (symbolTable.size() >= 2) {
-				int operand1Index;
-				int operand2Index;
+			//if (symbolTable.size() >= 2) {
+			//	int operand1Index;
+			//	int operand2Index;
 
-				operand1Index = rand() % symbolTable.size();
-				auto iterate = symbolTable.begin();
-				std::advance(iterate, operand1Index);
-				operand1 = iterate->second;
+			//	operand1Index = rand() % symbolTable.size();
+			//	auto iterate = symbolTable.begin();
+			//	std::advance(iterate, operand1Index);
+			//	operand1 = iterate->second;
 
-				operand2Index = rand() % symbolTable.size();
-				auto iterate2 = symbolTable.begin();
-				std::advance(iterate2, operand2Index);
-				operand2 = iterate2->second;
-			}
-			else if (symbolTable.size() == 1) {
-				int operand1Index;
-				operand1Index = rand() % symbolTable.size();
-				auto iterate = symbolTable.begin();
-				std::advance(iterate, operand1Index);
-				operand1 = iterate->second;
-				operand2 = 0;
-			}
-			else {
-				operand1 = 0;
-				operand2 = 0;
-			}
-			std::shared_ptr<AddCommand> addCmd = std::make_shared<AddCommand>(operand1, operand2);
-			addCmd->execute();
-			String varName = getUniqueVariableName();
-			symbolTable[varName] = addCmd->getResult();
-			this->addCommand(addCmd);
+			//	operand2Index = rand() % symbolTable.size();
+			//	auto iterate2 = symbolTable.begin();
+			//	std::advance(iterate2, operand2Index);
+			//	operand2 = iterate2->second;
+			//}
+			//else if (symbolTable.size() == 1) {
+			//	int operand1Index;
+			//	operand1Index = rand() % symbolTable.size();
+			//	auto iterate = symbolTable.begin();
+			//	std::advance(iterate, operand1Index);
+			//	operand1 = iterate->second;
+			//	operand2 = 0;
+			//}
+			//else {
+			//	operand1 = 0;
+			//	operand2 = 0;
+			//}
+			//std::shared_ptr<AddCommand> addCmd = std::make_shared<AddCommand>(operand1, operand2);
+			//addCmd->execute();
+			//String varName = getUniqueVariableName();
+			//symbolTable[varName] = addCmd->getResult();
+			//this->addCommand(addCmd);
 			break;
 		}
 
@@ -187,13 +187,13 @@ void Process::generateNestedForCommand(int currentDepth, int maxDepth, int repea
 		switch (instructionType) {
 			case 0: { // PRINT
 				String msg;
-				if (!symbolTable.empty())
+				if (!symbolTable->empty())
 				{
 					bool msgOrNone = rand() % 2; // 0 for no message, 1 for message
 
 					if (msgOrNone) {
-						int randomIndex = rand() % symbolTable.size();
-						auto it = symbolTable.begin();
+						int randomIndex = rand() % symbolTable->size();
+						auto it = symbolTable->begin();
 						std::advance(it, randomIndex);
 
 						uint16_t varValue = it->second;
@@ -207,18 +207,18 @@ void Process::generateNestedForCommand(int currentDepth, int maxDepth, int repea
 				{
 					msg = "Hello world from " + this->name;
 				}
-				const std::shared_ptr<ICommand> command = std::make_shared<PrintCommand>(this->pid, msg);
+				const std::shared_ptr<ICommand> command = std::make_shared<PrintCommand>(this->pid, this->name, symbolTable);
 				this->addCommand(command);
 				instructions.push_back(command->clone());
 				break;
 			}
 			case 1: { // DECLARE
-				String varName = getUniqueVariableName();
-				std::shared_ptr<DeclareCommand> declareCmd = std::make_shared<DeclareCommand>(varName, 0);
-				declareCmd->execute();
-				symbolTable[declareCmd->getVariableName()] = declareCmd->getValue();
-				this->addCommand(declareCmd);
-				instructions.push_back(declareCmd->clone());
+				//String varName = getUniqueVariableName();
+				//std::shared_ptr<DeclareCommand> declareCmd = std::make_shared<DeclareCommand>(varName, 0);
+				//declareCmd->execute();
+				//symbolTable[declareCmd->getVariableName()] = declareCmd->getValue();
+				//this->addCommand(declareCmd);
+				//instructions.push_back(declareCmd->clone());
 				break;
 			}
 			case 2: { // ADD
@@ -262,7 +262,7 @@ String Process::getUniqueVariableName() {
 	do {
 		newKey = varName + std::to_string(varCounter);
 		varCounter++;
-	} while (symbolTable.find(newKey) != symbolTable.end());
+	} while (symbolTable->find(newKey) != symbolTable->end());
 
 	return newKey;
 }

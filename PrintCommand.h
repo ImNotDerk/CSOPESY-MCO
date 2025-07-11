@@ -12,6 +12,6 @@ public:
 private:
 	String toPrint;
 	String processName;
-	std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable;;
+	std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable;
 };
 

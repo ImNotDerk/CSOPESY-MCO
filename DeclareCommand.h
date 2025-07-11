@@ -6,7 +6,7 @@ public:
     std::shared_ptr<ICommand> clone() const;
     void execute() override;
 
-    void declareVariable(const String& varName);
+    void declareVariable(const String varName);
     String getVariableName();
     uint16_t getValue();
     String getOutput() const override;

@@ -12,31 +12,31 @@ std::shared_ptr<ICommand> PrintCommand::clone() const {
 void PrintCommand::execute()
 {
 	ICommand::execute();
-	std::cout << toPrint << std::endl;
+	setString();
 }
 
 void PrintCommand::setString()
 {
-	if (!symbolTable->empty())
-	{
-		bool msgOrNone = rand() % 2; // 0 for no message, 1 for message
+    if (symbolTable && !symbolTable->empty())
+    {
+        bool msgOrNone = rand() % 2; // 0 for no message, 1 for message
 
-		if (msgOrNone) {
-			int randomIndex = rand() % symbolTable->size();
-			auto it = symbolTable->begin();
-			std::advance(it, randomIndex);
+        if (msgOrNone) {
+            int randomIndex = rand() % symbolTable->size();
+            auto it = symbolTable->begin();
+            std::advance(it, randomIndex);
 
-			uint16_t varValue = it->second;
-			toPrint = "Print value from: " + std::to_string(varValue);
-		}
-		else {
-			toPrint = "Hello world from " + processName;
-		}
-	}
-	else
-	{
-		toPrint = "Hello world from " + processName;
-	}
+            uint16_t varValue = it->second;
+            toPrint = "Print value from: " + std::to_string(varValue);
+        }
+        else {
+            toPrint = "Hello world from " + processName;
+        }
+    }
+    else {
+        toPrint = "Hello world from " + processName;
+    }
+
 }
 
 String PrintCommand::getOutput() const

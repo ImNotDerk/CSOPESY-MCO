@@ -75,7 +75,7 @@ private:
     int pid;
     String name;
     CommandList commandList;
-    Symbol_Table symbolTable;
+    std::shared_ptr<Symbol_Table> symbolTable;
 
     int commandCounter;
     int commandCounterIndex;
