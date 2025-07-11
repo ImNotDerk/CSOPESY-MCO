@@ -35,6 +35,7 @@ void DeclareCommand::getUniqueVariableName() {
 void DeclareCommand::declareVariable(const String varName) {
 	this->newVar = varName;
 	this->value = static_cast<uint16_t>(rand() % 65536); // clamp range of uint16_t from 0 to 65535
+	(*symbolTable)[newVar] = value;
 }
 
 String DeclareCommand::getVariableName() {

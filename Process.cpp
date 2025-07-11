@@ -112,45 +112,14 @@ void Process::generateRandomCommands()
 		}
 
 		case 2: { // ADD COMMAND
-			//uint16_t operand1 = 0, operand2 = 0; 
-
-			//if (symbolTable.size() >= 2) {
-			//	int operand1Index;
-			//	int operand2Index;
-
-			//	operand1Index = rand() % symbolTable.size();
-			//	auto iterate = symbolTable.begin();
-			//	std::advance(iterate, operand1Index);
-			//	operand1 = iterate->second;
-
-			//	operand2Index = rand() % symbolTable.size();
-			//	auto iterate2 = symbolTable.begin();
-			//	std::advance(iterate2, operand2Index);
-			//	operand2 = iterate2->second;
-			//}
-			//else if (symbolTable.size() == 1) {
-			//	int operand1Index;
-			//	operand1Index = rand() % symbolTable.size();
-			//	auto iterate = symbolTable.begin();
-			//	std::advance(iterate, operand1Index);
-			//	operand1 = iterate->second;
-			//	operand2 = 0;
-			//}
-			//else {
-			//	operand1 = 0;
-			//	operand2 = 0;
-			//}
-			//std::shared_ptr<AddCommand> addCmd = std::make_shared<AddCommand>(operand1, operand2);
-			//addCmd->execute();
-			//String varName = getUniqueVariableName();
-			//symbolTable[varName] = addCmd->getResult();
-			//this->addCommand(addCmd);
+			auto newCommand = std::make_shared<AddCommand>(symbolTable);
+			this->addCommand(newCommand);
 			break;
 		}
 
 		case 3: { // SUBTRACT COMMAND
-			// create subtract command instance here
-			// then use the addCommand function here
+			auto newCommand = std::make_shared<SubtractCommand>(symbolTable);
+			this->addCommand(newCommand);
 			break;
 		}
 

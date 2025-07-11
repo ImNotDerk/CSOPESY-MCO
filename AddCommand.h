@@ -3,16 +3,19 @@
 class AddCommand : public ICommand
 {
 public:
-	AddCommand(uint16_t var2, uint16_t var3);
-	void performAddition();
+	AddCommand(std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable);
 	std::shared_ptr<ICommand> clone() const override;
 	void execute() override;
-	uint16_t getResult() const;
 	String getOutput() const override;
 
 private:
-	uint16_t var1; // result
+	String var1; // variable name for result
 	uint16_t var2; // value 1
 	uint16_t var3; // value 2
+	std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable;
+	void setVariablesForAddition();
+	void getUniqueVariableName();
+	void performAddition();
+	uint16_t getResult() const;
 };
 
