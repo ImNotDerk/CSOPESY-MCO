@@ -2,6 +2,7 @@
 #include <algorithm>  // For std::all_of
 #include <fstream>    // For file output
 #include <unordered_set> // For getAllocatedProcessCount
+#include <string>   // For std::to_string
 
 MemoryManager::MemoryManager(int totalMemory, int frameSize, int procSize)
     : totalMemory(totalMemory), frameSize(frameSize), procSize(procSize) {
@@ -27,25 +28,39 @@ int MemoryManager::getExternalFragmentation() const {
 }
 
 void MemoryManager::saveMemorySnapshot(int cycle) const {
-    std::ofstream file("memory_stamp_" + std::to_string(cycle) + ".txt");
+    // 1. Create the filename in a separate string variable first.
+    std::string filename = "memory_stamp_" + std::to_string(cycle) + ".txt";
+
+    // 2. Pass the named variable to the ofstream constructor.
+    std::ofstream file(filename);
+
+    // Check if the file opened successfully (good practice)
+    if (!file.is_open()) {
+        // Handle error, maybe print to console
+        return;
+    }
+
     file << "Timestamp: " << cycle << "\n";
     file << "Processes in memory: " << getAllocatedProcessCount() << "\n";
     file << "External Fragmentation: " << getExternalFragmentation() << " KB\n";
     file << "Memory Snapshot:\n";
 
-    // Print memory snapshot (each process in memory or free space)
+    // Print memory snapshot
     for (size_t i = 0; i < memory.size(); ++i) {
-        if (i % 10 == 0) file << "\n";  // Formatting for readability
-        file << memory[i] << " ";  // 0 = free, process ID > 0
+        if (i > 0 && i % 10 == 0) file << "\n"; // Add newline for formatting
+        file << memory[i] << " ";
     }
     file << "\n";
+
+    // The file will be automatically closed when 'file' goes out of scope.
 }
 
 int MemoryManager::getAllocatedProcessCount() const {
     std::unordered_set<int> allocatedProcesses;
-    // Iterate through memory and add process IDs to set
     for (int i : memory) {
-        if (i != 0) allocatedProcesses.insert(i);
+        if (i != 0) {
+            allocatedProcesses.insert(i);
+        }
     }
-    return allocatedProcesses.size();  // Return the number of unique processes
+    return allocatedProcesses.size();
 }
