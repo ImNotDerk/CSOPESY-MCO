@@ -1,6 +1,9 @@
 #pragma once
 #include "IETThread.h"
+#include "ConfigReader.h"
+#include <unordered_map>
 #include <string>
+#include <random>
 
 typedef std::string String;
 
@@ -27,4 +30,5 @@ public:
 protected:
 	int processID;
 	CommandType commandType;
+
 };

@@ -3,19 +3,19 @@
 class SubtractCommand : public ICommand
 {
 public:
-	SubtractCommand(int processID, uint16_t var1, uint16_t var2, uint16_t var3) : ICommand(processID, CommandType::ADD)
-	{
-		this->var1 = var1;
-		this->var2 = var2;
-		this->var3 = var3;
-	}
-
-	uint16_t performSubtraction();
+	SubtractCommand(std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable);
+	std::shared_ptr<ICommand> clone() const override;
 	void execute() override;
+	String getOutput() const override;
 
 private:
-	uint16_t var1; // result
+	String var1; // variable name for result
 	uint16_t var2; // value 1
 	uint16_t var3; // value 2
+	std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable;
+	void setVariablesForSubtraction();
+	void getUniqueVariableName();
+	void performSubtraction();
+	uint16_t getResult() const;
 };
 

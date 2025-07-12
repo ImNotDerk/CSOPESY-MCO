@@ -62,13 +62,6 @@ void RRSchedulerWorker::run() {
                 process->executeCurrentCommand(coreId);
                 lastExecutedTick = currentTick;
                 executedAtLeastOnce = true;
-
-                if (delays_per_exec > 0) {
-                    int delayStart = CPUTick::getInstance()->getTicks();
-                    while (CPUTick::getInstance()->getTicks() - delayStart < delays_per_exec) {
-                        std::this_thread::yield();
-                    }
-                }
             }
 
             // Preempt if quantum expired and we've executed at least once

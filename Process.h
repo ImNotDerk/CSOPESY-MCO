@@ -64,7 +64,6 @@ public:
     CommandList getCommandList();
     String getRunningTimestamp();
     String getFinishedTimestamp();
-    String getUniqueVariableName(); // used to store a unique var name in an unordered map
     std::vector<String> getLogs();
 
     String stateToString(ProcessState state);
@@ -75,7 +74,7 @@ private:
     int pid;
     String name;
     CommandList commandList;
-    Symbol_Table symbolTable;
+    std::shared_ptr<Symbol_Table> symbolTable;
 
     int commandCounter;
     int commandCounterIndex;

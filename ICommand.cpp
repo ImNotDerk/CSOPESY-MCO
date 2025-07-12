@@ -5,9 +5,8 @@ ICommand::CommandType ICommand::getCommandType() {
 }
 
 void ICommand::execute() {
-	IETThread::sleep(10);
 
-	//IETThread::sleep(Delay::PER_INSTRUCTION_DELAY)
+	IETThread::sleep(ConfigReader::getInstance()->getDelays());
 }
 
 ICommand::ICommand(int processID, CommandType commandType) {
