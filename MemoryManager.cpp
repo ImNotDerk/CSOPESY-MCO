@@ -51,7 +51,6 @@ bool MemoryManager::isAllocated(int processID) const {
 }
 
 int MemoryManager::getExternalFragmentation() const {
-    // Count the number of free frames and convert to KB
     int freeSpace = std::count(memory.begin(), memory.end(), 0);
     return freeSpace * memPerProc;
 }
@@ -76,7 +75,7 @@ void MemoryManager::saveMemorySnapshot(int cycle) const {
 
     file << "Timestamp: (" << timeStr << ") " << "\n";
     file << "Processes in memory: " << getAllocatedProcessCount() << "\n";
-    file << "External Fragmentation: " << getExternalFragmentation() << " KB\n";
+    file << "Total external fragmentation in KB: " << getExternalFragmentation() << "\n";
     file << "Memory Snapshot:\n";
 
     file << "---end--- = " << maxOverallMemory << "\n";
