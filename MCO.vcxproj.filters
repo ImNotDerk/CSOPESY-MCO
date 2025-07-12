@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
@@ -90,6 +90,9 @@
     <ClCompile Include="ConfigReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ICommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
     <ClCompile Include="GlobalScheduler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -99,14 +102,14 @@
     <ClCompile Include="GlobalProcessQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ICommand.cpp">
-      <Filter>Commands</Filter>
-    </ClCompile>
     <ClCompile Include="RRScheduler.cpp">
       <Filter>Schedulers</Filter>
     </ClCompile>
     <ClCompile Include="RRSchedulerWorker.cpp">
       <Filter>Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryManager.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -124,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="MainConsole.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ICommand.h">
+      <Filter>Commands</Filter>
     </ClInclude>
     <ClInclude Include="CommandPrinter.h">
       <Filter>Header Files</Filter>
@@ -176,14 +182,14 @@
     <ClInclude Include="GlobalProcessQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ICommand.h">
-      <Filter>Commands</Filter>
-    </ClInclude>
     <ClInclude Include="RRScheduler.h">
       <Filter>Schedulers</Filter>
     </ClInclude>
     <ClInclude Include="RRSchedulerWorker.h">
       <Filter>Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryManager.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
