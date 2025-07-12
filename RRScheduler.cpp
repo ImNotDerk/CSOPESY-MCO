@@ -47,14 +47,20 @@ void RRScheduler::execute() {
             if (process && process->getState() == Process::WAITING) {
                 process->setState(Process::READY);
             }
-            else if (process && process->getState() == Process::FINISHED) {
-            }
 
             auto nextProcess = GlobalProcessQueue::getInstance().pop();
             if (nextProcess) {
-                nextProcess->setState(Process::RUNNING);
-                worker->assignProcess(nextProcess);
-                worker->start();
+                bool alreadyAllocated = MemoryManager::getInstance()->isAllocated(nextProcess->getPID());
+                bool memAllocated = alreadyAllocated || MemoryManager::getInstance()->allocateMemory(nextProcess->getPID());
+                if (memAllocated) {
+                    nextProcess->setState(Process::RUNNING);
+                    worker->assignProcess(nextProcess);
+                    worker->start();
+                }
+                else {
+                    // Not enough memory, optionally push back to queue
+                    GlobalProcessQueue::getInstance().push(nextProcess);
+                }
             }
         }
     }

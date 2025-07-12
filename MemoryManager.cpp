@@ -1,60 +1,101 @@
 #include "MemoryManager.h"  // Include the header file for MemoryManager
-#include <algorithm>  // For std::all_of
-#include <fstream>    // For file output
-#include <unordered_set> // For getAllocatedProcessCount
-#include <string>   // For std::to_string
 
-MemoryManager::MemoryManager(int totalMemory, int frameSize, int procSize)
-    : totalMemory(totalMemory), frameSize(frameSize), procSize(procSize) {
-    memory.resize(totalMemory / frameSize, 0);  // 0 means free
+MemoryManager* MemoryManager::sharedInstance = nullptr;
+
+void MemoryManager::initialize(int maxOverallMemory, int memFrameSize, int memPerProc) {
+    if(sharedInstance == nullptr) {
+        sharedInstance = new MemoryManager(maxOverallMemory, memFrameSize, memPerProc);
+	}
+}
+
+void MemoryManager::destroy() {
+    if (sharedInstance != nullptr) {
+        delete sharedInstance;
+        sharedInstance = nullptr;
+    }
+}
+
+MemoryManager* MemoryManager::getInstance() {
+    return sharedInstance;
 }
 
 bool MemoryManager::allocateMemory(int processID) {
-    int numFrames = procSize / frameSize;
-    for (size_t i = 0; i <= memory.size() - numFrames; ++i) {
-        // Check if there are enough consecutive free frames to allocate the process
-        if (std::all_of(memory.begin() + i, memory.begin() + i + numFrames, [](int x) { return x == 0; })) {
-            std::fill(memory.begin() + i, memory.begin() + i + numFrames, processID);  // Mark as allocated
+    // Check if the process is already allocated
+    if (isAllocated(processID)) {
+        return false; // Process already has a frame
+    }
+
+    // Find the first free frame and allocate the process
+    for (int& frame : memory) {
+        if (frame == 0) {
+            frame = processID;
             return true;
         }
     }
-    return false;  // No space available
+    return false; // No free frame available
+}
+
+bool MemoryManager::deallocateMemory(int processID) {
+    bool deallocated = false;
+    for (int& frame : memory) {
+        if (frame == processID) {
+            frame = 0;
+            deallocated = true;
+        }
+    }
+    return deallocated;
+}
+
+bool MemoryManager::isAllocated(int processID) const {
+    return std::find(memory.begin(), memory.end(), processID) != memory.end();
 }
 
 int MemoryManager::getExternalFragmentation() const {
     // Count the number of free frames and convert to KB
     int freeSpace = std::count(memory.begin(), memory.end(), 0);
-    return freeSpace * frameSize / 1024;  // Convert to KB
+    return freeSpace * memPerProc;
 }
 
 void MemoryManager::saveMemorySnapshot(int cycle) const {
-    // 1. Create the filename in a separate string variable first.
-    std::string filename = "memory_stamp_" + std::to_string(cycle) + ".txt";
-
-    // 2. Pass the named variable to the ofstream constructor.
+    std::string folder = "snapshots";
+    std::string filename = folder + "/memory_stamp_" + std::to_string(cycle) + ".txt";
     std::ofstream file(filename);
 
-    // Check if the file opened successfully (good practice)
     if (!file.is_open()) {
-        // Handle error, maybe print to console
         return;
     }
 
-    file << "Timestamp: " << cycle << "\n";
+    // Get current time as string using std::chrono and localtime_s
+    auto now = std::chrono::system_clock::now();
+    std::time_t time_t_now = std::chrono::system_clock::to_time_t(now);
+    std::tm tm;
+    localtime_s(&tm, &time_t_now);
+
+    char timeStr[64];
+    std::strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", &tm);
+
+    file << "Timestamp: (" << timeStr << ") " << "\n";
     file << "Processes in memory: " << getAllocatedProcessCount() << "\n";
     file << "External Fragmentation: " << getExternalFragmentation() << " KB\n";
     file << "Memory Snapshot:\n";
 
-    // Print memory snapshot
-    for (size_t i = 0; i < memory.size(); ++i) {
-        if (i > 0 && i % 10 == 0) file << "\n"; // Add newline for formatting
-        file << memory[i] << " ";
+    file << "---end--- = " << maxOverallMemory << "\n";
+    int addr = maxOverallMemory;
+    for (int i = memory.size() - 1; i >= 0; --i) {
+        if (memory[i] != 0) {
+            file << "\n";
+            file << addr << "\n";
+            file << "P" << memory[i] << "\n";
+            addr -= memPerProc;
+            file << addr << "\n";
+        }
+        else {
+            addr -= memPerProc; // still decrease addr even if not printing
+        }
     }
-    file << "\n";
 
-    // The file will be automatically closed when 'file' goes out of scope.
+    file << "\n---start--- = 0\n";
 }
-
 int MemoryManager::getAllocatedProcessCount() const {
     std::unordered_set<int> allocatedProcesses;
     for (int i : memory) {
@@ -64,3 +105,22 @@ int MemoryManager::getAllocatedProcessCount() const {
     }
     return allocatedProcesses.size();
 }
+
+void MemoryManager::setMaxOverallMemory(int maxOverallMemory) {
+	this->maxOverallMemory = maxOverallMemory;
+}
+
+void MemoryManager::setMemPerFrame(int memFrameSize) {
+    this->memPerFrame = memFrameSize;
+}
+
+void MemoryManager::setMemPerProc(int memPerProc) {
+    this->memPerProc = memPerProc;
+}
+
+MemoryManager::MemoryManager(int maxOverallMemory, int memPerFrame, int memPerProc)
+    : maxOverallMemory(maxOverallMemory), memPerFrame(memPerFrame), memPerProc(memPerProc) {
+	this->numFrames = maxOverallMemory / memPerProc; // Calculate number of frames
+    this->memory.resize(numFrames, 0);
+}
+

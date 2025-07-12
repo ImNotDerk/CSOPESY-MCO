@@ -12,8 +12,6 @@ GlobalScheduler* GlobalScheduler::instance = nullptr;
 GlobalScheduler::GlobalScheduler() {
     // Default: use FCFS scheduler
     this->scheduler = std::make_shared<FCFSScheduler>();
-    // Initialize memory manager with total memory size, frame size, and process size
-    memoryManager = std::make_unique<MemoryManager>(16384, 16, 4096); // 16384 bytes total memory, 16 bytes per frame, 4096 bytes per process
 }
 
 GlobalScheduler::~GlobalScheduler() {
@@ -64,21 +62,18 @@ void GlobalScheduler::schedulerStart() {
                 auto process = std::make_shared<Process>(i, name);
 
                 // Attempt to allocate memory for the process
-                if (memoryManager->allocateMemory(i)) {
+                if (MemoryManager::getInstance()->allocateMemory(i)) {
                     ConsoleManager::getInstance()->createBaseScreen(process, false);
                     processList.push_back(process);
                     this->scheduler->addProcess(process, -1);
                 }
                 else {
-                    std::cout << "Memory allocation failed for process: " << name << std::endl;
+                    ConsoleManager::getInstance()->createBaseScreen(process, false);
+                    processList.push_back(process);
+                    this->scheduler->addProcess(process, -1);
                 }
 
                 lastSpawnTick = currentTick; // Update last spawn tick
-            }
-
-            // Periodically save memory snapshots
-            if (currentTick % 10 == 0) {  // Save snapshot every 10 ticks
-                memoryManager->saveMemorySnapshot(currentTick);
             }
 
             std::this_thread::sleep_for(std::chrono::milliseconds(30)); // Keep thread responsive

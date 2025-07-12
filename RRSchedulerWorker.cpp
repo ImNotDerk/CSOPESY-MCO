@@ -12,6 +12,17 @@ void RRSchedulerWorker::start() {
     if (!running) {
         running = true;
         workerThread = std::thread(&RRSchedulerWorker::run, this);
+        // Start a snapshot thread that runs alongside the worker thread
+        snapshotThread = std::thread([this]() {
+            while (running) {
+                int currentTick = CPUTick::getInstance()->getTicks();
+                int quantum = ConfigReader::getInstance()->getQuantum();
+                if (currentTick % quantum == 0) {
+                    MemoryManager::getInstance()->saveMemorySnapshot(currentTick);
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(10)); // adjust as needed
+            }
+            });
     }
 }
 
@@ -20,6 +31,9 @@ void RRSchedulerWorker::stop() {
     cv.notify_all();
     if (workerThread.joinable()) {
         workerThread.join();
+    }
+    if (snapshotThread.joinable()) {
+        snapshotThread.join();
     }
 }
 
@@ -79,6 +93,7 @@ void RRSchedulerWorker::run() {
         }
         else if (process && process->isFinished()) {
             process->setState(Process::FINISHED);
+            MemoryManager::getInstance()->deallocateMemory(process->getPID());
         }
 
         lock.lock();

@@ -8,6 +8,7 @@
 #include "Process.h"
 #include "AScheduler.h"
 #include "RRSchedulerWorker.h"
+#include "MemoryManager.h"
 // Round Robin Scheduler
 class RRScheduler : public AScheduler
 {

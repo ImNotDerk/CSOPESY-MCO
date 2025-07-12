@@ -116,9 +116,6 @@ void ConsoleManager::returnToPreviousConsole()
 		std::cerr << "No previous console to return to." << std::endl;
 		return;
 	}
-
-	/*this->consoleTable[screenRef->getName()] = screenRef;*/
-
 }
 
 void ConsoleManager::switchToScreen(String screenName)

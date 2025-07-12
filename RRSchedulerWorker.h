@@ -10,6 +10,7 @@
 #include "CPUTick.h"
 #include "ConfigReader.h"
 #include "GlobalProcessQueue.h"
+#include "MemoryManager.h"
 
 class RRSchedulerWorker : public IETThread 
 {
@@ -31,6 +32,7 @@ public:
 private: 
 	int coreId;
 	std::thread workerThread;
+	std::thread snapshotThread;
 	std::atomic<bool> running;
 	std::atomic<bool> busy;
 	std::atomic<bool> preemptRequested;

@@ -26,6 +26,9 @@ public:
 	int getMinIns();
 	int getMaxIns();
 	int getDelays();
+	int getMaxOverallMem();
+	int getMemPerFrame();
+	int getMemPerProc();
 
 private:
 	ConfigReader();
@@ -41,5 +44,8 @@ private:
 	int min_ins;
 	int max_ins;
 	int delays;
+	int max_overall_mem;
+	int mem_per_frame;
+	int mem_per_proc;
 };
 
