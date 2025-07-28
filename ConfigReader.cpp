@@ -83,7 +83,13 @@ void ConfigReader::assignParams(int index) {
 			this->mem_per_frame = std::stoi(paramsList[8]);
         }
         else if (index == 9) {
-			this->mem_per_proc = std::stoi(paramsList[9]);
+			this->min_mem_per_proc = std::stoi(paramsList[9]);
+        } 
+        else if (index == 10) {
+            this->max_mem_per_proc = std::stoi(paramsList[10]);
+        }
+		else { // Will not be reached at all, but just in case
+			throw std::out_of_range("Index out of range"); // If index is out of range, throw an exception
         }
     }
     catch (const std::out_of_range& e) {
@@ -111,7 +117,8 @@ void ConfigReader::testPrint() { // debug test to check if working
     std::cout << "delays = " << getDelays() << std::endl;
 	std::cout << "max_overall_mem = " << getMaxOverallMem() << std::endl;
 	std::cout << "mem_per_frame = " << getMemPerFrame() << std::endl;
-	std::cout << "mem_per_proc = " << getMemPerProc() << std::endl;
+	std::cout << "min_mem_per_proc = " << getMinMemPerProc() << std::endl;
+	std::cout << "max_mem_per_proc = " << getMaxMemPerProc() << std::endl;
 }
 
 int ConfigReader::getNumCPU() {
@@ -150,8 +157,12 @@ int ConfigReader::getMemPerFrame() {
     return this->mem_per_frame;
 }
 
-int ConfigReader::getMemPerProc() {
-    return this->mem_per_proc;
+int ConfigReader::getMinMemPerProc() {
+    return this->min_mem_per_proc;
+}
+
+int ConfigReader::getMaxMemPerProc() {
+    return this->max_mem_per_proc;
 }
 
 ConfigReader::ConfigReader() {
@@ -164,5 +175,6 @@ ConfigReader::ConfigReader() {
     delays = 0;
     max_overall_mem = 0;
 	mem_per_frame = 0;
-    mem_per_proc = 0;
+    min_mem_per_proc = 0;
+    max_mem_per_proc = 0;
 }
