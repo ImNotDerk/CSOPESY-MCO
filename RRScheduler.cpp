@@ -51,7 +51,7 @@ void RRScheduler::execute() {
             auto nextProcess = GlobalProcessQueue::getInstance().pop();
             if (nextProcess) {
                 bool alreadyAllocated = MemoryManager::getInstance()->isAllocated(nextProcess->getPID());
-                bool memAllocated = alreadyAllocated || MemoryManager::getInstance()->allocateMemory(nextProcess->getPID());
+                bool memAllocated = alreadyAllocated || MemoryManager::getInstance()->allocateMemory(nextProcess->getPID(), nextProcess->getMemSize());
                 if (memAllocated) {
                     nextProcess->setState(Process::RUNNING);
                     worker->assignProcess(nextProcess);

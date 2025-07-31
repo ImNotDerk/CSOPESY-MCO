@@ -45,7 +45,17 @@ void GlobalScheduler::selectScheduler(const std::string& algoName) {
     }
 }
 
-// Assign dummy processes to the scheduler and start it
+int GlobalScheduler::getRandomMemSize(int minMem, int maxMem)
+{
+    int minExp = static_cast<int>(log2(minMem));
+    int maxExp = static_cast<int>(log2(maxMem));
+
+    int randExp = minExp + rand() % (maxExp - minExp + 1);
+
+    return 1 << randExp;
+}
+
+// Generate dummy processes and assign them to the scheduler
 void GlobalScheduler::schedulerStart() {
     scheduler_start = true;
     int lastSpawnTick = 0;
@@ -58,11 +68,20 @@ void GlobalScheduler::schedulerStart() {
             if ((currentTick - lastSpawnTick) >= batchFreq) {
                 int i = getProcessCount();
                 i++;
-                std::string name = "process_" + std::to_string(i);
-                auto process = std::make_shared<Process>(i, name);
+
+				// Create a new process with a unique ID, name, and random memory size
+
+                std::string name = "process_" + std::to_string(i); // Generate name based of process number
+
+				int minMem = ConfigReader::getInstance()->getMinMemPerProc();
+				int maxMem = ConfigReader::getInstance()->getMaxMemPerProc();
+
+				int memSize = getRandomMemSize(minMem, maxMem); // Generate random memory size for the process
+
+                auto process = std::make_shared<Process>(i, name, memSize);
 
                 // Attempt to allocate memory for the process
-                if (MemoryManager::getInstance()->allocateMemory(i)) {
+                if (MemoryManager::getInstance()->allocateMemory(i, memSize)) {
                     ConsoleManager::getInstance()->createBaseScreen(process, false);
                     processList.push_back(process);
                     this->scheduler->addProcess(process, -1);

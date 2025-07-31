@@ -45,6 +45,9 @@ private:
     // Singleton instance
     static GlobalScheduler* instance;
 
+	// Helper function to generate random memory size
+    int getRandomMemSize(int minMem, int maxMem);
+
     // Current scheduler
     std::shared_ptr<AScheduler> scheduler;
 

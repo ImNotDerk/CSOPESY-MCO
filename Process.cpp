@@ -3,7 +3,20 @@
 Process::Process(int pid, String name) {
 	this->pid = pid;
 	this->name = name;
+	this->memorySize = 0;
 	this->commandCounter = 0;
+	this->cpuCoreID = -1; // default value
+	this->symbolTable = std::make_shared<Symbol_Table>();
+	this->generateRandomCommands();
+	this->currentState = Process::ProcessState::READY;
+}
+
+Process::Process(int pid, String name, int memorySize) {
+	this->pid = pid;
+	this->name = name;
+	this->memorySize = memorySize;
+	this->commandCounter = 0;
+	this->cpuCoreID = -1; // default value
 	this->symbolTable = std::make_shared<Symbol_Table>();
 	this->generateRandomCommands();
 	this->currentState = Process::ProcessState::READY;
@@ -76,6 +89,11 @@ String Process::getName() const
 	return this->name;
 }
 
+int Process::getMemSize() const
+{
+	return this->memorySize;
+}
+
 void Process::addCommand(std::shared_ptr<ICommand> command)
 {
 	/*if (command == nullptr)
@@ -88,11 +106,13 @@ void Process::addCommand(std::shared_ptr<ICommand> command)
 
 void Process::generateRandomCommands()
 {
-	// Get min and max number of commands from config
-	int min = ConfigReader::getInstance()->getMinIns();
-	int max = ConfigReader::getInstance()->getMaxIns();
+	srand(time(nullptr)); // Seed the random number generator
 
-	int noCommands = min + rand() % (max - min + 1);
+	// Get min and max number of commands from config
+	int minIns = ConfigReader::getInstance()->getMinIns();
+	int maxIns = ConfigReader::getInstance()->getMaxIns();
+
+	int noCommands = minIns + rand() % (maxIns - minIns + 1);
 
 	for (int i = 0; i < noCommands; i++) {
 		int type = rand()% 6; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)

@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <chrono>
+#include <cmath>
 #include <ctime>
 #include <format>
 #include <sstream>
@@ -37,6 +38,7 @@ public:
     };
 
     Process(int pid, String name);
+	Process(int pid, String name, int memorySize);
 
     void addCommand(std::shared_ptr<ICommand> command);
     void executeCurrentCommand(int coreId); // called by ScheduleWorker
@@ -54,6 +56,7 @@ public:
     void setState(ProcessState currentState);
     ProcessState getState() const;
     String getName() const;
+	int getMemSize() const;
 
     void generateRandomCommands();
     void printCommands() const;
@@ -73,12 +76,13 @@ public:
 private:
     int pid;
     String name;
+	int memorySize; // size in bytes
     CommandList commandList;
     std::shared_ptr<Symbol_Table> symbolTable;
 
     int commandCounter;
     int commandCounterIndex;
-    int cpuCoreID = -1;
+    int cpuCoreID;
     ProcessState currentState = WAITING;
 
     String runningTimestamp;

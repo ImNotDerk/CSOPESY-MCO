@@ -11,16 +11,16 @@
 class MemoryManager {
 public:
 	// Default Constructor and Destructor
-    MemoryManager(int maxOverallMemory, int memFrameSize, int memPerProc);
+    MemoryManager(int maxOverallMemory, int memFrameSize, int minMemPerProc, int maxMemPerProc);
     ~MemoryManager() = default;
 
     // Singleton access
     static MemoryManager* getInstance();
-    static void initialize(int maxOverallMemory, int memFrameSize, int memPerProc);
+    static void initialize(int maxOverallMemory, int memFrameSize, int minMemPerProc, int maxMemPerProc);
     static void destroy();
 
     // Function to allocate memory for a process
-    bool allocateMemory(int processID);
+    bool allocateMemory(int processID, int memRequired);
 
     // Function to deallocate memory for a process
     bool deallocateMemory(int processID);
@@ -35,7 +35,8 @@ public:
 
     void setMaxOverallMemory(int maxOverallMemory);
     void setMemPerFrame(int memPerFrame);
-    void setMemPerProc(int memPerProc);
+    void setMinMemPerProc(int minMemPerProc);
+    void setMaxMemPerProc(int maxMemPerProc);
 
 private:
     // Disallow copying
@@ -48,8 +49,9 @@ private:
     int maxOverallMemory = 0;     // Total memory size (in bytes)
     int memPerFrame = 0;          // Size of each memory frame (in bytes)
 	int numFrames = 0;            // Number of memory frames (THIS IS JUST FOR HOMEWORK 10. Should be removed in the future)
-    int memPerProc = 0;           // Size of each process (in bytes)
-    std::vector<int> memory;    // Vector representing the memory (0 = free, >0 = process ID)
+    int minMemPerProc = 0;        // Size of each process (in bytes)
+	int maxMemPerProc = 0;        // Maximum size of each process (in bytes)
+    std::vector<int> memory;      // Vector representing the memory/frames (0 = free, >0 = process ID)
 
     // Helper function to get the count of allocated processes
     int getAllocatedProcessCount() const;
