@@ -4,6 +4,7 @@ HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 std::string userInput = "";
 std::string commandMessage = "";
 std::string outputArg2 = "";
+std::string outputArg3 = "";
 bool isInitialized = false;
 
 MainConsole::MainConsole()
@@ -68,7 +69,7 @@ void MainConsole::display() // handles what displayes after the process function
 		{
 			commandMessage = "";
 			std::shared_ptr<Process> newProcess = std::make_shared<Process>(
-				ConsoleManager::getInstance()->getNumScreens(), outputArg2
+				ConsoleManager::getInstance()->getNumScreens(), outputArg2, outputArg3
 			);
 			ConsoleManager::getInstance()->createBaseScreen(newProcess, true);
 			GlobalScheduler::getInstance()->addProcess(newProcess);
@@ -135,8 +136,8 @@ void MainConsole::process() // this function handles the input from the user
 	getline(std::cin, commandInput);
 
 	std::stringstream ss(commandInput);
-	std::string command, arg1, arg2;
-	ss >> command >> arg1 >> arg2;
+	std::string command, arg1, arg2, arg3;
+	ss >> command >> arg1 >> arg2 >> arg3;
 
 	if (command == "exit") 
 	{
@@ -156,10 +157,11 @@ void MainConsole::process() // this function handles the input from the user
 		commandMessage = "screenR";
 		outputArg2 = arg2;
 	}
-	else if (command == "screen" && arg1 == "-s" && !arg2.empty()) 
+	else if (command == "screen" && arg1 == "-s" && !arg2.empty() && !arg3.empty()) 
 	{
 		commandMessage = "screenS";
 		outputArg2 = arg2;
+		outputArg3 = arg3;
 	}
 	else if (command == "screen" && arg1 == "-ls") 
 	{
