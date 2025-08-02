@@ -1,4 +1,5 @@
 #include "MemoryManager.h"  // Include the header file for MemoryManager
+#include "GlobalScheduler.h"
 
 MemoryManager* MemoryManager::sharedInstance = nullptr;
 
@@ -67,10 +68,11 @@ bool MemoryManager::loadPagesForProcess(std::shared_ptr<Process> process)
                 // Write evicted page to backing store
                 writeToBackingStore(victimPID, victimPage);
 
-                // Invalidate page entry in evicted process's page table
-                if (process) {
-                    if (process->getPageTable() && victimPage >= 0 && victimPage < process->getPageTable()->size()) {
-                        (*process->getPageTable())[victimPage].invalidatePage();
+                auto victimProcess = GlobalScheduler::getInstance()->getProcessByPID(victimPID);
+                if (victimProcess) {
+                    auto victimPageTable = victimProcess->getPageTable();
+                    if (victimPageTable && victimPage >= 0 && victimPage < victimPageTable->size()) {
+                        (*victimPageTable)[victimPage].invalidatePage();
                     }
                 }
 
@@ -141,6 +143,7 @@ void MemoryManager::removeFromBackingStore(int processID, int pageNumber)
     }
     outFile.close();
 }
+
 
 
 int MemoryManager::getExternalFragmentation() const 

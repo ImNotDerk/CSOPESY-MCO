@@ -90,10 +90,10 @@ void RRSchedulerWorker::run() {
         if (process && !process->isFinished()) {
             process->setState(Process::WAITING);
             GlobalProcessQueue::getInstance().push(process);
-        } /*else if (process->isFinished()) {*/
-  //          process->setState(Process::FINISHED);
-  //          /*MemoryManager::getInstance()->unloadPagesForProcess(process);*/
-		//}
+        } else if (process->isFinished()) {
+            process->setState(Process::FINISHED);
+            /*MemoryManager::getInstance()->unloadPagesForProcess(process);*/
+		}
 
         lock.lock();
         currentProcess = nullptr;

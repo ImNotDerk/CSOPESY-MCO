@@ -1,7 +1,7 @@
 #include "FrameEntry.h"
 
 FrameEntry::FrameEntry()
-	: processID(-1), pageNumber(-1), isValid(true) {
+	: processID(-1), pageNumber(-1), isValid(false) {
 }
 
 FrameEntry::FrameEntry(int processID, int pageNumber, bool isValid)
