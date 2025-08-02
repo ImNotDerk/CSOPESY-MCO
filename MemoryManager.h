@@ -1,12 +1,17 @@
 #pragma once
 #include <vector>
+#include <queue>
 #include <unordered_set>
 #include <fstream>
 #include <iostream>
-#include <algorithm>  // For std::all_of
-#include <string>   // For std::to_string
+#include <algorithm> 
+#include <string>   
 #include <ctime>
 #include <chrono>
+#include <cstdio> 
+
+#include "Process.h"
+#include "FrameEntry.h"
 
 class MemoryManager {
 public:
@@ -20,12 +25,14 @@ public:
     static void destroy();
 
     // Function to allocate memory for a process
-    bool allocateMemory(int processID, int memRequired);
+    bool loadPagesForProcess(std::shared_ptr<Process> process);
 
     // Function to deallocate memory for a process
     bool deallocateMemory(int processID);
 
-    bool isAllocated(int processID) const;
+	// Function to check if a page is in the backing store
+	void removeFromBackingStore(int processID, int pageNumber);
+    void writeToBackingStore(int processID, int pageNumber);
 
     // Function to get the external fragmentation in KB
     int getExternalFragmentation() const;
@@ -51,7 +58,8 @@ private:
 	int numFrames = 0;            // Number of memory frames (THIS IS JUST FOR HOMEWORK 10. Should be removed in the future)
     int minMemPerProc = 0;        // Size of each process (in bytes)
 	int maxMemPerProc = 0;        // Maximum size of each process (in bytes)
-    std::vector<int> memory;      // Vector representing the memory/frames (0 = free, >0 = process ID)
+    std::vector<FrameEntry> memory;      // Vector representing the memory/frames 
+    std::queue<std::pair<int, int>> fifoQueue; // PID, page number
 
     // Helper function to get the count of allocated processes
     int getAllocatedProcessCount() const;

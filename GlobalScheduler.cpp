@@ -77,11 +77,14 @@ void GlobalScheduler::schedulerStart() {
 				int maxMem = ConfigReader::getInstance()->getMaxMemPerProc();
 
 				int memSize = getRandomMemSize(minMem, maxMem); // Generate random memory size for the process
+				int memPerFrame = ConfigReader::getInstance()->getMemPerFrame();
 
-                auto process = std::make_shared<Process>(i, name, memSize);
+				int numPages = (memSize + memPerFrame - 1) / memPerFrame; // Calculate number of pages based on memory size and frame size
+
+                auto process = std::make_shared<Process>(i, name, memSize, numPages);
 
                 // Attempt to allocate memory for the process
-                if (MemoryManager::getInstance()->allocateMemory(i, memSize)) {
+                if (MemoryManager::getInstance()->loadPagesForProcess(process)) {
                     ConsoleManager::getInstance()->createBaseScreen(process, false);
                     processList.push_back(process);
                     this->scheduler->addProcess(process, -1);

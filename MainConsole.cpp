@@ -4,7 +4,7 @@ HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 std::string userInput = "";
 std::string commandMessage = "";
 std::string outputArg2 = "";
-std::string outputArg3 = "";
+int outputArg3 = 0;
 bool isInitialized = false;
 
 MainConsole::MainConsole()
@@ -68,11 +68,20 @@ void MainConsole::display() // handles what displayes after the process function
 		if (commandMessage == "screenS")
 		{
 			commandMessage = "";
-			std::shared_ptr<Process> newProcess = std::make_shared<Process>(
-				ConsoleManager::getInstance()->getNumScreens(), outputArg2, outputArg3
-			);
-			ConsoleManager::getInstance()->createBaseScreen(newProcess, true);
-			GlobalScheduler::getInstance()->addProcess(newProcess);
+			if (outputArg3 >= 64 && outputArg3 <= 65536)
+			{
+				int numPages = (outputArg3 + ConfigReader::getInstance()->getMemPerFrame() - 1) / outputArg3;
+				std::shared_ptr<Process> newProcess = std::make_shared<Process>(
+					ConsoleManager::getInstance()->getNumScreens(), outputArg2, outputArg3, numPages
+				);
+				ConsoleManager::getInstance()->createBaseScreen(newProcess, true);
+				GlobalScheduler::getInstance()->addProcess(newProcess);
+			} 
+			else
+			{
+				std::cout << "Invalid memory size. Please enter a value between 64 and 65536." << std::endl;
+			}
+			
 		}
 		
 		if (commandMessage == "screenLS")
@@ -136,7 +145,8 @@ void MainConsole::process() // this function handles the input from the user
 	getline(std::cin, commandInput);
 
 	std::stringstream ss(commandInput);
-	std::string command, arg1, arg2, arg3;
+	std::string command, arg1, arg2;
+	int arg3 = 0;
 	ss >> command >> arg1 >> arg2 >> arg3;
 
 	if (command == "exit") 
@@ -157,7 +167,7 @@ void MainConsole::process() // this function handles the input from the user
 		commandMessage = "screenR";
 		outputArg2 = arg2;
 	}
-	else if (command == "screen" && arg1 == "-s" && !arg2.empty() && !arg3.empty()) 
+	else if (command == "screen" && arg1 == "-s" && !arg2.empty() && arg3 != 0) 
 	{
 		commandMessage = "screenS";
 		outputArg2 = arg2;

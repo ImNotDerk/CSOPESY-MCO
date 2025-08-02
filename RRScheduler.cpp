@@ -50,21 +50,24 @@ void RRScheduler::execute() {
 
             auto nextProcess = GlobalProcessQueue::getInstance().pop();
             if (nextProcess) {
-                bool alreadyAllocated = MemoryManager::getInstance()->isAllocated(nextProcess->getPID());
-                bool memAllocated = alreadyAllocated || MemoryManager::getInstance()->allocateMemory(nextProcess->getPID(), nextProcess->getMemSize());
-                if (memAllocated) {
+                // Load pages using demand paging
+                bool memoryLoaded = MemoryManager::getInstance()->loadPagesForProcess(nextProcess);
+
+                if (memoryLoaded) {
                     nextProcess->setState(Process::RUNNING);
                     worker->assignProcess(nextProcess);
                     worker->start();
                 }
                 else {
-                    // Not enough memory, optionally push back to queue
+                    // Page loading failed (e.g., backing store failure or FIFO problem)
+                    nextProcess->setState(Process::WAITING);
                     GlobalProcessQueue::getInstance().push(nextProcess);
                 }
             }
         }
     }
 }
+
 
 void RRScheduler::addProcess(std::shared_ptr<Process> process, int core) {
     std::lock_guard<std::mutex> lock(schedulerMutex);

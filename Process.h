@@ -13,10 +13,12 @@
 #include <iterator> 
 #include <filesystem>
 #include <algorithm>
-#include <random>   
+#include <random>  
+#include <map>
 
 #include "ICommand.h"
 #include "ConfigReader.h"
+#include "PageEntry.h"
 #include "PrintCommand.h"
 #include "DeclareCommand.h"
 #include "AddCommand.h"
@@ -27,6 +29,7 @@
 typedef std::string String;
 typedef std::vector<std::shared_ptr<ICommand>> CommandList;
 typedef std::unordered_map<std::string, uint16_t> Symbol_Table; // stores results from process commands
+typedef std::map<int, PageEntry> Page_Table; // stores page table for this process
 
 class Process {
 public:
@@ -38,7 +41,7 @@ public:
     };
 
     Process(int pid, String name);
-	Process(int pid, String name, int memorySize);
+	Process(int pid, String name, int memorySize, int numPages);
 
     void addCommand(std::shared_ptr<ICommand> command);
     void executeCurrentCommand(int coreId); // called by ScheduleWorker
@@ -57,6 +60,8 @@ public:
     ProcessState getState() const;
     String getName() const;
 	int getMemSize() const;
+	int getNumPages() const; // returns the number of pages for this process
+    std::shared_ptr<Page_Table> getPageTable() const;
 
     void generateRandomCommands();
     void printCommands() const;
@@ -71,14 +76,14 @@ public:
 
     String stateToString(ProcessState state);
 
-    
-
 private:
     int pid;
     String name;
 	int memorySize; // size in bytes
+    int pages;
     CommandList commandList;
     std::shared_ptr<Symbol_Table> symbolTable;
+	std::shared_ptr<Page_Table> pageTable; // page table for this process
 
     int commandCounter;
     int commandCounterIndex;

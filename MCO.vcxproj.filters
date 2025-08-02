@@ -28,6 +28,9 @@
     <Filter Include="Threading">
       <UniqueIdentifier>{a140723f-5f9d-43db-b7a0-5f4319d6acfa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Memory">
+      <UniqueIdentifier>{985dc938-8ae0-4229-b9ef-23374bbc6635}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main_menu.cpp">
@@ -105,8 +108,14 @@
     <ClCompile Include="RRSchedulerWorker.cpp">
       <Filter>Threading</Filter>
     </ClCompile>
+    <ClCompile Include="PageEntry.cpp">
+      <Filter>Process</Filter>
+    </ClCompile>
     <ClCompile Include="MemoryManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameEntry.cpp">
+      <Filter>Memory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -182,11 +191,18 @@
     <ClInclude Include="RRSchedulerWorker.h">
       <Filter>Threading</Filter>
     </ClInclude>
+    <ClInclude Include="PageEntry.h">
+      <Filter>Process</Filter>
+    </ClInclude>
     <ClInclude Include="MemoryManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameEntry.h">
+      <Filter>Memory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="config.txt" />
+    <Text Include="csopesy-backing-store.txt" />
   </ItemGroup>
 </Project>

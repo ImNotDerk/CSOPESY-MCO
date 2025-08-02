@@ -85,6 +85,7 @@ void BaseScreen::printProcessInfo() const
 		this->attachedProcess->getCommandCounter();
 		std::cout << "Process: " << this->attachedProcess->getName() << std::endl;
 		std::cout << "ID: " << this->attachedProcess->getPID() << std::endl;
+		std::cout << "Memory Size: " << this->attachedProcess->getMemSize() << " bytes" << std::endl;
 		std::cout << "Logs:" << std::endl;
 		for (const auto& log : this->attachedProcess->getLogs())
 			std::cout << " " << log << std::endl;
@@ -100,6 +101,7 @@ void BaseScreen::printProcessInfo() const
 		std::cout << "" << std::endl;
 		std::cout << "Process: " << this->attachedProcess->getName() << std::endl;
 		std::cout << "ID: " << this->attachedProcess->getPID() << std::endl;
+		std::cout << "Memory Size: " << this->attachedProcess->getMemSize() << " bytes" << std::endl;
 		std::cout << "Logs:" << std::endl;
 		for (const auto& log : this->attachedProcess->getLogs())
 			std::cout << " " << log << std::endl;

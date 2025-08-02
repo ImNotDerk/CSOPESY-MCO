@@ -4,6 +4,7 @@ Process::Process(int pid, String name) {
 	this->pid = pid;
 	this->name = name;
 	this->memorySize = 0;
+	this->pages = 0; // default value
 	this->commandCounter = 0;
 	this->cpuCoreID = -1; // default value
 	this->symbolTable = std::make_shared<Symbol_Table>();
@@ -11,10 +12,12 @@ Process::Process(int pid, String name) {
 	this->currentState = Process::ProcessState::READY;
 }
 
-Process::Process(int pid, String name, int memorySize) {
+Process::Process(int pid, String name, int memorySize, int numPages) {
 	this->pid = pid;
 	this->name = name;
 	this->memorySize = memorySize;
+	this->pages = numPages; // number of pages for this process
+	this->pageTable = std::make_shared<Page_Table>(); // initialize page table
 	this->commandCounter = 0;
 	this->cpuCoreID = -1; // default value
 	this->symbolTable = std::make_shared<Symbol_Table>();
@@ -94,6 +97,16 @@ int Process::getMemSize() const
 	return this->memorySize;
 }
 
+int Process::getNumPages() const 
+{
+	return this->pages; // returns the number of pages for this process
+}
+
+std::shared_ptr<Page_Table> Process::getPageTable() const
+{
+	return this->pageTable; // returns the page table for this process
+}
+
 void Process::addCommand(std::shared_ptr<ICommand> command)
 {
 	/*if (command == nullptr)
@@ -125,9 +138,12 @@ void Process::generateRandomCommands()
 			}
 
 			case 1: { // DECLARE COMMAND
-				String varName = "";
-				auto newCommand = std::make_shared<DeclareCommand>(varName, 0, symbolTable);
-				this->addCommand(newCommand);
+				if (this->memorySize >= 64 && this->symbolTable->size() != 64) 
+				{
+					String varName = "";
+					auto newCommand = std::make_shared<DeclareCommand>(varName, 0, symbolTable);
+					this->addCommand(newCommand);
+				} 				
 				break;
 			}
 
