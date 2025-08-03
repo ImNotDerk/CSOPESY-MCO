@@ -2,8 +2,8 @@
 class ReadCommand : public ICommand
 {
 public:
-	ReadCommand(const String& varName, const String& address);
-	ReadCommand(const String& varName);
+	ReadCommand(const String& varName, const String& address, std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable);
+	ReadCommand(const String& varName, std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable);
 	std::shared_ptr<ICommand> clone() const override;
 	void execute() override;
 
@@ -13,4 +13,5 @@ public:
 private:
 	String varName; 
 	uint16_t value; 
+	std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable;
 };

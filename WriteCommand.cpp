@@ -1,10 +1,9 @@
 #include "WriteCommand.h"
 
 // implement logic to write a uint16_t value to the specified memory address
-WriteCommand::WriteCommand(const String& address, uint16_t value) : ICommand(processID, WRITE)
+WriteCommand::WriteCommand(const String& address, uint16_t value, std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable)
+    : ICommand(processID, WRITE), address(address), value(value), symbolTable(symbolTable)
 {
-    this->address = address;
-    this->value = value;
 }
 
 std::shared_ptr<ICommand> WriteCommand::clone() const {

@@ -128,7 +128,7 @@ void Process::generateRandomCommands()
 	int noCommands = minIns + rand() % (maxIns - minIns + 1);
 
 	for (int i = 0; i < noCommands; i++) {
-		int type = rand()% 6; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
+		int type = rand()% 8; // 0 to 7 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, READ, WRITE, FOR)
 
 		switch (type) {
 			case 0: { // PRINT COMMAND
@@ -165,7 +165,22 @@ void Process::generateRandomCommands()
 				this->addCommand(newCommand);
 				break;
 			}
-			case 5: { 
+			
+			case 5: { // READ COMMAND
+				//auto newCommand = std::make_shared<ReadCommand>();
+				//this->addCommand(newCommand);
+				std::cout << "KUNWARI NAGREAD" << std::endl;
+				break;
+			}
+			
+			case 6: { // WRITE COMMAND
+				//auto newCommand = std::make_shared<WriteCommand>();
+				//this->addCommand(newCommand);
+				std::cout << "KUNWARI NAGWRITE" << std::endl;
+				break;
+			}
+
+			case 7: { 
 				const int MAX_DEPTH = 1 + rand() % 3; // Randomly choose max depth between 1 and 3
 				const int repeats = 1 + rand() % 4; 
 				generateNestedForCommand(1, MAX_DEPTH, repeats); // creates instructions then directly adds to commandList
@@ -182,7 +197,7 @@ void Process::generateNestedForCommand(int currentDepth, int maxDepth, int repea
 	std::vector<std::shared_ptr<ICommand>> instructions;
 
 	for (int i = 0; i < noCommands; i++) {
-		int instructionType = rand() % 5; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
+		int instructionType = rand() % 8; // 0 to 7 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, READ, WRITE, FOR)
 
 		switch (instructionType) {
 			case 0: {
@@ -212,6 +227,14 @@ void Process::generateNestedForCommand(int currentDepth, int maxDepth, int repea
 				break;
 			}
 			case 5: {
+				// READ
+				break;
+			}
+			case 6: {
+				// WRITE
+				break;
+			}
+			case 7: {
 				if (currentDepth < maxDepth) {
 					generateNestedForCommand(currentDepth + 1, maxDepth, repeatsNested);
 				}
@@ -238,6 +261,8 @@ void Process::printCommands() const
 		case ICommand::ADD:      std::cout << "ADD"; break;
 		case ICommand::SUBTRACT: std::cout << "SUBTRACT"; break;
 		case ICommand::SLEEP:    std::cout << "SLEEP"; break;
+		case ICommand::READ:	 std::cout << "READ"; break;
+		case ICommand::WRITE:    std::cout << "WRITE"; break;
 		case ICommand::FOR:      std::cout << "FOR"; break;
 		default:                 std::cout << "UNKNOWN"; break;
 		}
