@@ -17,6 +17,8 @@ public:
 		ADD,
 		SUBTRACT,
 		SLEEP,
+		READ,
+		WRITE,
 		FOR
 	};
 	

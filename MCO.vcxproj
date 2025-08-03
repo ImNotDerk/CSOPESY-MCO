@@ -154,12 +154,14 @@
     <ClCompile Include="PageEntry.cpp" />
     <ClCompile Include="PrintCommand.cpp" />
     <ClCompile Include="Process.cpp" />
+    <ClCompile Include="ReadCommand.cpp" />
     <ClCompile Include="RRScheduler.cpp" />
     <ClCompile Include="RRSchedulerWorker.cpp" />
     <ClCompile Include="SchedulerWorker.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="SleepCommand.cpp" />
     <ClCompile Include="SubtractCommand.cpp" />
+    <ClCompile Include="WriteCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AConsole.h" />
@@ -183,12 +185,14 @@
     <ClInclude Include="PageEntry.h" />
     <ClInclude Include="PrintCommand.h" />
     <ClInclude Include="Process.h" />
+    <ClInclude Include="ReadCommand.h" />
     <ClInclude Include="RRScheduler.h" />
     <ClInclude Include="RRSchedulerWorker.h" />
     <ClInclude Include="SchedulerWorker.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="SleepCommand.h" />
     <ClInclude Include="SubtractCommand.h" />
+    <ClInclude Include="WriteCommand.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="config.txt" />
