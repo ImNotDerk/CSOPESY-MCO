@@ -1,12 +1,8 @@
 #include "ReadCommand.h"
 
 // implement logic to check whether memory block is initialized, if not read returns 0
-ReadCommand::ReadCommand(const String& varName, const String& address, std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable) 
-    : ICommand(processID, READ), varName(varName), value(0), symbolTable(symbolTable) {
-}
-
-ReadCommand::ReadCommand(const String& varName, std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable)
-    : ICommand(processID, READ), varName(varName), value(0), symbolTable(symbolTable) {
+ReadCommand::ReadCommand(const String& varName, int address, std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable) 
+    : ICommand(processID, READ), varName(varName), address(address), value(0), symbolTable(symbolTable) {
 }
 
 std::shared_ptr<ICommand> ReadCommand::clone() const {

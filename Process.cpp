@@ -413,30 +413,36 @@ void Process::parseAndLoadInstructions(const std::string& instructionStr)
 
 		if (instr.empty()) continue;
 
+		size_t parenPos = instr.find('(');
+		size_t spacePos = instr.find(' ');
+		size_t splitPos = (parenPos != std::string::npos) ? parenPos : spacePos;
+
+		std::string keyword = instr.substr(0, splitPos);
+		std::string args = (splitPos != std::string::npos) ? instr.substr(splitPos) : "";
+
 		std::stringstream line(instr);
-		std::string keyword;
-		line >> keyword;
 
 		if (keyword == "DECLARE") {
+			std::stringstream line(args); 
 			std::string varName;
 			uint16_t value;
+
 			line >> varName >> value;
 
-			std::cout << "[debug] Parsed instruction: " << instr << std::endl; //debug
-
-			system("pause");
 			auto cmd = std::make_shared<DeclareCommand>(varName, value, symbolTable);
 			addCommand(cmd);
 		}
 		else if (keyword == "ADD") {
+			std::stringstream argStream(args);
 			std::string target, op1, op2;
-			line >> target >> op1 >> op2;
+			argStream >> target >> op1 >> op2;
 			auto cmd = std::make_shared<AddCommand>(target, op1, op2, symbolTable);
 			addCommand(cmd);
 		}
 		else if (keyword == "SUB") {
+			std::stringstream argStream(args);
 			std::string target, op1, op2;
-			line >> target >> op1 >> op2;
+			argStream >> target >> op1 >> op2;
 			auto cmd = std::make_shared<SubtractCommand>(target, op1, op2, symbolTable);
 			addCommand(cmd);
 		}
@@ -454,10 +460,8 @@ void Process::parseAndLoadInstructions(const std::string& instructionStr)
 		//	auto cmd = std::make_shared<ReadCommand>(varName, address, symbolTable, pageTable);
 		//	addCommand(cmd);
 		//}
-		else if (keyword == "PRINT") {
-			std::string remainingLine;
-			std::getline(line, remainingLine);
-			auto cmd = std::make_shared<PrintCommand>(pid, name, symbolTable, remainingLine);
+		else if (keyword == "PRINT") {			
+			auto cmd = std::make_shared<PrintCommand>(pid, name, symbolTable, args);
 			addCommand(cmd);
 		}
 		else if (keyword == "SLEEP") {

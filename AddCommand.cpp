@@ -8,19 +8,24 @@ AddCommand::AddCommand(std::shared_ptr<std::unordered_map<std::string, uint16_t>
 }
 
 // make another constructor here for mo2
-AddCommand::AddCommand(String target, String op1, String op2, std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable)
-	: ICommand(processID, ADD), symbolTable(symbolTable)
-{
-	this->var2 = (*symbolTable)[op1];
-    this->var3 = (*symbolTable)[op2];
+AddCommand::AddCommand(String target, String op1, String op2,std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable)
+    : ICommand(processID, ADD), symbolTable(symbolTable),
+    target(target), op1(op1), op2(op2) {
 }
 
 void AddCommand::execute()
 {
 	ICommand::execute(); // Call base class execute for common behavior
-	setVariablesForAddition();
-	getUniqueVariableName();
-	performAddition();
+    if (target.empty()) {
+        setVariablesForAddition();
+        getUniqueVariableName();
+        (*symbolTable)[var1] = var2 + var3;
+    }
+    else {
+        var2 = (*symbolTable)[op1];
+        var3 = (*symbolTable)[op2];
+        (*symbolTable)[target] = var2 + var3;
+    }
 }
 
 std::shared_ptr<ICommand> AddCommand::clone() const {
@@ -67,15 +72,15 @@ void AddCommand::getUniqueVariableName() { // generate a new variable name for t
 
 void AddCommand::performAddition()
 {
-	(*symbolTable)[var1] = this->var2 + this->var3;
+    (*symbolTable)[target] = this->var2 + this->var3;
 }
 
 uint16_t AddCommand::getResult() const
 {
-	return (*symbolTable)[var1];
+    return target.empty() ? (*symbolTable)[var1] : (*symbolTable)[target];
 }
 
 String AddCommand::getOutput() const
 {
-	return "Addition: " + std::to_string(var2) + " + " + std::to_string(var3) + " = " + std::to_string((*symbolTable)[var1]);
+    return "Addition: " + std::to_string(var2) + " + " + std::to_string(var3) + " = " + std::to_string(getResult());
 }
