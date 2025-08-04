@@ -67,6 +67,7 @@ bool MemoryManager::loadPagesForProcess(std::shared_ptr<Process> process)
 
                 // Write evicted page to backing store
                 writeToBackingStore(victimPID, victimPage);
+                pagedOut++;
 
                 auto victimProcess = GlobalScheduler::getInstance()->getProcessByPID(victimPID);
                 if (victimProcess) {
@@ -90,6 +91,7 @@ bool MemoryManager::loadPagesForProcess(std::shared_ptr<Process> process)
             entry.setFrameNumber(frameNumber);
 
 			removeFromBackingStore(processID, pageNumber); // Remove from backing store if it exists
+                pagedIn++;
 
             // Add to FIFO queue
             fifoQueue.push({ processID, pageNumber });
@@ -100,17 +102,30 @@ bool MemoryManager::loadPagesForProcess(std::shared_ptr<Process> process)
 }
 
 
-bool MemoryManager::deallocateMemory(int processID) 
+bool MemoryManager::deallocateMemory(int processID)
 {
-    /*bool deallocated = false;
-    for (int& frame : memory) {
-        if (frame == processID) {
-            frame = 0;
+    bool deallocated = false;
+    for (auto& frame : memory) {
+        if (frame.getProcessID() == processID && frame.isFrameValid()) {
+            frame.setState(false);
+            frame.setProcessID(-1);
+            frame.setPageNumber(-1);
             deallocated = true;
         }
     }
-    return deallocated;*/
-    return 0;
+
+    // Remove from FIFO queue
+    std::queue<std::pair<int, int>> tempQueue;
+    while (!fifoQueue.empty()) {
+        auto entry = fifoQueue.front();
+        fifoQueue.pop();
+        if (entry.first != processID) {
+            tempQueue.push(entry);
+        }
+    }
+    fifoQueue = tempQueue;
+
+    return deallocated;
 }
 
 void MemoryManager::writeToBackingStore(int processID, int pageNumber)
@@ -146,10 +161,9 @@ void MemoryManager::removeFromBackingStore(int processID, int pageNumber)
 
 
 
-int MemoryManager::getExternalFragmentation() const 
+int MemoryManager::getExternalFragmentation() const
 {
-    /*int freeSpace = std::count(memory.begin(), memory.end(), 0);*/
-    return 0 /** memPerProc*/;
+    return getFreeMemory();
 }
 
 void MemoryManager::saveMemorySnapshot(int cycle) const 
@@ -193,16 +207,231 @@ void MemoryManager::saveMemorySnapshot(int cycle) const
 
     //file << "\n---start--- = 0\n";
 }
-int MemoryManager::getAllocatedProcessCount() const 
+int MemoryManager::getAllocatedProcessCount() const
 {
-    /*std::unordered_set<int> allocatedProcesses;
-    for (int i : memory) {
-        if (i != 0) {
-            allocatedProcesses.insert(i);
+    std::unordered_set<int> allocatedProcesses;
+    for (const auto& frame : memory) {
+        if (frame.isFrameValid()) {
+            allocatedProcesses.insert(frame.getProcessID());
         }
     }
-    return allocatedProcesses.size();*/
-	return 0; // Placeholder, should be replaced with actual logic
+    return allocatedProcesses.size();
+}
+
+std::string MemoryManager::getProcessSMI() const {
+    std::ostringstream out;
+
+    out << getCurrentTimestamp() << "\n";
+    out << "===============================================================\n";
+    out << "| PROCESS-SMI " << std::setw(45) << "CSOPESY Memory Usage " << std::setw(5) << "|\n";
+    out << "===============================================================\n";
+
+    // Memory summary
+    int totalMem = getTotalMemory();
+    int usedMem = getUsedMemory();
+    int freeMem = getFreeMemory();
+    double usagePercent = (static_cast<double>(usedMem) / totalMem) * 100.0;
+
+    out << "| Memory Usage: " << std::setw(6) << usedMem << " / " << totalMem << " bytes ("
+        << std::fixed << std::setprecision(1) << usagePercent << "%) "<< std::setw(21) <<"| \n";
+    out << "| Free Memory: " << std::setw(7) << freeMem << " bytes" << std::setw(36) << "|\n";
+    out << "===============================================================\n";
+
+    // Process list header
+    out << "| Processes:" << std::setw(52) << "|\n";
+    out << "+-------+---------------+------------------+------------------+\n";
+    out << "| PID   | Process Name  | Memory Used (B)  | Memory Used (KB) |\n";
+    out << "+-------+---------------+------------------+------------------+\n";
+
+    // Get process memory usage
+    auto processUsage = getProcessMemoryUsage();
+    if (processUsage.empty()) {
+        out << "| No processes currently in memory" << std::setw(30) << "|\n";
+    }
+    else {
+        for (const auto& proc : processUsage) {
+            int pid = proc.first;
+            int memUsed = proc.second;
+            int memUsedKB = memUsed / 1024;
+
+            // Get process name from GlobalScheduler
+            std::string processName = "process_" + std::to_string(pid);
+            if (GlobalScheduler::getInstance()) {
+                auto process = GlobalScheduler::getInstance()->getProcessByPID(pid);
+                if (process) {
+                    processName = process->getName();
+                }
+            }
+
+            out << "| " << std::setw(5) << pid
+                << " | " << std::setw(13) << processName.substr(0, 13)
+                << " | " << std::setw(16) << memUsed
+                << " | " << std::setw(16) << memUsedKB << " |\n";
+        }
+    }
+
+    out << "+-------+---------------+------------------+------------------+\n";
+    out << "===============================================================\n";
+
+    return out.str();
+}
+
+std::string MemoryManager::getVMStat() const {
+    std::ostringstream out;
+
+    out << getCurrentTimestamp() << "\n";
+    out << "==========================================================\n";
+    out << "|               Virtual Memory Statistics                |\n";
+    out << "==========================================================\n";
+
+    // Memory statistics
+    int totalMem = getTotalMemory();
+    int usedMem = getUsedMemory();
+    int freeMem = getFreeMemory();
+
+    out << "Memory Information:\n";
+    out << "  Total Memory: " << std::setw(10) << totalMem << " bytes ("
+        << (totalMem / 1024) << " KB)\n";
+    out << "  Used Memory:  " << std::setw(10) << usedMem << " bytes ("
+        << (usedMem / 1024) << " KB)\n";
+    out << "  Free Memory:  " << std::setw(10) << freeMem << " bytes ("
+        << (freeMem / 1024) << " KB)\n";
+    out << "\n";
+
+    // Page statistics
+    int totalPages = getTotalPages();
+    int usedPages = getUsedPages();
+    int freePages = getFreePages();
+
+    out << "Page Information:\n";
+    out << "  Total Pages:  " << std::setw(10) << totalPages << " pages\n";
+    out << "  Used Pages:   " << std::setw(10) << usedPages << " pages\n";
+    out << "  Free Pages:   " << std::setw(10) << freePages << " pages\n";
+    out << "  Page Size:    " << std::setw(10) << memPerFrame << " bytes\n";
+    out << "\n";
+
+    // Paging activity
+    out << "Paging Activity:\n";
+    out << "  Pages In:     " << std::setw(10) << getPagedIn() << " pages\n";
+    out << "  Pages Out:    " << std::setw(10) << getPagedOut() << " pages\n";
+    out << "\n";
+
+    // Process information
+    int numProcesses = getNumProcessesInMemory();
+    out << "Process Information:\n";
+    out << "  Active Processes: " << std::setw(6) << numProcesses << " processes\n";
+
+    // Get running vs waiting processes
+    int runningProcesses = 0;
+    int waitingProcesses = 0;
+
+    if (GlobalScheduler::getInstance()) {
+        for (int i = 0; i < GlobalScheduler::getInstance()->getProcessCount(); ++i) {
+            auto& process = GlobalScheduler::getInstance()->getProcess(i);
+            if (process->getState() == Process::RUNNING) {
+                runningProcesses++;
+            }
+            else if (process->getState() == Process::WAITING || process->getState() == Process::READY) {
+                waitingProcesses++;
+            }
+        }
+    }
+
+    out << "  Running:      " << std::setw(10) << runningProcesses << " processes\n";
+    out << "  Waiting:      " << std::setw(10) << waitingProcesses << " processes\n";
+    out << "\n";
+
+    // Detailed page frame information
+    out << "Page Frame Details:\n";
+    out << "+-------+----------+-----------+--------+\n";
+    out << "| Frame | Process  | Page      | Status |\n";
+    out << "+-------+----------+-----------+--------+\n";
+
+    for (int i = 0; i < memory.size(); ++i) {
+        const auto& frame = memory[i];
+        out << "| " << std::setw(5) << i;
+
+        if (frame.isFrameValid()) {
+            out << " | " << std::setw(8) << frame.getProcessID()
+                << " | " << std::setw(9) << frame.getPageNumber()
+                << " | " << std::setw(6) << "USED";
+        }
+        else {
+            out << " | " << std::setw(8) << "-"
+                << " | " << std::setw(9) << "-"
+                << " | " << std::setw(6) << "FREE";
+        }
+        out << " |\n";
+    }
+
+    out << "+-------+----------+-----------+--------+\n";
+
+    return out.str();
+}
+
+int MemoryManager::getUsedMemory() const {
+    int usedFrames = 0;
+    for (const auto& frame : memory) {
+        if (frame.isFrameValid()) {
+            usedFrames++;
+        }
+    }
+    return usedFrames * memPerFrame;
+}
+
+int MemoryManager::getFreeMemory() const {
+    return maxOverallMemory - getUsedMemory();
+}
+
+int MemoryManager::getNumProcessesInMemory() const {
+    return getAllocatedProcessCount();
+}
+
+std::vector<std::pair<int, int>> MemoryManager::getProcessMemoryUsage() const {
+    std::unordered_map<int, int> processPageCount;
+
+    // Count pages per process
+    for (const auto& frame : memory) {
+        if (frame.isFrameValid()) {
+            processPageCount[frame.getProcessID()]++;
+        }
+    }
+
+    // Convert to vector of pairs (PID, memory used in bytes)
+    std::vector<std::pair<int, int>> result;
+    for (const auto& entry : processPageCount) {
+        result.push_back({ entry.first, entry.second * memPerFrame });
+    }
+
+    // Sort by PID for consistent output
+    std::sort(result.begin(), result.end());
+
+    return result;
+}
+
+int MemoryManager::getUsedPages() const {
+    int usedPages = 0;
+    for (const auto& frame : memory) {
+        if (frame.isFrameValid()) {
+            usedPages++;
+        }
+    }
+    return usedPages;
+}
+
+int MemoryManager::getFreePages() const {
+    return numFrames - getUsedPages();
+}
+
+std::string MemoryManager::getCurrentTimestamp() const {
+    auto now = std::chrono::system_clock::now();
+    auto time_t = std::chrono::system_clock::to_time_t(now);
+    std::tm tm;
+    localtime_s(&tm, &time_t);
+
+    char buffer[100];
+    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &tm);
+    return std::string(buffer);
 }
 
 void MemoryManager::setMaxOverallMemory(int maxOverallMemory) 

@@ -33,6 +33,12 @@ void BaseScreen::display() {
 		this->printProcessInfo();
 		this->commandInput.clear();
 	}
+	else if (commandInput == "vmstat")
+	{
+		this->printProcessInfo();
+		std::cout << "\n" << MemoryManager::getInstance()->getVMStat() << std::endl;
+		this->commandInput.clear();
+	}
 	else
 	{
 		this->commandInput.clear();
@@ -57,6 +63,10 @@ void BaseScreen::process() {
 		this->commandInput = userInput;
 	}
 	else if (this->userInput == "process-smi")
+	{
+		this->commandInput = this->userInput;
+	}
+	else if (this->userInput == "vmstat")
 	{
 		this->commandInput = this->userInput;
 	}

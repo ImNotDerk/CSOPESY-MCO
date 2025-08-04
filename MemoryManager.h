@@ -45,6 +45,24 @@ public:
     void setMinMemPerProc(int minMemPerProc);
     void setMaxMemPerProc(int maxMemPerProc);
 
+    // Methods for process-smi and vmstat
+    std::string getProcessSMI() const;
+    std::string getVMStat() const;
+
+    // Memory statistics methods
+    int getTotalMemory() const { return maxOverallMemory; }
+    int getUsedMemory() const;
+    int getFreeMemory() const;
+    int getNumProcessesInMemory() const;
+    std::vector<std::pair<int, int>> getProcessMemoryUsage() const; // Returns (PID, memory used in bytes)
+
+    // Page statistics
+    int getTotalPages() const { return numFrames; }
+    int getUsedPages() const;
+    int getFreePages() const;
+    int getPagedIn() const { return pagedIn; }
+    int getPagedOut() const { return pagedOut; }
+
 private:
     // Disallow copying
     MemoryManager(const MemoryManager&) = delete;
@@ -61,6 +79,11 @@ private:
     std::vector<FrameEntry> memory;      // Vector representing the memory/frames 
     std::queue<std::pair<int, int>> fifoQueue; // PID, page number
 
+    // Statistics counters
+    mutable int pagedIn = 0;      // Number of pages loaded from backing store
+    mutable int pagedOut = 0;     // Number of pages written to backing store
+
     // Helper function to get the count of allocated processes
     int getAllocatedProcessCount() const;
+    std::string getCurrentTimestamp() const;
 };

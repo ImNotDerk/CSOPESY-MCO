@@ -184,6 +184,18 @@ void MainConsole::display() // handles what displayes after the process function
 			std::cout << CPUTick::getInstance()->getTicks() << std::endl;
 		}
 
+		if (commandMessage == "process-smi")
+		{
+			std::cout << MemoryManager::getInstance()->getProcessSMI() << std::endl;
+			commandMessage = "";
+		}
+
+		if (commandMessage == "vmstat")
+		{
+			std::cout << MemoryManager::getInstance()->getVMStat() << std::endl;
+			commandMessage = "";
+		}
+
 		if (commandMessage == "unknown-command")
 		{
 			commandMessage = "";
@@ -275,6 +287,14 @@ void MainConsole::process() // this function handles the input from the user
 		commandMessage = command;
 	}
 	else if (command == "show-ticks")
+	{
+		commandMessage = command;
+	}
+	else if (command == "process-smi")
+	{
+		commandMessage = command;
+	}
+	else if (command == "vmstat")
 	{
 		commandMessage = command;
 	}
