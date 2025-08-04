@@ -27,13 +27,12 @@ bool MemoryManager::loadPagesForProcess(std::shared_ptr<Process> process)
 {
     int processID = process->getPID();
     int pageSize = memPerFrame;
-    int totalPages = process->getNumPages();
 
 
-    auto pageTable = process->getPageTable(); // Assumes getter for pageTable exists
+    auto pageTable = process->getPageTable();
     if (!pageTable) return false;
 
-    for (int pageNumber = 0; pageNumber < totalPages; ++pageNumber) {
+    for (int pageNumber = 0; pageNumber < process->getLinesOfCode(); ++pageNumber) {
         PageEntry& entry = (*pageTable)[pageNumber];
 
         if (!entry.isPageValid()) {

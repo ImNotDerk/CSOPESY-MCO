@@ -50,7 +50,6 @@ public:
 
     int incrementCommandCounter();
 
-    int getRemainingTime() const;
     int getCommandCounter() const;
     std::size_t getLinesOfCode() const;
     int getPID() const;
@@ -60,7 +59,6 @@ public:
     ProcessState getState() const;
     String getName() const;
 	int getMemSize() const;
-	int getNumPages() const; // returns the number of pages for this process
     std::shared_ptr<Page_Table> getPageTable() const;
 
     void generateRandomCommands();
@@ -82,7 +80,8 @@ private:
     int pid;
     String name;
 	int memorySize; // size in bytes
-    int pages;
+	int pages; // number of pages allocated for this process (each page will have instructions and variables)
+	int memPerPage; // size of each page in bytes
     CommandList commandList;
     std::shared_ptr<Symbol_Table> symbolTable;
 	std::shared_ptr<Page_Table> pageTable; // page table for this process

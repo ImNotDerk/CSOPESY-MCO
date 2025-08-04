@@ -81,12 +81,14 @@ void MainConsole::display() // handles what displayes after the process function
 			if (outputArg3 >= 64 && outputArg3 <= 65536)
 			{
 				int numPages = (outputArg3 + ConfigReader::getInstance()->getMemPerFrame() - 1) / outputArg3;
-				std::shared_ptr<Process> newProcess = std::make_shared<Process>(
-					ConsoleManager::getInstance()->getNumScreens(), outputArg2, outputArg3, numPages
-				);
+				std::shared_ptr<Process> newProcess = std::make_shared<Process>(ConsoleManager::getInstance()->getNumScreens(), outputArg2, outputArg3);
 				ConsoleManager::getInstance()->createBaseScreen(newProcess, true);
 				GlobalScheduler::getInstance()->addProcess(newProcess);
-			} 
+			}
+			else if (outputArg3 == 0)
+			{
+				std::cout << "Please input memory size." << std::endl;
+			}
 			else
 			{
 				std::cout << "Invalid memory size. Please enter a value between 64 and 65536." << std::endl;
