@@ -394,11 +394,7 @@ void Process::parseAndLoadInstructions(const std::string& instructionStr)
 		//	auto cmd = std::make_shared<ReadCommand>(varName, address, symbolTable, pageTable);
 		//	addCommand(cmd);
 		//}
-		else if (keyword == "PRINT") {
-			std::cout << "[debug] Parsed instruction: " << instr << std::endl; //debug
-
-			system("pause");
-			
+		else if (keyword == "PRINT") {			
 			auto cmd = std::make_shared<PrintCommand>(pid, name, symbolTable, args);
 			addCommand(cmd);
 		}
