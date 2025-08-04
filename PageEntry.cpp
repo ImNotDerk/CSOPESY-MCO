@@ -1,7 +1,11 @@
 #include "PageEntry.h"
 
-PageEntry::PageEntry(int pageNumber)
+PageEntry::PageEntry() : pageNumber(-1), memPerPage(0), isLoaded(false), frameNumber(-1) {}
+
+
+PageEntry::PageEntry(int pageNumber, int memPerPage)
 	: pageNumber(pageNumber), // or 0 or whatever default makes sense
+	memPerPage(memPerPage),
 	usedBytes(0),
 	isLoaded(false),
 	frameNumber(-1),
@@ -22,6 +26,11 @@ int PageEntry::getFrameNumber() const
 	return this->frameNumber;
 }
 
+int PageEntry::getUsedBytes() const
+{
+	return this->usedBytes;
+}
+
 void PageEntry::invalidatePage()
 {
 	this->isLoaded = false; // Mark the page as invalid
@@ -36,7 +45,7 @@ void PageEntry::setFrameNumber(int frameNumber)
 
 bool PageEntry::hasSpaceFor(int bytes) const
 {
-	return (this->usedBytes + bytes <= PAGE_SIZE);
+	return (this->usedBytes + bytes <= memPerPage);
 }
 
 bool PageEntry::addInstruction(std::shared_ptr<ICommand> instruction)
@@ -89,7 +98,7 @@ int PageEntry::returnOffset(std::string varName) const // for virtual memory
 		if (this->pageNumber == 1)
 			return it->second.addressOffset;
 		else
-			return this->pageNumber * PAGE_SIZE + it->second.addressOffset;
+			return this->pageNumber * memPerPage + it->second.addressOffset;
 	}
 	else {
 		// handle case where varName doesn't exist

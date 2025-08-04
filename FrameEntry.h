@@ -13,9 +13,11 @@ public:
 	int getPageNumber() const;
 	bool isFrameValid() const;
 
+	void freeFrame();
+
 private:
 	int processID;
 	int pageNumber;
-	bool isValid;
+	bool isValid; // is occupied or not
 };
 

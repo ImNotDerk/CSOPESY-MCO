@@ -21,7 +21,7 @@ Process::Process(int pid, String name, int memorySize, int numPages) {
 	this->memPerPage = memorySize / numPages; // calculate memory size per page
 
 	for (int i = 0; i < pages; ++i) {
-		PageEntry page;
+		PageEntry page(i, memPerPage);
 		pageTable->emplace(i, page);
 	}
 
@@ -114,7 +114,7 @@ void Process::addCommand(std::shared_ptr<ICommand> command)
 	}
 
 	// If all pages are full
-	std::cerr << "All pages are full. Cannot add command.\n";
+	// std::cerr << "All pages are full. Cannot add command.\n";
 }
 
 void Process::generateRandomCommands()
@@ -176,14 +176,14 @@ void Process::generateRandomCommands()
 				case 5: { // READ COMMAND
 					//auto newCommand = std::make_shared<ReadCommand>();
 					//this->addCommand(newCommand);
-					std::cout << "KUNWARI NAGREAD" << std::endl;
+					//std::cout << "KUNWARI NAGREAD" << std::endl;
 					break;
 				}
 
 				case 6: { // WRITE COMMAND
 					//auto newCommand = std::make_shared<WriteCommand>();
 					//this->addCommand(newCommand);
-					std::cout << "KUNWARI NAGWRITE" << std::endl;
+					//std::cout << "KUNWARI NAGWRITE" << std::endl;
 					break;
 				}
 
@@ -234,14 +234,14 @@ void Process::generateRandomCommands()
 				case 4: { // READ COMMAND
 					//auto newCommand = std::make_shared<ReadCommand>();
 					//this->addCommand(newCommand);
-					std::cout << "KUNWARI NAGREAD" << std::endl;
+					//std::cout << "KUNWARI NAGREAD" << std::endl;
 					break;
 				}
 
 				case 5: { // WRITE COMMAND
 					//auto newCommand = std::make_shared<WriteCommand>();
 					//this->addCommand(newCommand);
-					std::cout << "KUNWARI NAGWRITE" << std::endl;
+					//std::cout << "KUNWARI NAGWRITE" << std::endl;
 					break;
 				}
 
@@ -430,21 +430,21 @@ void Process::parseAndLoadInstructions(const std::string& instructionStr)
 			line >> varName >> value;
 
 			auto cmd = std::make_shared<DeclareCommand>(varName, value, symbolTable);
-			addCommand(cmd);
+			this->addCommand(cmd);
 		}
 		else if (keyword == "ADD") {
 			std::stringstream argStream(args);
 			std::string target, op1, op2;
 			argStream >> target >> op1 >> op2;
 			auto cmd = std::make_shared<AddCommand>(target, op1, op2, symbolTable);
-			addCommand(cmd);
+			this->addCommand(cmd);
 		}
 		else if (keyword == "SUB") {
 			std::stringstream argStream(args);
 			std::string target, op1, op2;
 			argStream >> target >> op1 >> op2;
 			auto cmd = std::make_shared<SubtractCommand>(target, op1, op2, symbolTable);
-			addCommand(cmd);
+			this->addCommand(cmd);
 		}
 		//else if (keyword == "WRITE") {
 		//	std::string addrStr, varName;
@@ -462,13 +462,13 @@ void Process::parseAndLoadInstructions(const std::string& instructionStr)
 		//}
 		else if (keyword == "PRINT") {			
 			auto cmd = std::make_shared<PrintCommand>(pid, name, symbolTable, args);
-			addCommand(cmd);
+			this->addCommand(cmd);
 		}
 		else if (keyword == "SLEEP") {
 			uint16_t ticks;
 			line >> ticks;
 			auto cmd = std::make_shared<SleepCommand>(this->pid, ticks);
-			addCommand(cmd);
+			this->addCommand(cmd);
 		}
 		else {
 			std::cerr << "Unknown instruction: " << instr << std::endl;

@@ -33,6 +33,7 @@ public:
 	// Function to check if a page is in the backing store
 	void removeFromBackingStore(int processID, int pageNumber);
     void writeToBackingStore(int processID, int pageNumber);
+    void clearBackingStore();
 
     // Function to get the external fragmentation in KB
     int getExternalFragmentation() const;
@@ -44,6 +45,7 @@ public:
     void setMemPerFrame(int memPerFrame);
     void setMinMemPerProc(int minMemPerProc);
     void setMaxMemPerProc(int maxMemPerProc);
+	void clearAllMemory();
 
     // Methods for process-smi and vmstat
     std::string getProcessSMI() const;

@@ -40,3 +40,10 @@ bool FrameEntry::isFrameValid() const
 {
 	return this->isValid;
 }
+
+void FrameEntry::freeFrame()
+{
+	this->processID = -1;
+	this->pageNumber = -1;
+	this->isValid = false; // Mark the frame as free
+}

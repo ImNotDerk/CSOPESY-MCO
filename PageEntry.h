@@ -4,6 +4,7 @@
 #include <cmath>
 
 #include "ICommand.h"
+#include "ConfigReader.h"
 
 struct SymbolEntry 
 {
@@ -16,10 +17,12 @@ typedef std::unordered_map<std::string, SymbolEntry> VariableList;
 class PageEntry
 {
 public:
-	PageEntry(int pageNumber);
+	PageEntry();
+	PageEntry(int pageNumber, int memPerPage);
 
 	bool isPageValid() const; // check if page is valid
 	int getFrameNumber() const; // get the frame number where the page is loaded in the physical memory
+	int getUsedBytes() const; // get the number of bytes used in this page
 	void setFrameNumber(int frameNumber); // set the frame number where the page is loaded in the physical memory
 	void invalidatePage(); // invalidate the page
 
@@ -30,7 +33,7 @@ public:
 	int returnOffset(const std::string varName) const;
 
 private:
-	static const int PAGE_SIZE; // size of each page in bytes
+	int memPerPage; // size of each page in bytes
 	int usedBytes = 0;
 
 	int pageNumber; // page number in the process

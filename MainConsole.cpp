@@ -66,6 +66,8 @@ void MainConsole::display() // handles what displayes after the process function
 		if (commandMessage == "exit")
 		{
 			commandMessage = "";
+			GlobalScheduler::getInstance()->getScheduler()->stop();
+			MemoryManager::getInstance()->clearBackingStore();
 			ConsoleManager::getInstance()->exitApplication();
 		}
 
@@ -81,7 +83,7 @@ void MainConsole::display() // handles what displayes after the process function
 			if (outputArg3 >= 64 && outputArg3 <= 65536)
 			{
 				int numPages = (outputArg3 + ConfigReader::getInstance()->getMemPerFrame() - 1) / outputArg3;
-				std::shared_ptr<Process> newProcess = std::make_shared<Process>(ConsoleManager::getInstance()->getNumScreens(), outputArg2, outputArg3);
+				std::shared_ptr<Process> newProcess = std::make_shared<Process>(ConsoleManager::getInstance()->getNumScreens(), outputArg2, outputArg3, numPages);
 				ConsoleManager::getInstance()->createBaseScreen(newProcess, true);
 				GlobalScheduler::getInstance()->addProcess(newProcess);
 			}

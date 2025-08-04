@@ -24,9 +24,16 @@ void RRScheduler::run() {
     schedulerThread = std::thread([this]() {
         while (schedulerRun) {
             execute();
+
+            if (allProcessesFinished()) {
+                MemoryManager::getInstance()->clearAllMemory(); // Clear memory when all processes are finished
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(10)); // slight delay to prevent tight loop
         }
         });
 }
+
 
 void RRScheduler::stop() {
     schedulerRun = false;

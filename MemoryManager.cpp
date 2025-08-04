@@ -32,10 +32,11 @@ bool MemoryManager::loadPagesForProcess(std::shared_ptr<Process> process)
     auto pageTable = process->getPageTable();
     if (!pageTable) return false;
 
-    for (int pageNumber = 0; pageNumber < process->getLinesOfCode(); ++pageNumber) {
+    for (int pageNumber = 0; pageNumber < process->getPageTable()->size(); ++pageNumber) {
         PageEntry& entry = (*pageTable)[pageNumber];
 
         if (!entry.isPageValid()) {
+
             // Find a free frame
             auto it = std::find_if(memory.begin(), memory.end(), [](const FrameEntry& f) {
                 return !f.isFrameValid(); // find an invalid (free) frame
@@ -89,8 +90,8 @@ bool MemoryManager::loadPagesForProcess(std::shared_ptr<Process> process)
             // Update page table
             entry.setFrameNumber(frameNumber);
 
-			removeFromBackingStore(processID, pageNumber); // Remove from backing store if it exists
-                pagedIn++;
+			//removeFromBackingStore(processID, pageNumber); // Remove from backing store
+            pagedIn++;
 
             // Add to FIFO queue
             fifoQueue.push({ processID, pageNumber });
@@ -158,6 +159,11 @@ void MemoryManager::removeFromBackingStore(int processID, int pageNumber)
     outFile.close();
 }
 
+void MemoryManager::clearBackingStore() // clear backing store when exiting operating system
+{
+    std::ofstream outFile("csopesy-backing-store.txt", std::ios::trunc);
+    outFile.close();
+}
 
 
 int MemoryManager::getExternalFragmentation() const
@@ -216,6 +222,18 @@ int MemoryManager::getAllocatedProcessCount() const
     }
     return allocatedProcesses.size();
 }
+
+void MemoryManager::clearAllMemory() {
+    for (auto& frame : memory) {
+        frame.freeFrame();
+    }
+
+    while (!fifoQueue.empty()) {
+        fifoQueue.pop();
+    }
+
+}
+
 
 std::string MemoryManager::getProcessSMI() const {
     std::ostringstream out;
@@ -369,14 +387,26 @@ std::string MemoryManager::getVMStat() const {
 }
 
 int MemoryManager::getUsedMemory() const {
-    int usedFrames = 0;
+    int totalUsedBytes = 0;
+
     for (const auto& frame : memory) {
         if (frame.isFrameValid()) {
-            usedFrames++;
+            int pid = frame.getProcessID();
+            int pageNum = frame.getPageNumber();  
+
+            auto process = GlobalScheduler::getInstance()->getProcessByPID(pid);
+            if (process) {
+                const auto& pageTable = process->getPageTable();
+                if (pageNum >= 0 && pageNum < pageTable->size()) {
+                    totalUsedBytes += (*pageTable)[pageNum].getUsedBytes();
+                }
+            }
         }
     }
-    return usedFrames * memPerFrame;
+
+    return totalUsedBytes;
 }
+
 
 int MemoryManager::getFreeMemory() const {
     return maxOverallMemory - getUsedMemory();
@@ -387,26 +417,32 @@ int MemoryManager::getNumProcessesInMemory() const {
 }
 
 std::vector<std::pair<int, int>> MemoryManager::getProcessMemoryUsage() const {
-    std::unordered_map<int, int> processPageCount;
+    std::unordered_map<int, int> processUsedBytes;
 
-    // Count pages per process
     for (const auto& frame : memory) {
         if (frame.isFrameValid()) {
-            processPageCount[frame.getProcessID()]++;
+            int pid = frame.getProcessID();
+            int pageNum = frame.getPageNumber();
+
+            auto process = GlobalScheduler::getInstance()->getProcessByPID(pid);
+            if (process) {
+                const auto& pageTable = process->getPageTable();
+                if (pageNum >= 0 && pageNum < pageTable->size()) {
+                    processUsedBytes[pid] += (*pageTable)[pageNum].getUsedBytes();
+                }
+            }
         }
     }
 
-    // Convert to vector of pairs (PID, memory used in bytes)
     std::vector<std::pair<int, int>> result;
-    for (const auto& entry : processPageCount) {
-        result.push_back({ entry.first, entry.second * memPerFrame });
+    for (const auto& entry : processUsedBytes) {
+        result.push_back({ entry.first, entry.second });
     }
 
-    // Sort by PID for consistent output
-    std::sort(result.begin(), result.end());
-
+    std::sort(result.begin(), result.end());  // Sort by PID
     return result;
 }
+
 
 int MemoryManager::getUsedPages() const {
     int usedPages = 0;
