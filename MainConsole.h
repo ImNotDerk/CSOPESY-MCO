@@ -25,6 +25,8 @@ public:
 	void display() override;
 	void process() override;
 
+	String separateCommands(const std::string& str);
+
 	void printHeader() const;
 
 	String screenLS;

@@ -296,3 +296,91 @@ String Process::getCurrentTimestamp()
 
 	return timestamp;
 }
+
+std::string trim(const std::string& str) {
+	size_t first = str.find_first_not_of(" \t\r\n");
+	if (first == std::string::npos) return "";
+	size_t last = str.find_last_not_of(" \t\r\n");
+	return str.substr(first, (last - first + 1));
+}
+
+void Process::parseAndLoadInstructions(const std::string& instructionStr)
+{
+	commandList.clear(); // clear any default/random commands
+
+	std::stringstream ss(instructionStr);
+	std::string token;
+
+	while (std::getline(ss, token, ';')) {
+		std::string instr = trim(token);
+
+		instr.erase(0, instr.find_first_not_of(" \t\r\n"));
+		instr.erase(instr.find_last_not_of(" \t\r\n") + 1);
+
+		if (!instr.empty() && instr.front() == '"') instr.erase(0, 1);
+		if (!instr.empty() && instr.back() == '"') instr.pop_back();
+
+		if (instr.empty()) continue;
+
+		std::stringstream line(instr);
+		std::string keyword;
+		line >> keyword;
+
+		if (keyword == "DECLARE") {
+			std::string varName;
+			uint16_t value;
+			line >> varName >> value;
+
+			std::cout << "[debug] Parsed instruction: " << instr << std::endl; //debug
+
+			system("pause");
+			auto cmd = std::make_shared<DeclareCommand>(varName, value, symbolTable);
+			addCommand(cmd);
+		}
+		else if (keyword == "ADD") {
+			std::string target, op1, op2;
+			line >> target >> op1 >> op2;
+			auto cmd = std::make_shared<AddCommand>(target, op1, op2, symbolTable);
+			addCommand(cmd);
+		}
+		else if (keyword == "SUB") {
+			std::string target, op1, op2;
+			line >> target >> op1 >> op2;
+			auto cmd = std::make_shared<SubtractCommand>(target, op1, op2, symbolTable);
+			addCommand(cmd);
+		}
+		//else if (keyword == "WRITE") {
+		//	std::string addrStr, varName;
+		//	line >> addrStr >> varName;
+		//	int address = std::stoi(addrStr, nullptr, 0); // hex or decimal
+		//	auto cmd = std::make_shared<WriteCommand>(address, varName, symbolTable, pageTable);
+		//	addCommand(cmd);
+		//}
+		//else if (keyword == "READ") {
+		//	std::string varName, addrStr;
+		//	line >> varName >> addrStr;
+		//	int address = std::stoi(addrStr, nullptr, 0);
+		//	auto cmd = std::make_shared<ReadCommand>(varName, address, symbolTable, pageTable);
+		//	addCommand(cmd);
+		//}
+		else if (keyword == "PRINT") {
+			std::string remainingLine;
+			std::getline(line, remainingLine);
+			auto cmd = std::make_shared<PrintCommand>(pid, name, symbolTable, remainingLine);
+			addCommand(cmd);
+		}
+		else if (keyword == "SLEEP") {
+			uint16_t ticks;
+			line >> ticks;
+			auto cmd = std::make_shared<SleepCommand>(this->pid, ticks);
+			addCommand(cmd);
+		}
+		else {
+			std::cerr << "Unknown instruction: " << instr << std::endl;
+		}
+	}
+
+	if (commandList.empty()) {
+		std::cerr << "No valid instructions loaded for process." << std::endl;
+	}
+}

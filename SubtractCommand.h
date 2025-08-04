@@ -4,6 +4,7 @@ class SubtractCommand : public ICommand
 {
 public:
 	SubtractCommand(std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable);
+	SubtractCommand(String var1, String var2, String var3, std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable);
 	std::shared_ptr<ICommand> clone() const override;
 	void execute() override;
 	String getOutput() const override;

@@ -7,6 +7,13 @@ SubtractCommand::SubtractCommand(std::shared_ptr<std::unordered_map<std::string,
     this->var3 = 0;
 }
 
+SubtractCommand::SubtractCommand(String target, String op1, String op2, std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable)
+    : ICommand(processID, SUBTRACT), symbolTable(symbolTable)
+{
+    this->var2 = (*symbolTable)[op1];
+    this->var3 = (*symbolTable)[op2];
+}
+
 void SubtractCommand::execute()
 {
     ICommand::execute();

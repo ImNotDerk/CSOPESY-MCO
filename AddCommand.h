@@ -5,6 +5,7 @@ class AddCommand : public ICommand
 public:
 	AddCommand(std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable);
 	std::shared_ptr<ICommand> clone() const override;
+	AddCommand(String target, String op1, String op2, std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable);
 	void execute() override;
 	String getOutput() const override;
 
