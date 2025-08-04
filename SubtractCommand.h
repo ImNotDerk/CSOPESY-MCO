@@ -10,6 +10,8 @@ public:
 	String getOutput() const override;
 
 private:
+	String target, op1, op2;
+
 	String var1; // variable name for result
 	uint16_t var2; // value 1
 	uint16_t var3; // value 2

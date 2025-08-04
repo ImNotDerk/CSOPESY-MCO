@@ -8,18 +8,23 @@ SubtractCommand::SubtractCommand(std::shared_ptr<std::unordered_map<std::string,
 }
 
 SubtractCommand::SubtractCommand(String target, String op1, String op2, std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable)
-    : ICommand(processID, SUBTRACT), symbolTable(symbolTable)
-{
-    this->var2 = (*symbolTable)[op1];
-    this->var3 = (*symbolTable)[op2];
+    : ICommand(processID, SUBTRACT), symbolTable(symbolTable),
+    target(target), op1(op1), op2(op2) {
 }
 
 void SubtractCommand::execute()
 {
     ICommand::execute();
-    setVariablesForSubtraction();
-    getUniqueVariableName();
-    performSubtraction();
+    if (target.empty()) {
+        setVariablesForSubtraction();
+        getUniqueVariableName();
+        (*symbolTable)[var1] = var2 - var3;
+    }
+    else {
+        var2 = (*symbolTable)[op1];
+        var3 = (*symbolTable)[op2];
+        (*symbolTable)[target] = var2 - var3;
+    }
 }
 
 std::shared_ptr<ICommand> SubtractCommand::clone() const {
@@ -67,7 +72,7 @@ void SubtractCommand::getUniqueVariableName()
 void SubtractCommand::performSubtraction()
 {
     if (var2 >= var3) {
-        (*symbolTable)[var1] = var2 - var3;
+        (*symbolTable)[target] = var2 - var3;
     }
     else {
         (*symbolTable)[var1] = 0;
@@ -76,10 +81,10 @@ void SubtractCommand::performSubtraction()
 
 uint16_t SubtractCommand::getResult() const
 {
-    return (*symbolTable)[var1];
+    return target.empty() ? (*symbolTable)[var1] : (*symbolTable)[target];
 }
 
 std::string SubtractCommand::getOutput() const
 {
-    return "Subtraction: " + std::to_string(var2) + " - " + std::to_string(var3) + " = " + std::to_string((*symbolTable)[var1]);
+    return "Subtraction: " + std::to_string(var2) + " - " + std::to_string(var3) + " = " + std::to_string(getResult());
 }

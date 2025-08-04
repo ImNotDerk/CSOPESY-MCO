@@ -21,45 +21,88 @@ void PrintCommand::execute()
 
 void PrintCommand::setString()
 {
-	// If no expression provided, fall back to default
+	//// If no expression provided, fall back to default
+	//if (expression.empty()) {
+	//	toPrint = "Hello world from " + processName;
+	//	return;
+	//}
+
+	//// Handle PRINT("message" + varName) style
+	//size_t quoteStart = expression.find("\"");
+	//size_t quoteEnd = expression.find_last_of("\"");
+
+	//String result = "";
+
+	//if (quoteStart != std::string::npos && quoteEnd != std::string::npos && quoteEnd > quoteStart) {
+	//	// Extract string before +
+	//	String message = expression.substr(quoteStart + 1, quoteEnd - quoteStart - 1);
+	//	result += message;
+
+	//	// Check if there's a '+' and a variable after the quote
+	//	size_t plusPos = expression.find('+', quoteEnd);
+	//	if (plusPos != std::string::npos) {
+	//		String varName = expression.substr(plusPos + 1);
+	//		// Trim whitespace
+	//		varName.erase(0, varName.find_first_not_of(" \t"));
+	//		varName.erase(varName.find_last_not_of(" \t\r\n") + 1);
+
+	//		// Look up varName
+	//		if (symbolTable && symbolTable->count(varName)) {
+	//			result += std::to_string(symbolTable->at(varName));
+	//		}
+	//		else {
+	//			result += "[undefined:" + varName + "]";
+	//		}
+	//	}
+	//	toPrint = result;
+	//}
+	//else {
+	//	// Fallback if badly formatted
+	//	toPrint = "Invalid PRINT expression: " + expression;
+	//}
+
 	if (expression.empty()) {
 		toPrint = "Hello world from " + processName;
 		return;
 	}
 
-	// Handle PRINT("message" + varName) style
+	// Trim expression
+	expression.erase(0, expression.find_first_not_of(" \t"));
+	expression.erase(expression.find_last_not_of(" \t\r\n") + 1);
+
+	// Find quoted message
 	size_t quoteStart = expression.find("\"");
 	size_t quoteEnd = expression.find_last_of("\"");
 
-	String result = "";
+	if (quoteStart == std::string::npos || quoteEnd == std::string::npos || quoteEnd <= quoteStart) {
+		toPrint = "Invalid PRINT expression (missing quotes): " + expression;
+		return;
+	}
 
-	if (quoteStart != std::string::npos && quoteEnd != std::string::npos && quoteEnd > quoteStart) {
-		// Extract string before +
-		String message = expression.substr(quoteStart + 1, quoteEnd - quoteStart - 1);
-		result += message;
+	String result = expression.substr(quoteStart + 1, quoteEnd - quoteStart - 1);  // the "message"
 
-		// Check if there's a '+' and a variable after the quote
-		size_t plusPos = expression.find('+', quoteEnd);
-		if (plusPos != std::string::npos) {
-			String varName = expression.substr(plusPos + 1);
-			// Trim whitespace
-			varName.erase(0, varName.find_first_not_of(" \t"));
-			varName.erase(varName.find_last_not_of(" \t\r\n") + 1);
+	result.erase(std::remove(result.begin(), result.end(), '\\'), result.end());
 
-			// Look up varName
-			if (symbolTable && symbolTable->count(varName)) {
-				result += std::to_string(symbolTable->at(varName));
-			}
-			else {
-				result += "[undefined:" + varName + "]";
-			}
+	// Check for '+'
+	size_t plusPos = expression.find('+', quoteEnd);
+
+	if (plusPos != std::string::npos) {
+		// Extract variable name
+		String varName = expression.substr(plusPos + 1);
+
+		// Trim whitespace, parentheses, and semicolons
+		varName.erase(0, varName.find_first_not_of(" \t\r\n("));
+		varName.erase(varName.find_last_not_of(" \t\r\n);") + 1);
+
+		if (symbolTable && symbolTable->count(varName)) {
+			result += std::to_string(symbolTable->at(varName));
 		}
-		toPrint = result;
+		else {
+			result += "[undefined:" + varName + "]";
+		}
 	}
-	else {
-		// Fallback if badly formatted
-		toPrint = "Invalid PRINT expression: " + expression;
-	}
+
+	toPrint = result;
 
 }
 
