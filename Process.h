@@ -76,6 +76,8 @@ public:
 
     String stateToString(ProcessState state);
 
+    void parseAndLoadInstructions(const std::string& instructionStr);
+
 private:
     int pid;
     String name;
@@ -94,6 +96,8 @@ private:
     String finishedTimestamp;
 
     std::vector<String> print_logs;
+
+    std::vector<String> instructions;
 
     String getCurrentTimestamp();
 };

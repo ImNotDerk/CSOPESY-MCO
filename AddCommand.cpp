@@ -8,6 +8,12 @@ AddCommand::AddCommand(std::shared_ptr<std::unordered_map<std::string, uint16_t>
 }
 
 // make another constructor here for mo2
+AddCommand::AddCommand(String target, String op1, String op2, std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable)
+	: ICommand(processID, ADD), symbolTable(symbolTable)
+{
+	this->var2 = (*symbolTable)[op1];
+    this->var3 = (*symbolTable)[op2];
+}
 
 void AddCommand::execute()
 {
