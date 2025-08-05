@@ -23,77 +23,106 @@ MemoryManager* MemoryManager::getInstance()
     return sharedInstance;
 }
 
-bool MemoryManager::loadPagesForProcess(std::shared_ptr<Process> process)
-{
+//bool MemoryManager::loadPagesForProcess(std::shared_ptr<Process> process)
+//{
+//    int processID = process->getPID();
+//    int pageSize = memPerFrame;
+//
+//
+//    auto pageTable = process->getPageTable();
+//    if (!pageTable) return false;
+//
+//    for (int pageNumber = 0; pageNumber < process->getPageTable()->size(); ++pageNumber) {
+//        PageEntry& entry = (*pageTable)[pageNumber];
+//
+//        if (!entry.isPageValid()) {
+//
+//            // Find a free frame
+//            auto it = std::find_if(memory.begin(), memory.end(), [](const FrameEntry& f) {
+//                return !f.isFrameValid(); // find an invalid (free) frame
+//                });
+//
+//            int frameNumber;
+//
+//            if (it == memory.end()) {   
+//                // FIFO Page Replacement
+//                if (fifoQueue.empty()) return false;
+//
+//                auto victim = fifoQueue.front(); // pair<processID, pageNumber>
+//                fifoQueue.pop();
+//
+//                int victimPID = victim.first;
+//                int victimPage = victim.second;
+//
+//                // Find the frame to evict
+//                int evictFrame = -1;
+//                for (int i = 0; i < memory.size(); ++i) {
+//                    if (memory[i].getProcessID() == victimPID && memory[i].getPageNumber() == victimPage) {
+//                        evictFrame = i;
+//                        break;
+//                    } 
+//                }
+//
+//                if (evictFrame == -1) return false; // Should not happen
+//
+//                // Write evicted page to backing store
+//                writeToBackingStore(victimPID, victimPage);
+//                pagedOut++;
+//
+//                auto victimProcess = GlobalScheduler::getInstance()->getProcessByPID(victimPID);
+//                if (victimProcess) {
+//                    auto victimPageTable = victimProcess->getPageTable();
+//                    if (victimPageTable && victimPage >= 0 && victimPage < victimPageTable->size()) {
+//                        (*victimPageTable)[victimPage].invalidatePage();
+//                    }
+//                }
+//
+//                // Overwrite frame
+//                memory[evictFrame] = FrameEntry{ processID, pageNumber, true };
+//                frameNumber = evictFrame;
+//            }
+//            else {
+//                // Free frame found
+//                frameNumber = std::distance(memory.begin(), it);
+//                memory[frameNumber] = FrameEntry{ processID, pageNumber, true };
+//            }
+//
+//            // Update page table
+//            entry.setFrameNumber(frameNumber);
+//
+//			//removeFromBackingStore(processID, pageNumber); // Remove from backing store
+//            pagedIn++;
+//
+//            // Add to FIFO queue
+//            fifoQueue.push({ processID, pageNumber });
+//        }
+//    }
+//
+//    return true;
+//}
+
+bool MemoryManager::loadPagesForProcess(std::shared_ptr<Process> process) {
+
     int processID = process->getPID();
-    int pageSize = memPerFrame;
-
-
     auto pageTable = process->getPageTable();
     if (!pageTable) return false;
 
-    for (int pageNumber = 0; pageNumber < process->getPageTable()->size(); ++pageNumber) {
+    for (int pageNumber = 0; pageNumber < pageTable->size(); ++pageNumber) {
         PageEntry& entry = (*pageTable)[pageNumber];
 
         if (!entry.isPageValid()) {
+            int frameNumber = -1;
 
-            // Find a free frame
-            auto it = std::find_if(memory.begin(), memory.end(), [](const FrameEntry& f) {
-                return !f.isFrameValid(); // find an invalid (free) frame
-                });
-
-            int frameNumber;
-
-            if (it == memory.end()) {   
-                // FIFO Page Replacement
-                if (fifoQueue.empty()) return false;
-
-                auto victim = fifoQueue.front(); // pair<processID, pageNumber>
-                fifoQueue.pop();
-
-                int victimPID = victim.first;
-                int victimPage = victim.second;
-
-                // Find the frame to evict
-                int evictFrame = -1;
-                for (int i = 0; i < memory.size(); ++i) {
-                    if (memory[i].getProcessID() == victimPID && memory[i].getPageNumber() == victimPage) {
-                        evictFrame = i;
-                        break;
-                    } 
-                }
-
-                if (evictFrame == -1) return false; // Should not happen
-
-                // Write evicted page to backing store
-                writeToBackingStore(victimPID, victimPage);
-                pagedOut++;
-
-                auto victimProcess = GlobalScheduler::getInstance()->getProcessByPID(victimPID);
-                if (victimProcess) {
-                    auto victimPageTable = victimProcess->getPageTable();
-                    if (victimPageTable && victimPage >= 0 && victimPage < victimPageTable->size()) {
-                        (*victimPageTable)[victimPage].invalidatePage();
-                    }
-                }
-
-                // Overwrite frame
-                memory[evictFrame] = FrameEntry{ processID, pageNumber, true };
-                frameNumber = evictFrame;
-            }
-            else {
-                // Free frame found
-                frameNumber = std::distance(memory.begin(), it);
+            if (hasFreeFrame()) {
+                frameNumber = allocateFrame();
                 memory[frameNumber] = FrameEntry{ processID, pageNumber, true };
             }
+            else {
+                frameNumber = evictPageFIFO(processID, pageNumber);
+                if (frameNumber == -1) return false;
+            }
 
-            // Update page table
             entry.setFrameNumber(frameNumber);
-
-			//removeFromBackingStore(processID, pageNumber); // Remove from backing store
-            pagedIn++;
-
-            // Add to FIFO queue
             fifoQueue.push({ processID, pageNumber });
         }
     }
@@ -101,6 +130,78 @@ bool MemoryManager::loadPagesForProcess(std::shared_ptr<Process> process)
     return true;
 }
 
+
+int MemoryManager::evictPageFIFO(int processID, int pageNumber) {
+    std::lock_guard<std::mutex> lock(memoryMutex);  // Lock acquired here
+    if (fifoQueue.empty()) return -1;
+
+    auto victim = fifoQueue.front();
+    fifoQueue.pop();
+
+    int victimPID = victim.first;
+    int victimPage = victim.second;
+
+    int evictFrame = -1;
+    for (int i = 0; i < memory.size(); ++i) {
+        if (memory[i].getProcessID() == victimPID &&
+            memory[i].getPageNumber() == victimPage) {
+            evictFrame = i;
+            break;
+        }
+    }
+
+    if (evictFrame == -1) return -1;
+
+    // Write to backing store
+    writeToBackingStore(victimPID, victimPage);
+    pagedOut++;
+
+    // Invalidate page in page table
+    auto victimProcess = GlobalScheduler::getInstance()->getProcessByPID(victimPID);
+    if (victimProcess) {
+        auto victimPageTable = victimProcess->getPageTable();
+        if (victimPageTable && victimPage >= 0 && victimPage < victimPageTable->size()) {
+            (*victimPageTable)[victimPage].invalidatePage();
+        }
+    }
+
+    // Overwrite frame
+    memory[evictFrame] = FrameEntry{ processID, pageNumber, true };
+    return evictFrame;
+}
+
+
+void MemoryManager::handlePageFault(int processPID, PageEntry* pageEntry) {
+    if (!pageEntry) return;
+
+    int frameNum = -1;
+    if (!hasFreeFrame()) {
+        frameNum = evictPageFIFO(processPID, pageEntry->getPageNumber());
+        if (frameNum == -1) return;
+    }
+    else {
+        frameNum = allocateFrame();
+    }
+
+    loadFromBackingStore(processPID, pageEntry->getPageNumber());
+    pagedIn++;
+    pageEntry->setFrameNumber(frameNum);
+}
+
+bool MemoryManager::hasFreeFrame() const {
+    return std::any_of(memory.begin(), memory.end(), [](const FrameEntry& f) {
+        return !f.isFrameValid();
+    });
+}
+
+int MemoryManager::allocateFrame() {
+    for (int i = 0; i < memory.size(); ++i) {
+        if (!memory[i].isFrameValid()) {
+            return i; // Return the index of the first free frame
+        }
+    }
+    return -1; // No free frame found
+}
 
 bool MemoryManager::deallocateMemory(int processID)
 {
@@ -134,6 +235,25 @@ void MemoryManager::writeToBackingStore(int processID, int pageNumber)
     if (!file.is_open()) return;
     file << processID << ":" << pageNumber << "\n";
     file.close();
+}
+
+std::string MemoryManager::loadFromBackingStore(int processID, int pageNumber)
+{
+    std::ifstream inFile("csopesy-backing-store.txt");
+    if (!inFile.is_open()) return "";
+
+    std::string line;
+    std::string target = std::to_string(processID) + ":" + std::to_string(pageNumber);
+
+    while (std::getline(inFile, line)) {
+        if (line == target) {
+            inFile.close();
+            return line; // Found the matching line
+        }
+    }
+
+    inFile.close();
+    return ""; // Not found
 }
 
 void MemoryManager::removeFromBackingStore(int processID, int pageNumber)

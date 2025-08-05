@@ -73,6 +73,17 @@ void RRSchedulerWorker::run() {
             int currentTick = CPUTick::getInstance()->getTicks();
 
             if (currentTick > lastExecutedTick) {
+
+                // initiate page fault here
+                auto page = process->getPageForInstruction(process->getCommandCounter());
+                if (!page) {
+                    break;
+                }
+
+                if (!page->isPageValid()) {
+                    MemoryManager::getInstance()->handlePageFault(process->getPID(), page);
+                }
+                
                 process->executeCurrentCommand(coreId);
                 lastExecutedTick = currentTick;
                 executedAtLeastOnce = true;

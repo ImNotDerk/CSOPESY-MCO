@@ -23,6 +23,7 @@ public:
 	bool isPageValid() const; // check if page is valid
 	int getFrameNumber() const; // get the frame number where the page is loaded in the physical memory
 	int getUsedBytes() const; // get the number of bytes used in this page
+	int getPageNumber() const;
 	void setFrameNumber(int frameNumber); // set the frame number where the page is loaded in the physical memory
 	void invalidatePage(); // invalidate the page
 

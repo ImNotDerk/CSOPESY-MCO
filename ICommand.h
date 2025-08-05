@@ -28,6 +28,7 @@ public:
 	CommandType	getCommandType();
 	virtual void execute();
 	virtual String getOutput() const { return ""; }  // default empty
+	int pageNumber = -1;
 
 protected:
 	int processID;

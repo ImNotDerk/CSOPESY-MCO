@@ -10,6 +10,7 @@ public:
 	void execute() override;
 	void setString();
 	String getOutput() const override;
+
 private:
 	String expression;
 	String toPrint;

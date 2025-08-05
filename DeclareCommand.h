@@ -11,6 +11,7 @@ public:
     String getVariableName();
     uint16_t getValue() const;
     String getOutput() const override;
+
 private:
     String newVar;
     uint16_t value;

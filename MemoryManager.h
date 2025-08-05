@@ -9,6 +9,7 @@
 #include <ctime>
 #include <chrono>
 #include <cstdio> 
+#include <mutex>
 
 #include "Process.h"
 #include "FrameEntry.h"
@@ -26,13 +27,18 @@ public:
 
     // Function to allocate memory for a process
     bool loadPagesForProcess(std::shared_ptr<Process> process);
+    int evictPageFIFO(int processID, int pageNumber);
+	void handlePageFault(int processPID, PageEntry* pageEntry);
+	bool hasFreeFrame() const;
+	int allocateFrame();
 
     // Function to deallocate memory for a process
     bool deallocateMemory(int processID);
 
-	// Function to check if a page is in the backing store
-	void removeFromBackingStore(int processID, int pageNumber);
+	// backing store functions
     void writeToBackingStore(int processID, int pageNumber);
+	std::string loadFromBackingStore(int processID, int pageNumber);
+    void removeFromBackingStore(int processID, int pageNumber);
     void clearBackingStore();
 
     // Function to get the external fragmentation in KB
@@ -84,6 +90,8 @@ private:
     // Statistics counters
     mutable int pagedIn = 0;      // Number of pages loaded from backing store
     mutable int pagedOut = 0;     // Number of pages written to backing store
+
+    std::mutex memoryMutex;
 
     // Helper function to get the count of allocated processes
     int getAllocatedProcessCount() const;

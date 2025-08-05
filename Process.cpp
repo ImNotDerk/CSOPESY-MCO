@@ -104,6 +104,17 @@ std::shared_ptr<Page_Table> Process::getPageTable() const
 	return this->pageTable; // returns the page table for this process
 }
 
+PageEntry* Process::getPageForInstruction(int instructionIndex) {
+	if (instructionIndex < 0 || instructionIndex >= commandList.size()) return nullptr;
+	int pageNum = commandList[instructionIndex]->pageNumber;
+	auto it = pageTable->find(pageNum);
+	if (it != pageTable->end()) {
+		return &it->second;
+	}
+	return nullptr;
+}
+
+
 void Process::addCommand(std::shared_ptr<ICommand> command)
 {
 	for (auto& [pageNum, page] : *pageTable) {
@@ -112,9 +123,6 @@ void Process::addCommand(std::shared_ptr<ICommand> command)
 			return;
 		}
 	}
-
-	// If all pages are full
-	// std::cerr << "All pages are full. Cannot add command.\n";
 }
 
 void Process::generateRandomCommands()
@@ -136,7 +144,6 @@ void Process::generateRandomCommands()
 				case 0: { // PRINT COMMAND
 					auto newCommand = std::make_shared<PrintCommand>(this->pid, this->name, symbolTable);
 					this->addCommand(newCommand);
-
 					break;
 				}
 
@@ -146,7 +153,6 @@ void Process::generateRandomCommands()
 						String varName = "";
 						auto newCommand = std::make_shared<DeclareCommand>(varName, 0, symbolTable);
 						this->addCommand(newCommand);
-
 					}
 					break;
 				}

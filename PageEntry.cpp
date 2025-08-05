@@ -31,6 +31,11 @@ int PageEntry::getUsedBytes() const
 	return this->usedBytes;
 }
 
+int PageEntry::getPageNumber() const
+{
+	return this->pageNumber;
+}
+
 void PageEntry::invalidatePage()
 {
 	this->isLoaded = false; // Mark the page as invalid
@@ -72,6 +77,7 @@ bool PageEntry::addInstruction(std::shared_ptr<ICommand> instruction)
 	}
 	if (hasSpaceFor(size))
 	{
+		instruction->pageNumber = this->pageNumber; // set the page number for the instruction
 		instructionList.push_back(instruction);
 		usedBytes += size;
 		return true;

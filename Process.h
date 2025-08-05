@@ -60,6 +60,7 @@ public:
     String getName() const;
 	int getMemSize() const;
     std::shared_ptr<Page_Table> getPageTable() const;
+	PageEntry* getPageForInstruction(int instructionIndex);
 
     void generateRandomCommands();
     void printCommands() const;
