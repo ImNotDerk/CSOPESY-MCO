@@ -417,20 +417,18 @@ void Process::parseAndLoadInstructions(const std::string& instructionStr)
 			this->addCommand(cmd);
 		}
 		else if (keyword == "WRITE") {
-			/*std::string addrStr;*/
 			uint16_t value = 0;
 			uint16_t address;
 			line >> address >> value;
-			/*int address = std::stoi(addrStr, nullptr, 0); */
 			auto cmd = std::make_shared<WriteCommand>(address, value, symbolTable, pageTable);
-			addCommand(cmd);
+			this->addCommand(cmd);
 		}
 		else if (keyword == "READ") {
 			std::string varName;
 			uint16_t address;
 			line >> varName >> address;
 			auto cmd = std::make_shared<ReadCommand>(varName, address, symbolTable, pageTable);
-			addCommand(cmd);
+			this->addCommand(cmd);
 		}
 		else if (keyword == "PRINT") {
 			auto cmd = std::make_shared<PrintCommand>(pid, name, symbolTable, args);

@@ -104,8 +104,6 @@ String WriteCommand::getOutput() const
     }
 }
 
-
-
 void WriteCommand::handlePageFault(int pageNumber) {
     auto pageIt = pageTable->find(pageNumber);
     if (pageIt != pageTable->end()) {

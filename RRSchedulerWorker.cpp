@@ -20,7 +20,7 @@ void RRSchedulerWorker::start() {
                 if (currentTick % quantum == 0) {
                     MemoryManager::getInstance()->saveMemorySnapshot(currentTick);
                 }
-                std::this_thread::sleep_for(std::chrono::milliseconds(10)); // adjust as needed
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
             });
     }
@@ -65,6 +65,8 @@ void RRSchedulerWorker::run() {
 
         int idleEnd = CPUTick::getInstance()->getTicks();
         CPUTick::getInstance()->addIdleCpuTicks(idleEnd - idleStart);
+
+        cv.wait(lock, [&]() { return currentProcess != nullptr || !running; });
 
         if (!running) break;
 

@@ -26,7 +26,7 @@ void RRScheduler::run() {
         while (schedulerRun) {
             execute();
 
-            if (allProcessesFinished() && !GlobalScheduler::getInstance()->getSchedulerStart()) {
+            if (allProcessesFinished() /*&& !GlobalScheduler::getInstance()->getSchedulerStart()*/) {
                 MemoryManager::getInstance()->clearAllMemory(); // Clear memory when all processes are finished
             }
 
@@ -61,7 +61,7 @@ void RRScheduler::execute() {
                 // Load pages using demand paging
                 bool memoryLoaded = MemoryManager::getInstance()->loadPagesForProcess(nextProcess);
 
-                if (memoryLoaded) {
+                if (memoryLoaded && nextProcess->getState() != Process::MEMORY_WAITING) {
                     nextProcess->setState(Process::RUNNING);
                     worker->assignProcess(nextProcess);
                     worker->start();

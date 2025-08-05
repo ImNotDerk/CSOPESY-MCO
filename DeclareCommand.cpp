@@ -1,4 +1,4 @@
-#include "DeclareCommand.h"
+         #include "DeclareCommand.h"
 
 // Constructor for DECLARE: takes variable name and initial value
 DeclareCommand::DeclareCommand(const String& varName, uint16_t value, std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable)

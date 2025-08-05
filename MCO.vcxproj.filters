@@ -117,10 +117,10 @@
     <ClCompile Include="FrameEntry.cpp">
       <Filter>Memory</Filter>
     </ClCompile>
-    <ClCompile Include="ReadCommand.cpp">
+    <ClCompile Include="WriteCommand.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
-    <ClCompile Include="WriteCommand.cpp">
+    <ClCompile Include="ReadCommand.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
   </ItemGroup>
@@ -206,10 +206,10 @@
     <ClInclude Include="FrameEntry.h">
       <Filter>Memory</Filter>
     </ClInclude>
-    <ClInclude Include="ReadCommand.h">
+    <ClInclude Include="WriteCommand.h">
       <Filter>Commands</Filter>
     </ClInclude>
-    <ClInclude Include="WriteCommand.h">
+    <ClInclude Include="ReadCommand.h">
       <Filter>Commands</Filter>
     </ClInclude>
   </ItemGroup>

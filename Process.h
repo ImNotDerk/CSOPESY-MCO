@@ -39,7 +39,8 @@ public:
         READY,
         RUNNING,
         WAITING,
-        FINISHED
+        FINISHED,
+        MEMORY_WAITING
     };
 
     Process(int pid, String name);

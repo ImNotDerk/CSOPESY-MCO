@@ -111,10 +111,38 @@ bool MemoryManager::loadPagesForProcess(std::shared_ptr<Process> process) {
 	int availableFrames = memory.size();
 
     if (requiredPages > availableFrames) {
-        pagedIn += requiredPages;
-		pagedOut += requiredPages;
-		return false; // Not enough frames available for the process
+        // Try to load each page one by one, even though process won't fully start
+        for (int pageNumber = 0; pageNumber < pageTable->size(); ++pageNumber) {
+            PageEntry& entry = (*pageTable)[pageNumber];
+
+            if (entry.isEmpty()) continue; // No instruction/data on this page
+
+            if (!entry.isPageValid()) {
+                int frameNumber = -1;
+
+                if (hasFreeFrame()) {
+                    frameNumber = allocateFrame();
+                    memory[frameNumber] = FrameEntry{ processID, pageNumber, true };
+                }
+                else {
+                    frameNumber = evictPageFIFO(processID, pageNumber);
+                    if (frameNumber == -1) {
+                        // Still count this as an attempt, simulate page out
+                        continue;
+                    }
+                    pagedOut++; // Track page out due to eviction
+                }
+
+                entry.setFrameNumber(frameNumber);
+                pagedIn++;
+                fifoQueue.push({ processID, pageNumber });
+            }
+        }
+        // Process did not fully fit into memory, will not be scheduled
+        process->setState(Process::MEMORY_WAITING);
+        return true;
     }
+
 
     for (int pageNumber = 0; pageNumber < pageTable->size(); ++pageNumber) {
         PageEntry& entry = (*pageTable)[pageNumber];
@@ -179,7 +207,6 @@ int MemoryManager::evictPageFIFO(int processID, int pageNumber) {
 
     // Overwrite frame
     memory[evictFrame] = FrameEntry{ processID, pageNumber, true };
-    memoryMutex.unlock();
     return evictFrame;
 }
 
@@ -262,7 +289,7 @@ void MemoryManager::writeToBackingStore(int processID, int pageNumber)
 }
 
 std::string MemoryManager::loadFromBackingStore(int processID, int pageNumber) {
-    std::ifstream inFile("backing_store.txt");
+    std::ifstream inFile("csopesy-backing_store.txt");
     std::string line, result;
     std::string searchToken = std::to_string(processID) + ":" + std::to_string(pageNumber) + ":";
 
