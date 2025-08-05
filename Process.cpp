@@ -404,6 +404,11 @@ std::string trim(const std::string& str) {
 void Process::parseAndLoadInstructions(const std::string& instructionStr)
 {
 	commandList.clear(); // clear any default/random commands
+	pageTable->clear();
+	for (int i = 0; i < pages; ++i) {
+		PageEntry page(i, memPerPage);
+		pageTable->emplace(i, page);
+	}
 
 	std::stringstream ss(instructionStr);
 	std::string token;
