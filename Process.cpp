@@ -417,6 +417,7 @@ void Process::parseAndLoadInstructions(const std::string& instructionStr)
 			this->addCommand(cmd);
 		}
 		else if (keyword == "WRITE") {
+			std::stringstream line(args);
 			uint16_t value = 0;
 			uint16_t address;
 			line >> address >> value;
@@ -424,6 +425,7 @@ void Process::parseAndLoadInstructions(const std::string& instructionStr)
 			this->addCommand(cmd);
 		}
 		else if (keyword == "READ") {
+			std::stringstream line(args);
 			std::string varName;
 			uint16_t address;
 			line >> varName >> address;
