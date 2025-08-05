@@ -25,6 +25,8 @@
 #include "SubtractCommand.h"
 #include "SleepCommand.h"
 #include "ForCommand.h"
+#include "ReadCommand.h"
+#include "WriteCommand.h"
 
 typedef std::string String;
 typedef std::vector<std::shared_ptr<ICommand>> CommandList;
@@ -41,7 +43,7 @@ public:
     };
 
     Process(int pid, String name);
-	Process(int pid, String name, int memorySize, int numPages);
+    Process(int pid, String name, int memorySize, int numPages);
 
     void addCommand(std::shared_ptr<ICommand> command);
     void executeCurrentCommand(int coreId); // called by ScheduleWorker
@@ -58,9 +60,9 @@ public:
     void setState(ProcessState currentState);
     ProcessState getState() const;
     String getName() const;
-	int getMemSize() const;
+    int getMemSize() const;
     std::shared_ptr<Page_Table> getPageTable() const;
-	PageEntry* getPageForInstruction(int instructionIndex);
+    PageEntry* getPageForInstruction(int instructionIndex);
 
     void generateRandomCommands();
     void printCommands() const;
@@ -80,12 +82,12 @@ public:
 private:
     int pid;
     String name;
-	int memorySize; // size in bytes
-	int pages; // number of pages allocated for this process (each page will have instructions and variables)
-	int memPerPage; // size of each page in bytes
+    int memorySize; // size in bytes
+    int pages; // number of pages allocated for this process (each page will have instructions and variables)
+    int memPerPage; // size of each page in bytes
     CommandList commandList;
     std::shared_ptr<Symbol_Table> symbolTable;
-	std::shared_ptr<Page_Table> pageTable; // page table for this process
+    std::shared_ptr<Page_Table> pageTable; // page table for this process
 
     int commandCounter;
     int commandCounterIndex;

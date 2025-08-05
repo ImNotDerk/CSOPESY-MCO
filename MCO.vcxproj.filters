@@ -117,6 +117,12 @@
     <ClCompile Include="FrameEntry.cpp">
       <Filter>Memory</Filter>
     </ClCompile>
+    <ClCompile Include="ReadCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="WriteCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Screen.h">
@@ -199,6 +205,12 @@
     </ClInclude>
     <ClInclude Include="FrameEntry.h">
       <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="ReadCommand.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="WriteCommand.h">
+      <Filter>Commands</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
