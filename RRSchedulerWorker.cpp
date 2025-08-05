@@ -59,7 +59,12 @@ void RRSchedulerWorker::run() {
 
     while (running) {
         std::unique_lock<std::mutex> lock(mtx);
+
+        int idleStart = CPUTick::getInstance()->getTicks();
         cv.wait(lock, [&]() { return currentProcess != nullptr || !running; });
+
+        int idleEnd = CPUTick::getInstance()->getTicks();
+        CPUTick::getInstance()->addIdleCpuTicks(idleEnd - idleStart);
 
         if (!running) break;
 
@@ -76,15 +81,13 @@ void RRSchedulerWorker::run() {
 
                 // initiate page fault here
                 auto page = process->getPageForInstruction(process->getCommandCounter());
-                if (!page) {
-                    break;
-                }
 
                 if (!page->isPageValid()) {
                     MemoryManager::getInstance()->handlePageFault(process->getPID(), page);
                 }
                 
                 process->executeCurrentCommand(coreId);
+                CPUTick::getInstance()->addActiveCpuTicks(1);
                 lastExecutedTick = currentTick;
                 executedAtLeastOnce = true;
             }
@@ -103,7 +106,6 @@ void RRSchedulerWorker::run() {
             GlobalProcessQueue::getInstance().push(process);
         } else if (process->isFinished()) {
             process->setState(Process::FINISHED);
-            /*MemoryManager::getInstance()->unloadPagesForProcess(process);*/
 		}
 
         lock.lock();

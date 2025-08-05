@@ -6,10 +6,12 @@
 #include <atomic>
 #include <iostream>
 #include <chrono>
+
 #include "IETThread.h"
 #include "Process.h"
 #include "CPUTick.h"
 #include "ConfigReader.h"
+#include "MemoryManager.h"
 
 class SchedulerWorker : public IETThread {
 public:

@@ -107,8 +107,19 @@ bool MemoryManager::loadPagesForProcess(std::shared_ptr<Process> process) {
     auto pageTable = process->getPageTable();
     if (!pageTable) return false;
 
+    int requiredPages = pageTable->size();
+	int availableFrames = memory.size();
+
+    if (requiredPages > availableFrames) {
+        pagedIn += requiredPages;
+		pagedOut += requiredPages;
+		return false; // Not enough frames available for the process
+    }
+
     for (int pageNumber = 0; pageNumber < pageTable->size(); ++pageNumber) {
         PageEntry& entry = (*pageTable)[pageNumber];
+
+        if (entry.isEmpty()) continue;
 
         if (!entry.isPageValid()) {
             int frameNumber = -1;
@@ -123,6 +134,7 @@ bool MemoryManager::loadPagesForProcess(std::shared_ptr<Process> process) {
             }
 
             entry.setFrameNumber(frameNumber);
+            pagedIn++;
             fifoQueue.push({ processID, pageNumber });
         }
     }
@@ -167,6 +179,7 @@ int MemoryManager::evictPageFIFO(int processID, int pageNumber) {
 
     // Overwrite frame
     memory[evictFrame] = FrameEntry{ processID, pageNumber, true };
+    memoryMutex.unlock();
     return evictFrame;
 }
 
@@ -181,10 +194,10 @@ void MemoryManager::handlePageFault(int processPID, PageEntry* pageEntry) {
     }
     else {
         frameNum = allocateFrame();
+        pagedIn++;
     }
 
     loadFromBackingStore(processPID, pageEntry->getPageNumber());
-    pagedIn++;
     pageEntry->setFrameNumber(frameNum);
 }
 
@@ -193,6 +206,17 @@ bool MemoryManager::hasFreeFrame() const {
         return !f.isFrameValid();
     });
 }
+
+int MemoryManager::countFreeFrames() const {
+    int count = 0;
+    for (const auto& frame : memory) {
+        if (!frame.isFrameValid()) {
+            count++;
+        }
+    }
+    return count;
+}
+
 
 int MemoryManager::allocateFrame() {
     for (int i = 0; i < memory.size(); ++i) {
@@ -237,23 +261,23 @@ void MemoryManager::writeToBackingStore(int processID, int pageNumber)
     file.close();
 }
 
-std::string MemoryManager::loadFromBackingStore(int processID, int pageNumber)
-{
-    std::ifstream inFile("csopesy-backing-store.txt");
-    if (!inFile.is_open()) return "";
-
-    std::string line;
-    std::string target = std::to_string(processID) + ":" + std::to_string(pageNumber);
+std::string MemoryManager::loadFromBackingStore(int processID, int pageNumber) {
+    std::ifstream inFile("backing_store.txt");
+    std::string line, result;
+    std::string searchToken = std::to_string(processID) + ":" + std::to_string(pageNumber) + ":";
 
     while (std::getline(inFile, line)) {
-        if (line == target) {
-            inFile.close();
-            return line; // Found the matching line
+        if (line.find(searchToken) == 0) {
+            result = line.substr(searchToken.length());
+            break;
         }
     }
 
-    inFile.close();
-    return ""; // Not found
+    if (!result.empty()) {
+        pagedIn++;
+    }
+
+    return result;
 }
 
 void MemoryManager::removeFromBackingStore(int processID, int pageNumber)
@@ -344,15 +368,21 @@ int MemoryManager::getAllocatedProcessCount() const
 }
 
 void MemoryManager::clearAllMemory() {
-    for (auto& frame : memory) {
-        frame.freeFrame();
+    for (int i = 0; i < memory.size(); ++i) {
+        if (memory[i].isFrameValid()) {
+            int pid = memory[i].getProcessID();
+            int page = memory[i].getPageNumber();
+
+            // Simulate writing page back to disk
+            writeToBackingStore(pid, page);
+            pagedOut++;
+        }
+        memory[i].freeFrame();
     }
 
-    while (!fifoQueue.empty()) {
-        fifoQueue.pop();
-    }
-
+    while (!fifoQueue.empty()) fifoQueue.pop();
 }
+
 
 
 std::string MemoryManager::getProcessSMI() const {
@@ -453,6 +483,16 @@ std::string MemoryManager::getVMStat() const {
     out << "  Pages Out:    " << std::setw(10) << getPagedOut() << " pages\n";
     out << "\n";
 
+	// System information
+	int idleCPUTicks = CPUTick::getInstance()->getIdleCpuTicks();
+	int activeCPUTicks = CPUTick::getInstance()->getActiveCpuTicks();
+
+    out << "System Information:\n";
+    out << "  Idle Ticks:    " << std::setw(10) << idleCPUTicks << " ticks\n";
+    out << "  Active Ticks:  " << std::setw(10) << activeCPUTicks << " ticks\n";
+    out << "  Total Ticks:   " << std::setw(10) << (idleCPUTicks + activeCPUTicks) << " ticks\n\n";
+
+
     // Process information
     int numProcesses = getNumProcessesInMemory();
     out << "Process Information:\n";
@@ -461,6 +501,7 @@ std::string MemoryManager::getVMStat() const {
     // Get running vs waiting processes
     int runningProcesses = 0;
     int waitingProcesses = 0;
+	int finishedProcesses = 0;
 
     if (GlobalScheduler::getInstance()) {
         for (int i = 0; i < GlobalScheduler::getInstance()->getProcessCount(); ++i) {
@@ -470,12 +511,16 @@ std::string MemoryManager::getVMStat() const {
             }
             else if (process->getState() == Process::WAITING || process->getState() == Process::READY) {
                 waitingProcesses++;
+            } 
+            else if (process->getState() == Process::FINISHED) {
+				finishedProcesses++;
             }
         }
     }
 
     out << "  Running:      " << std::setw(10) << runningProcesses << " processes\n";
     out << "  Waiting:      " << std::setw(10) << waitingProcesses << " processes\n";
+	out << "  Finished:     " << std::setw(10) << finishedProcesses << " processes\n";
     out << "\n";
 
     // Detailed page frame information

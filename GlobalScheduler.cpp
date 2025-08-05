@@ -124,6 +124,10 @@ std::shared_ptr<Process> GlobalScheduler::getProcessByPID(int pid)
     return nullptr;
 }
 
+bool GlobalScheduler::getSchedulerStart() const {
+    return this->scheduler_start;
+}
+
 // Get total process count
 int GlobalScheduler::getProcessCount() const {
     return static_cast<int>(processList.size());

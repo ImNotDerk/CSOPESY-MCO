@@ -27,6 +27,8 @@ public:
 	void setFrameNumber(int frameNumber); // set the frame number where the page is loaded in the physical memory
 	void invalidatePage(); // invalidate the page
 
+	bool isEmpty() const;
+
 	bool hasSpaceFor(int bytes) const;
 	bool addInstruction(std::shared_ptr<ICommand> instruction); // add instruction to this page
 	bool addVariable(std::string varName, uint16_t value);

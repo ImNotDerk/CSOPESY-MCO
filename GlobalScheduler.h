@@ -30,6 +30,8 @@ public:
     void schedulerStop();
     std::shared_ptr<Process> getProcessByPID(int pid);
 
+    bool getSchedulerStart() const;
+
     // Core configuration
     void setCoreCount(int cores);
     int getCoreCount() const;

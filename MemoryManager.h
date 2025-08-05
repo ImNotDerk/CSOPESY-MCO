@@ -30,6 +30,7 @@ public:
     int evictPageFIFO(int processID, int pageNumber);
 	void handlePageFault(int processPID, PageEntry* pageEntry);
 	bool hasFreeFrame() const;
+	int countFreeFrames() const;
 	int allocateFrame();
 
     // Function to deallocate memory for a process

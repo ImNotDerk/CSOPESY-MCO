@@ -50,6 +50,7 @@ void MainConsole::display() // handles what displayes after the process function
 			GlobalScheduler::getInstance()->setCoreCount(ConfigReader::getInstance()->getNumCPU());
 			GlobalScheduler::getInstance()->selectScheduler(ConfigReader::getInstance()->getSchedulerToUse());
 			MemoryManager::initialize(ConfigReader::getInstance()->getMaxOverallMem(), ConfigReader::getInstance()->getMemPerFrame(), ConfigReader::getInstance()->getMinMemPerProc(), ConfigReader::getInstance()->getMaxMemPerProc());
+			MemoryManager::getInstance()->clearBackingStore();
 			GlobalScheduler::getInstance()->getScheduler()->init();
 			GlobalScheduler::getInstance()->getScheduler()->run();
 			

@@ -1,4 +1,5 @@
 #include "RRScheduler.h"
+#include "GlobalScheduler.h"
 
 RRScheduler::RRScheduler() {}
 
@@ -25,7 +26,7 @@ void RRScheduler::run() {
         while (schedulerRun) {
             execute();
 
-            if (allProcessesFinished()) {
+            if (allProcessesFinished() && !GlobalScheduler::getInstance()->getSchedulerStart()) {
                 MemoryManager::getInstance()->clearAllMemory(); // Clear memory when all processes are finished
             }
 

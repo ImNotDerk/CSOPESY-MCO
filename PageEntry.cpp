@@ -42,6 +42,11 @@ void PageEntry::invalidatePage()
 	this->frameNumber = -1; // Reset frame number to indicate no frame is assigned
 }
 
+bool PageEntry::isEmpty() const
+{
+	return this->instructionList.empty() && this->variableList.empty();
+}
+
 void PageEntry::setFrameNumber(int frameNumber)
 {
 	this->frameNumber = frameNumber;

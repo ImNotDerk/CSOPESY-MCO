@@ -4,6 +4,8 @@ CPUTick* CPUTick::sharedInstance = nullptr;
 
 CPUTick::CPUTick() {
     this->nTicks = 0;
+	this->idleCpuTicks = 0;
+	this->activeCpuTicks = 0;
     ticking = false;
 }
 
@@ -35,6 +37,22 @@ void CPUTick::addTick(int ticks) {
 
 int CPUTick::getTicks() const {
     return this->nTicks;
+}
+
+void CPUTick::addIdleCpuTicks(int ticks) {
+    this->idleCpuTicks += ticks;
+}
+
+void CPUTick::addActiveCpuTicks(int ticks) {
+    this->activeCpuTicks += ticks;
+}
+
+int CPUTick::getIdleCpuTicks() const {
+    return this->idleCpuTicks;
+}
+
+int CPUTick::getActiveCpuTicks() const {
+    return this->activeCpuTicks;
 }
 
 void CPUTick::startAutoTick(int intervalMs) {
