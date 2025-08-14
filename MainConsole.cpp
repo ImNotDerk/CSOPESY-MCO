@@ -4,8 +4,10 @@ HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 std::string userInput = "";
 std::string commandMessage = "";
 std::string outputArg2 = "";
-std::string outputArg3 = "";
+int outputArg3 = 0;
 bool isInitialized = false;
+
+std::string instructionString = "";
 
 MainConsole::MainConsole()
 {
@@ -21,6 +23,14 @@ void MainConsole::onEnabled()
 {
 	system("cls");
 	printHeader();
+}
+
+std::string MainConsole::separateCommands(const std::string& str)
+{
+	size_t first = str.find_first_not_of(" \t\r\n");
+	if (first == std::string::npos) return "";
+	size_t last = str.find_last_not_of(" \t\r\n");
+	return str.substr(first, (last - first + 1));
 }
 
 void MainConsole::display() // handles what displayes after the process function handles the input
@@ -40,6 +50,7 @@ void MainConsole::display() // handles what displayes after the process function
 			GlobalScheduler::getInstance()->setCoreCount(ConfigReader::getInstance()->getNumCPU());
 			GlobalScheduler::getInstance()->selectScheduler(ConfigReader::getInstance()->getSchedulerToUse());
 			MemoryManager::initialize(ConfigReader::getInstance()->getMaxOverallMem(), ConfigReader::getInstance()->getMemPerFrame(), ConfigReader::getInstance()->getMinMemPerProc(), ConfigReader::getInstance()->getMaxMemPerProc());
+			MemoryManager::getInstance()->clearBackingStore();
 			GlobalScheduler::getInstance()->getScheduler()->init();
 			GlobalScheduler::getInstance()->getScheduler()->run();
 			
@@ -56,6 +67,8 @@ void MainConsole::display() // handles what displayes after the process function
 		if (commandMessage == "exit")
 		{
 			commandMessage = "";
+			GlobalScheduler::getInstance()->getScheduler()->stop();
+			MemoryManager::getInstance()->clearBackingStore();
 			ConsoleManager::getInstance()->exitApplication();
 		}
 
@@ -68,17 +81,84 @@ void MainConsole::display() // handles what displayes after the process function
 		if (commandMessage == "screenS")
 		{
 			commandMessage = "";
-			std::shared_ptr<Process> newProcess = std::make_shared<Process>(
-				ConsoleManager::getInstance()->getNumScreens(), outputArg2, outputArg3
-			);
-			ConsoleManager::getInstance()->createBaseScreen(newProcess, true);
-			GlobalScheduler::getInstance()->addProcess(newProcess);
+			if (outputArg3 >= 64 && outputArg3 <= 65536)
+			{
+				int numPages = (outputArg3 + ConfigReader::getInstance()->getMemPerFrame() - 1) / outputArg3;
+				std::shared_ptr<Process> newProcess = std::make_shared<Process>(ConsoleManager::getInstance()->getNumScreens(), outputArg2, outputArg3, numPages);
+				ConsoleManager::getInstance()->createBaseScreen(newProcess, true);
+				GlobalScheduler::getInstance()->addProcess(newProcess);
+			}
+			else if (outputArg3 == 0)
+			{
+				std::cout << "Please input memory size." << std::endl;
+			}
+			else
+			{
+				std::cout << "Invalid memory size. Please enter a value between 64 and 65536." << std::endl;
+			}
+			
 		}
 		
 		if (commandMessage == "screenLS")
 		{
 			this->screenLS = GlobalScheduler::getInstance()->getScheduler()->screenLS();
 			std::cout << this->screenLS;
+		}
+
+		if (commandMessage == "screenC")
+		{
+			commandMessage = "";
+			if (outputArg3 >= 64 && outputArg3 <= 65536)
+			{
+				/*int numPages = (outputArg3 + ConfigReader::getInstance()->getMemPerFrame() - 1) / outputArg3;
+				std::shared_ptr<Process> newProcess = std::make_shared<Process>(
+					ConsoleManager::getInstance()->getNumScreens(), outputArg2, outputArg3, numPages
+				);
+				ConsoleManager::getInstance()->createBaseScreen(newProcess, true);
+				GlobalScheduler::getInstance()->addProcess(newProcess);*/
+				
+				// separating commands from the instruction string
+				std::vector<std::string> instructions;
+				std::stringstream ss(instructionString);
+				std::string token;
+				while (getline(ss, token, ';')) {
+					if (!token.empty()) {
+						instructions.push_back(separateCommands(token));
+					}
+				}
+
+				//if (instructions.size() < 1 || instructions.size() > 50) {
+				//	std::cout << "Invalid command: number of instructions must be between 1 and 50." << std::endl;
+				//	return;
+				//}
+
+				//int numPages = (outputArg3 + ConfigReader::getInstance()->getMemPerFrame() - 1) / outputArg3;
+				//std::shared_ptr<Process> newProcess = std::make_shared<Process>(
+				//	ConsoleManager::getInstance()->getNumScreens(), outputArg2, outputArg3, numPages
+				//);
+				//newProcess->parseAndLoadInstructions(instructionString); // new method to set instruction list
+				//ConsoleManager::getInstance()->createBaseScreen(newProcess, true);
+				//GlobalScheduler::getInstance()->addProcess(newProcess);
+
+				
+
+				/*int frameSize = ConfigReader::getInstance()->getMemPerFrame();*/
+				int numPages = (outputArg3 + ConfigReader::getInstance()->getMemPerFrame() - 1) / outputArg3;
+
+				std::shared_ptr<Process> newProcess = std::make_shared<Process>(
+					ConsoleManager::getInstance()->getNumScreens(), outputArg2, outputArg3, numPages
+				);
+
+				newProcess->parseAndLoadInstructions(instructionString);
+
+				ConsoleManager::getInstance()->createBaseScreen(newProcess, true);
+				GlobalScheduler::getInstance()->addProcess(newProcess);
+				std::cout << "Process '" << outputArg2 << "' created with " << instructions.size() << " instructions." << std::endl;
+			}
+			else
+			{
+				std::cout << "Invalid memory size. Please enter a value between 64 and 65536." << std::endl;
+			}
 		}
 
 		if (commandMessage == "scheduler-start")
@@ -109,6 +189,18 @@ void MainConsole::display() // handles what displayes after the process function
 			std::cout << CPUTick::getInstance()->getTicks() << std::endl;
 		}
 
+		if (commandMessage == "process-smi")
+		{
+			std::cout << MemoryManager::getInstance()->getProcessSMI() << std::endl;
+			commandMessage = "";
+		}
+
+		if (commandMessage == "vmstat")
+		{
+			std::cout << MemoryManager::getInstance()->getVMStat() << std::endl;
+			commandMessage = "";
+		}
+
 		if (commandMessage == "unknown-command")
 		{
 			commandMessage = "";
@@ -136,7 +228,8 @@ void MainConsole::process() // this function handles the input from the user
 	getline(std::cin, commandInput);
 
 	std::stringstream ss(commandInput);
-	std::string command, arg1, arg2, arg3;
+	std::string command, arg1, arg2;
+	int arg3 = 0;
 	ss >> command >> arg1 >> arg2 >> arg3;
 
 	if (command == "exit") 
@@ -157,7 +250,7 @@ void MainConsole::process() // this function handles the input from the user
 		commandMessage = "screenR";
 		outputArg2 = arg2;
 	}
-	else if (command == "screen" && arg1 == "-s" && !arg2.empty() && !arg3.empty()) 
+	else if (command == "screen" && arg1 == "-s" && !arg2.empty() && arg3 != 0) 
 	{
 		commandMessage = "screenS";
 		outputArg2 = arg2;
@@ -166,6 +259,25 @@ void MainConsole::process() // this function handles the input from the user
 	else if (command == "screen" && arg1 == "-ls") 
 	{
 		commandMessage = "screenLS";
+	}
+	else if (command == "screen" && arg1 == "-c" && !arg2.empty() && arg3 != 0)
+	{
+		commandMessage = "screenC";
+		outputArg2 = arg2;
+		outputArg3 = arg3;
+
+		// Get the rest as the instruction string
+		std::string instructions;
+		getline(ss, instructions);
+
+		// Remove surrounding quotes if present
+		if (!instructions.empty() && instructions.front() == '\"' && instructions.back() == '\"') {
+			instructions = instructions.substr(1, instructions.length() - 2);
+		}
+
+		// Store everything
+		commandMessage = "screenC";
+		instructionString = instructions; // new member variable
 	}
 	else if (command == "scheduler-start") 
 	{
@@ -180,6 +292,14 @@ void MainConsole::process() // this function handles the input from the user
 		commandMessage = command;
 	}
 	else if (command == "show-ticks")
+	{
+		commandMessage = command;
+	}
+	else if (command == "process-smi")
+	{
+		commandMessage = command;
+	}
+	else if (command == "vmstat")
 	{
 		commandMessage = command;
 	}

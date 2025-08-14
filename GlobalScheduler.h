@@ -28,6 +28,9 @@ public:
     std::shared_ptr<Process> getMostRecentProcess();
     void schedulerStart(); // this is where dummy processes are generated
     void schedulerStop();
+    std::shared_ptr<Process> getProcessByPID(int pid);
+
+    bool getSchedulerStart() const;
 
     // Core configuration
     void setCoreCount(int cores);

@@ -1,4 +1,5 @@
 #include "RRScheduler.h"
+#include "GlobalScheduler.h"
 
 RRScheduler::RRScheduler() {}
 
@@ -24,9 +25,16 @@ void RRScheduler::run() {
     schedulerThread = std::thread([this]() {
         while (schedulerRun) {
             execute();
+
+            if (allProcessesFinished() /*&& !GlobalScheduler::getInstance()->getSchedulerStart()*/) {
+                MemoryManager::getInstance()->clearAllMemory(); // Clear memory when all processes are finished
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(10)); // slight delay to prevent tight loop
         }
         });
 }
+
 
 void RRScheduler::stop() {
     schedulerRun = false;
@@ -50,21 +58,24 @@ void RRScheduler::execute() {
 
             auto nextProcess = GlobalProcessQueue::getInstance().pop();
             if (nextProcess) {
-                bool alreadyAllocated = MemoryManager::getInstance()->isAllocated(nextProcess->getPID());
-                bool memAllocated = alreadyAllocated || MemoryManager::getInstance()->allocateMemory(nextProcess->getPID(), nextProcess->getMemSize());
-                if (memAllocated) {
+                // Load pages using demand paging
+                bool memoryLoaded = MemoryManager::getInstance()->loadPagesForProcess(nextProcess);
+
+                if (memoryLoaded && nextProcess->getState() != Process::MEMORY_WAITING) {
                     nextProcess->setState(Process::RUNNING);
                     worker->assignProcess(nextProcess);
                     worker->start();
                 }
                 else {
-                    // Not enough memory, optionally push back to queue
+                    // Page loading failed (e.g., backing store failure or FIFO problem)
+                    nextProcess->setState(Process::WAITING);
                     GlobalProcessQueue::getInstance().push(nextProcess);
                 }
             }
         }
     }
 }
+
 
 void RRScheduler::addProcess(std::shared_ptr<Process> process, int core) {
     std::lock_guard<std::mutex> lock(schedulerMutex);

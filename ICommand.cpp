@@ -12,4 +12,5 @@ void ICommand::execute() {
 ICommand::ICommand(int processID, CommandType commandType) {
 	this->processID = processID;
 	this->commandType = commandType;
+	this->pageNumber = -1; // default value, will be set later if needed
 }

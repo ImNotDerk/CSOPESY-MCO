@@ -40,25 +40,31 @@ void FCFSScheduler::stop()
     }
 }
 
-void FCFSScheduler::execute() 
+void FCFSScheduler::execute()
 {
     std::lock_guard<std::mutex> lock(schedulerMutex);
 
-    for (int core = 0; core < numCores; ++core) 
+    for (int core = 0; core < numCores; ++core)
     {
         auto& worker = cpuWorkers[core];
 
-        if (!worker->isBusy() && !globalQueue.empty()) 
+        if (!worker->isBusy() && !globalQueue.empty())
         {
             auto process = globalQueue.front();
-            globalQueue.pop();
 
-            worker->assignProcess(process);
-            process->setState(Process::RUNNING);
-            worker->start();
+            // Attempt to load pages into memory
+            if (MemoryManager::getInstance()->loadPagesForProcess(process))
+            {
+                globalQueue.pop();  // Only pop if it can be assigned
+
+                worker->assignProcess(process);
+                process->setState(Process::RUNNING);
+                worker->start();
+            }
         }
     }
 }
+
 
 void FCFSScheduler::addProcess(std::shared_ptr<Process> process, int core) 
 {

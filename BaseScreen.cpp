@@ -33,6 +33,12 @@ void BaseScreen::display() {
 		this->printProcessInfo();
 		this->commandInput.clear();
 	}
+	else if (commandInput == "vmstat")
+	{
+		this->printProcessInfo();
+		std::cout << "\n" << MemoryManager::getInstance()->getVMStat() << std::endl;
+		this->commandInput.clear();
+	}
 	else
 	{
 		this->commandInput.clear();
@@ -57,6 +63,10 @@ void BaseScreen::process() {
 		this->commandInput = userInput;
 	}
 	else if (this->userInput == "process-smi")
+	{
+		this->commandInput = this->userInput;
+	}
+	else if (this->userInput == "vmstat")
 	{
 		this->commandInput = this->userInput;
 	}
@@ -85,6 +95,7 @@ void BaseScreen::printProcessInfo() const
 		this->attachedProcess->getCommandCounter();
 		std::cout << "Process: " << this->attachedProcess->getName() << std::endl;
 		std::cout << "ID: " << this->attachedProcess->getPID() << std::endl;
+		std::cout << "Memory Size: " << this->attachedProcess->getMemSize() << " bytes" << std::endl;
 		std::cout << "Logs:" << std::endl;
 		for (const auto& log : this->attachedProcess->getLogs())
 			std::cout << " " << log << std::endl;
@@ -100,6 +111,7 @@ void BaseScreen::printProcessInfo() const
 		std::cout << "" << std::endl;
 		std::cout << "Process: " << this->attachedProcess->getName() << std::endl;
 		std::cout << "ID: " << this->attachedProcess->getPID() << std::endl;
+		std::cout << "Memory Size: " << this->attachedProcess->getMemSize() << " bytes" << std::endl;
 		std::cout << "Logs:" << std::endl;
 		for (const auto& log : this->attachedProcess->getLogs())
 			std::cout << " " << log << std::endl;

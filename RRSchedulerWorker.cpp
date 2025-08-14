@@ -20,7 +20,7 @@ void RRSchedulerWorker::start() {
                 if (currentTick % quantum == 0) {
                     MemoryManager::getInstance()->saveMemorySnapshot(currentTick);
                 }
-                std::this_thread::sleep_for(std::chrono::milliseconds(10)); // adjust as needed
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
             });
     }
@@ -59,6 +59,13 @@ void RRSchedulerWorker::run() {
 
     while (running) {
         std::unique_lock<std::mutex> lock(mtx);
+
+        int idleStart = CPUTick::getInstance()->getTicks();
+        cv.wait(lock, [&]() { return currentProcess != nullptr || !running; });
+
+        int idleEnd = CPUTick::getInstance()->getTicks();
+        CPUTick::getInstance()->addIdleCpuTicks(idleEnd - idleStart);
+
         cv.wait(lock, [&]() { return currentProcess != nullptr || !running; });
 
         if (!running) break;
@@ -73,7 +80,16 @@ void RRSchedulerWorker::run() {
             int currentTick = CPUTick::getInstance()->getTicks();
 
             if (currentTick > lastExecutedTick) {
+
+                // initiate page fault here
+                auto page = process->getPageForInstruction(process->getCommandCounter());
+
+                if (!page->isPageValid()) {
+                    MemoryManager::getInstance()->handlePageFault(process->getPID(), page);
+                }
+                
                 process->executeCurrentCommand(coreId);
+                CPUTick::getInstance()->addActiveCpuTicks(1);
                 lastExecutedTick = currentTick;
                 executedAtLeastOnce = true;
             }
@@ -90,11 +106,9 @@ void RRSchedulerWorker::run() {
         if (process && !process->isFinished()) {
             process->setState(Process::WAITING);
             GlobalProcessQueue::getInstance().push(process);
-        }
-        else if (process && process->isFinished()) {
+        } else if (process->isFinished()) {
             process->setState(Process::FINISHED);
-            MemoryManager::getInstance()->deallocateMemory(process->getPID());
-        }
+		}
 
         lock.lock();
         currentProcess = nullptr;

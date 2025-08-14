@@ -1,12 +1,18 @@
 #pragma once
 #include <vector>
+#include <queue>
 #include <unordered_set>
 #include <fstream>
 #include <iostream>
-#include <algorithm>  // For std::all_of
-#include <string>   // For std::to_string
+#include <algorithm> 
+#include <string>   
 #include <ctime>
 #include <chrono>
+#include <cstdio> 
+#include <mutex>
+
+#include "Process.h"
+#include "FrameEntry.h"
 
 class MemoryManager {
 public:
@@ -20,12 +26,21 @@ public:
     static void destroy();
 
     // Function to allocate memory for a process
-    bool allocateMemory(int processID, int memRequired);
+    bool loadPagesForProcess(std::shared_ptr<Process> process);
+    int evictPageFIFO(int processID, int pageNumber);
+	void handlePageFault(int processPID, PageEntry* pageEntry);
+	bool hasFreeFrame() const;
+	int countFreeFrames() const;
+	int allocateFrame();
 
     // Function to deallocate memory for a process
     bool deallocateMemory(int processID);
 
-    bool isAllocated(int processID) const;
+	// backing store functions
+    void writeToBackingStore(int processID, int pageNumber);
+	std::string loadFromBackingStore(int processID, int pageNumber);
+    void removeFromBackingStore(int processID, int pageNumber);
+    void clearBackingStore();
 
     // Function to get the external fragmentation in KB
     int getExternalFragmentation() const;
@@ -37,6 +52,25 @@ public:
     void setMemPerFrame(int memPerFrame);
     void setMinMemPerProc(int minMemPerProc);
     void setMaxMemPerProc(int maxMemPerProc);
+	void clearAllMemory();
+
+    // Methods for process-smi and vmstat
+    std::string getProcessSMI() const;
+    std::string getVMStat() const;
+
+    // Memory statistics methods
+    int getTotalMemory() const { return maxOverallMemory; }
+    int getUsedMemory() const;
+    int getFreeMemory() const;
+    int getNumProcessesInMemory() const;
+    std::vector<std::pair<int, int>> getProcessMemoryUsage() const; // Returns (PID, memory used in bytes)
+
+    // Page statistics
+    int getTotalPages() const { return numFrames; }
+    int getUsedPages() const;
+    int getFreePages() const;
+    int getPagedIn() const { return pagedIn; }
+    int getPagedOut() const { return pagedOut; }
 
 private:
     // Disallow copying
@@ -51,8 +85,16 @@ private:
 	int numFrames = 0;            // Number of memory frames (THIS IS JUST FOR HOMEWORK 10. Should be removed in the future)
     int minMemPerProc = 0;        // Size of each process (in bytes)
 	int maxMemPerProc = 0;        // Maximum size of each process (in bytes)
-    std::vector<int> memory;      // Vector representing the memory/frames (0 = free, >0 = process ID)
+    std::vector<FrameEntry> memory;      // Vector representing the memory/frames 
+    std::queue<std::pair<int, int>> fifoQueue; // PID, page number
+
+    // Statistics counters
+    mutable int pagedIn = 0;      // Number of pages loaded from backing store
+    mutable int pagedOut = 0;     // Number of pages written to backing store
+
+    std::mutex memoryMutex;
 
     // Helper function to get the count of allocated processes
     int getAllocatedProcessCount() const;
+    std::string getCurrentTimestamp() const;
 };

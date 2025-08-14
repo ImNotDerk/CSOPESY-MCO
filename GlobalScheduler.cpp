@@ -77,11 +77,14 @@ void GlobalScheduler::schedulerStart() {
 				int maxMem = ConfigReader::getInstance()->getMaxMemPerProc();
 
 				int memSize = getRandomMemSize(minMem, maxMem); // Generate random memory size for the process
+				int memPerFrame = ConfigReader::getInstance()->getMemPerFrame();
 
-                auto process = std::make_shared<Process>(i, name, memSize);
+				int numPages = (memSize + memPerFrame - 1) / memPerFrame; // Calculate number of pages based on memory size and frame size
+
+                auto process = std::make_shared<Process>(i, name, memSize, numPages);
 
                 // Attempt to allocate memory for the process
-                if (MemoryManager::getInstance()->allocateMemory(i, memSize)) {
+                if (MemoryManager::getInstance()->loadPagesForProcess(process)) {
                     ConsoleManager::getInstance()->createBaseScreen(process, false);
                     processList.push_back(process);
                     this->scheduler->addProcess(process, -1);
@@ -111,6 +114,18 @@ void GlobalScheduler::schedulerStop() {
 void GlobalScheduler::addProcess(std::shared_ptr<Process> process) {
     processList.push_back(process);
     this->scheduler->addProcess(process, -1);
+}
+
+std::shared_ptr<Process> GlobalScheduler::getProcessByPID(int pid)
+{
+    for (auto& proc : this->processList) {
+        if (proc->getPID() == pid) return proc;
+    }
+    return nullptr;
+}
+
+bool GlobalScheduler::getSchedulerStart() const {
+    return this->scheduler_start;
 }
 
 // Get total process count

@@ -12,6 +12,7 @@
 #include "Process.h"
 #include "AScheduler.h"
 #include "SchedulerWorker.h"
+#include "MemoryManager.h"
 
 // First-Come, First-Served Scheduler
 class FCFSScheduler : public AScheduler {

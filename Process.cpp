@@ -11,10 +11,20 @@ Process::Process(int pid, String name) {
 	this->currentState = Process::ProcessState::READY;
 }
 
-Process::Process(int pid, String name, int memorySize) {
+Process::Process(int pid, String name, int memorySize, int numPages) {
 	this->pid = pid;
 	this->name = name;
+
 	this->memorySize = memorySize;
+	this->pageTable = std::make_shared<Page_Table>(); // initialize page table
+	this->pages = numPages;
+	this->memPerPage = memorySize / numPages; // calculate memory size per page
+
+	for (int i = 0; i < pages; ++i) {
+		PageEntry page(i, memPerPage);
+		pageTable->emplace(i, page);
+	}
+
 	this->commandCounter = 0;
 	this->cpuCoreID = -1; // default value
 	this->symbolTable = std::make_shared<Symbol_Table>();
@@ -40,11 +50,6 @@ bool Process::isFinished() const {
 int Process::incrementCommandCounter()
 {
 	return this->commandCounter++;
-}
-
-int Process::getRemainingTime() const
-{
-	return this->commandCounter; //commandCounter for now...
 }
 
 int Process::getCommandCounter() const
@@ -94,14 +99,30 @@ int Process::getMemSize() const
 	return this->memorySize;
 }
 
+std::shared_ptr<Page_Table> Process::getPageTable() const
+{
+	return this->pageTable; // returns the page table for this process
+}
+
+PageEntry* Process::getPageForInstruction(int instructionIndex) {
+	if (instructionIndex < 0 || instructionIndex >= commandList.size()) return nullptr;
+	int pageNum = commandList[instructionIndex]->pageNumber;
+	auto it = pageTable->find(pageNum);
+	if (it != pageTable->end()) {
+		return &it->second;
+	}
+	return nullptr;
+}
+
+
 void Process::addCommand(std::shared_ptr<ICommand> command)
 {
-	/*if (command == nullptr)
-	{
-		std::cerr << "Failed to create command: No command declared [NULL detected]." << std::endl;
-		return;
-	}*/
-	this->commandList.push_back(command);
+	for (auto& [pageNum, page] : *pageTable) {
+		if (page.addInstruction(command)) {
+			commandList.push_back(command);
+			return;
+		}
+	}
 }
 
 void Process::generateRandomCommands()
@@ -114,10 +135,12 @@ void Process::generateRandomCommands()
 
 	int noCommands = minIns + rand() % (maxIns - minIns + 1);
 
-	for (int i = 0; i < noCommands; i++) {
-		int type = rand()% 6; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
+	if (this->memorySize >= 64) // if memory size is at least 64 bytes, let it generate commands including declare command
+	{
+		for (int i = 0; i < noCommands; i++) {
+			int type = rand() % 6; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
 
-		switch (type) {
+			switch (type) {
 			case 0: { // PRINT COMMAND
 				auto newCommand = std::make_shared<PrintCommand>(this->pid, this->name, symbolTable);
 				this->addCommand(newCommand);
@@ -125,21 +148,26 @@ void Process::generateRandomCommands()
 			}
 
 			case 1: { // DECLARE COMMAND
-				String varName = "";
-				auto newCommand = std::make_shared<DeclareCommand>(varName, 0, symbolTable);
-				this->addCommand(newCommand);
+				if (this->symbolTable->size() != 32)
+				{
+					String varName = "";
+					auto newCommand = std::make_shared<DeclareCommand>(varName, 0, symbolTable);
+					this->addCommand(newCommand);
+				}
 				break;
 			}
 
 			case 2: { // ADD COMMAND
 				auto newCommand = std::make_shared<AddCommand>(symbolTable);
 				this->addCommand(newCommand);
+
 				break;
 			}
 
 			case 3: { // SUBTRACT COMMAND
 				auto newCommand = std::make_shared<SubtractCommand>(symbolTable);
 				this->addCommand(newCommand);
+
 				break;
 			}
 
@@ -147,60 +175,107 @@ void Process::generateRandomCommands()
 				uint8_t sleepTicks = static_cast<uint8_t>(rand() % 255); // clamp range of uint16_t from 0 to 255
 				auto newCommand = std::make_shared<SleepCommand>(this->pid, sleepTicks);
 				this->addCommand(newCommand);
+
 				break;
 			}
-			case 5: { 
+
+			case 5: {
 				const int MAX_DEPTH = 1 + rand() % 3; // Randomly choose max depth between 1 and 3
-				const int repeats = 1 + rand() % 4; 
+				const int repeats = 1 + rand() % 4;
 				generateNestedForCommand(1, MAX_DEPTH, repeats); // creates instructions then directly adds to commandList
 				break;
+			}
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i < noCommands; i++) {
+			int type = rand() % 5; // 0 to 5 (PRINT, ADD, SUBTRACT, SLEEP, FOR)
+
+			switch (type) {
+			case 0: { // PRINT COMMAND
+				auto newCommand = std::make_shared<PrintCommand>(this->pid, this->name, symbolTable);
+				this->addCommand(newCommand);
+
+				break;
+			}
+
+			case 1: { // ADD COMMAND
+				auto newCommand = std::make_shared<AddCommand>(symbolTable);
+				this->addCommand(newCommand);
+
+				break;
+			}
+
+			case 2: { // SUBTRACT COMMAND
+				auto newCommand = std::make_shared<SubtractCommand>(symbolTable);
+				this->addCommand(newCommand);
+
+				break;
+			}
+
+			case 3: { // SLEEP COMMAND
+				uint8_t sleepTicks = static_cast<uint8_t>(rand() % 255); // clamp range of uint16_t from 0 to 255
+				auto newCommand = std::make_shared<SleepCommand>(this->pid, sleepTicks);
+				this->addCommand(newCommand);
+
+				break;
+			}
+
+			case 4: {
+				const int MAX_DEPTH = 1 + rand() % 3; // Randomly choose max depth between 1 and 3
+				const int repeats = 1 + rand() % 4;
+				generateNestedForCommand(1, MAX_DEPTH, repeats); // creates instructions then directly adds to commandList
+				break;
+			}
 			}
 		}
 	}
 }
 
-void Process::generateNestedForCommand(int currentDepth, int maxDepth, int repeats) 
+void Process::generateNestedForCommand(int currentDepth, int maxDepth, int repeats)
 {
 	int repeatsNested = 1 + rand() % 2;
 	int noCommands = 1 + rand() % 3;
 	std::vector<std::shared_ptr<ICommand>> instructions;
 
 	for (int i = 0; i < noCommands; i++) {
-		int instructionType = rand() % 5; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
+		int instructionType = rand() % 6; // 0 to 5 (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
 
 		switch (instructionType) {
-			case 0: {
-				auto cmd = std::make_shared<PrintCommand>(this->pid, this->name, symbolTable);
-				instructions.push_back(cmd->clone());
-				break;
+		case 0: {
+			auto cmd = std::make_shared<PrintCommand>(this->pid, this->name, symbolTable);
+			instructions.push_back(cmd->clone());
+			break;
+		}
+		case 1: {
+			auto cmd = std::make_shared<DeclareCommand>("", 0, symbolTable);
+			instructions.push_back(cmd->clone());
+			break;
+		}
+		case 2: {
+			auto cmd = std::make_shared<AddCommand>(symbolTable);
+			instructions.push_back(cmd->clone());
+			break;
+		}
+		case 3: {
+			auto cmd = std::make_shared<SubtractCommand>(symbolTable);
+			instructions.push_back(cmd->clone());
+			break;
+		}
+		case 4: {
+			uint8_t ticks = static_cast<uint8_t>(rand() % 255);
+			auto cmd = std::make_shared<SleepCommand>(this->pid, ticks);
+			instructions.push_back(cmd->clone());
+			break;
+		}
+		case 5: {
+			if (currentDepth < maxDepth) {
+				generateNestedForCommand(currentDepth + 1, maxDepth, repeatsNested);
 			}
-			case 1: {
-				auto cmd = std::make_shared<DeclareCommand>("", 0, symbolTable);
-				instructions.push_back(cmd->clone());
-				break;
-			}
-			case 2: {
-				auto cmd = std::make_shared<AddCommand>(symbolTable);
-				instructions.push_back(cmd->clone());
-				break;
-			}
-			case 3: {
-				auto cmd = std::make_shared<SubtractCommand>(symbolTable);
-				instructions.push_back(cmd->clone());
-				break;
-			}
-			case 4: {
-				uint8_t ticks = static_cast<uint8_t>(rand() % 255);
-				auto cmd = std::make_shared<SleepCommand>(this->pid, ticks);
-				instructions.push_back(cmd->clone());
-				break;
-			}
-			case 5: {
-				if (currentDepth < maxDepth) {
-					generateNestedForCommand(currentDepth + 1, maxDepth, repeatsNested);
-				}
-				break;
-			}
+			break;
+		}
 		}
 	}
 
@@ -222,6 +297,8 @@ void Process::printCommands() const
 		case ICommand::ADD:      std::cout << "ADD"; break;
 		case ICommand::SUBTRACT: std::cout << "SUBTRACT"; break;
 		case ICommand::SLEEP:    std::cout << "SLEEP"; break;
+		case ICommand::READ:	 std::cout << "READ"; break;
+		case ICommand::WRITE:    std::cout << "WRITE"; break;
 		case ICommand::FOR:      std::cout << "FOR"; break;
 		default:                 std::cout << "UNKNOWN"; break;
 		}
@@ -279,4 +356,98 @@ String Process::getCurrentTimestamp()
 	String timestamp(buffer);
 
 	return timestamp;
+}
+
+std::string trim(const std::string& str) {
+	size_t first = str.find_first_not_of(" \t\r\n");
+	if (first == std::string::npos) return "";
+	size_t last = str.find_last_not_of(" \t\r\n");
+	return str.substr(first, (last - first + 1));
+}
+
+void Process::parseAndLoadInstructions(const std::string& instructionStr)
+{
+	commandList.clear(); // clear any default/random commands
+
+	std::stringstream ss(instructionStr);
+	std::string token;
+
+	while (std::getline(ss, token, ';')) {
+		std::string instr = trim(token);
+
+		instr.erase(0, instr.find_first_not_of(" \t\r\n"));
+		instr.erase(instr.find_last_not_of(" \t\r\n") + 1);
+
+		if (!instr.empty() && instr.front() == '"') instr.erase(0, 1);
+		if (!instr.empty() && instr.back() == '"') instr.pop_back();
+
+		if (instr.empty()) continue;
+
+		size_t parenPos = instr.find('(');
+		size_t spacePos = instr.find(' ');
+		size_t splitPos = (parenPos != std::string::npos) ? parenPos : spacePos;
+
+		std::string keyword = instr.substr(0, splitPos);
+		std::string args = (splitPos != std::string::npos) ? instr.substr(splitPos) : "";
+
+		std::stringstream line(instr);
+
+		if (keyword == "DECLARE") {
+			std::stringstream line(args);
+			std::string varName;
+			uint16_t value;
+
+			line >> varName >> value;
+
+			auto cmd = std::make_shared<DeclareCommand>(varName, value, symbolTable);
+			this->addCommand(cmd);
+		}
+		else if (keyword == "ADD") {
+			std::stringstream argStream(args);
+			std::string target, op1, op2;
+			argStream >> target >> op1 >> op2;
+			auto cmd = std::make_shared<AddCommand>(target, op1, op2, symbolTable);
+			this->addCommand(cmd);
+		}
+		else if (keyword == "SUB") {
+			std::stringstream argStream(args);
+			std::string target, op1, op2;
+			argStream >> target >> op1 >> op2;
+			auto cmd = std::make_shared<SubtractCommand>(target, op1, op2, symbolTable);
+			this->addCommand(cmd);
+		}
+		else if (keyword == "WRITE") {
+			std::stringstream line(args);
+			uint16_t value = 0;
+			uint16_t address;
+			line >> address >> value;
+			auto cmd = std::make_shared<WriteCommand>(address, value, symbolTable, pageTable);
+			this->addCommand(cmd);
+		}
+		else if (keyword == "READ") {
+			std::stringstream line(args);
+			std::string varName;
+			uint16_t address;
+			line >> varName >> address;
+			auto cmd = std::make_shared<ReadCommand>(varName, address, symbolTable, pageTable);
+			this->addCommand(cmd);
+		}
+		else if (keyword == "PRINT") {
+			auto cmd = std::make_shared<PrintCommand>(pid, name, symbolTable, args);
+			this->addCommand(cmd);
+		}
+		else if (keyword == "SLEEP") {
+			uint16_t ticks;
+			line >> ticks;
+			auto cmd = std::make_shared<SleepCommand>(this->pid, ticks);
+			this->addCommand(cmd);
+		}
+		else {
+			std::cerr << "Unknown instruction: " << instr << std::endl;
+		}
+	}
+
+	if (commandList.empty()) {
+		std::cerr << "No valid instructions loaded for process." << std::endl;
+	}
 }

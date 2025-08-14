@@ -1,9 +1,14 @@
-#include "DeclareCommand.h"
+         #include "DeclareCommand.h"
 
 // Constructor for DECLARE: takes variable name and initial value
 DeclareCommand::DeclareCommand(const String& varName, uint16_t value, std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable)
     : ICommand(processID, CommandType::DECLARE), newVar(varName), value(value), symbolTable(symbolTable) {
 }
+
+//DeclareCommand::DeclareCommand(int processID, const String& varName, uint16_t value,
+//	std::shared_ptr<std::unordered_map<std::string, uint16_t>> symbolTable)
+//	: ICommand(processID, CommandType::DECLARE), newVar(varName), value(value), symbolTable(symbolTable) {
+//}
 
 std::shared_ptr<ICommand> DeclareCommand::clone() const {
 	return std::make_shared<DeclareCommand>(*this);
@@ -34,7 +39,7 @@ void DeclareCommand::getUniqueVariableName() {
 
 void DeclareCommand::declareVariable(const String varName) {
 	this->newVar = varName;
-	this->value = static_cast<uint16_t>(rand() % 65536); // clamp range of uint16_t from 0 to 65535
+	// this->value = static_cast<uint16_t>(rand() % 65536); // clamp range of uint16_t from 0 to 65535
 	(*symbolTable)[newVar] = value;
 }
 
